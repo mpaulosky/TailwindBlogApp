@@ -1,1 +1,14 @@
-﻿<Solution />
+﻿<Solution>
+  <Folder Name="/Solution/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="TailwindBlog.slnx" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="TailwindBlog.ApiService\TailwindBlog.ApiService.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/tests/" />
+</Solution>

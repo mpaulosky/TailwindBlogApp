@@ -62,13 +62,13 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: BlazorApp-test-results
+          name: Test Results
           path: TestResults
 
       - name: Codecov
         uses: codecov/codecov-action@v5.4.2
 
-      # Removed redundant step for uploading test results
+# Removed redundant step to avoid duplicate uploads of test results.
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3.2.0

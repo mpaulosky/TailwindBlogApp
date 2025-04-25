@@ -3,12 +3,18 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="TailwindBlog.slnx" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="MyMediator\MyMediator.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.ApiService\TailwindBlog.ApiService.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.Domain\TailwindBlog.Domain.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" Type="Classic C#" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="TailwindBlog.AppHost.Tests.Integration\TailwindBlog.AppHost.Tests.Integration.csproj" Type="Classic C#" />
+  </Folder>
 </Solution>

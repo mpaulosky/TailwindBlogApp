@@ -18,7 +18,7 @@ public static class ServiceNames
 
 	public static string OutputCache { get; } = "output-cache";
 
-	public static string Api { get; } = "blog-api";
+	public static string ApiService { get; } = "blog-api";
 
 	public static string WebApp { get; } = "web-frontend";
 

@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MyMediator\MyMediator.csproj" />
+    <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
     <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
   </ItemGroup>
 

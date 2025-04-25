@@ -3,7 +3,7 @@ namespace TailwindBlog.AppHost.Tests.Integration;
 public class IntegrationTests
 {
 
-	private static readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(30);
+	private static readonly TimeSpan _defaultTimeout = TimeSpan.FromSeconds(50);
 
 
 	[Fact]

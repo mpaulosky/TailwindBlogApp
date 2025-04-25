@@ -50,7 +50,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Unit Test
-        run: dotnet test --configuration Release --no-restore --no-build --logger trx --results-directory TestResults
+        run: dotnet test --configuration Release --no-restore --no-build --logger trx --results-directory TestResults --verbosity detailed
 
       - name: Upload Event File
         uses: actions/upload-artifact@v4

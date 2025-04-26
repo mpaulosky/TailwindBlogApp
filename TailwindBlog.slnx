@@ -19,7 +19,6 @@
     <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="TailwindBlog.AppHost.Tests.Integration\TailwindBlog.AppHost.Tests.Integration.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
   </Folder>
 </Solution>

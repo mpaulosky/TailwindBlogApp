@@ -1,5 +1,5 @@
 ﻿<Solution>
-  <Folder Name="/Solution/">
+  <Folder Name="/solution/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="TailwindBlog.slnx" />
@@ -20,5 +20,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="TailwindBlog.AppHost.Tests.Integration\TailwindBlog.AppHost.Tests.Integration.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
   </Folder>
 </Solution>

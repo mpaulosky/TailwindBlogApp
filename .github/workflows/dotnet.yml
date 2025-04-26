@@ -32,32 +32,30 @@ jobs:
         with:
           global-json-file: ./global.json
 
-      - name: Restore .NET tools
-        run: dotnet tool restore
-
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
-#      - name: Unit Test
-#        run: dotnet test --configuration Release --no-restore --no-build --logger trx --results-directory TestResults
-#      - name: Upload Event File
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: Event File
-#          path: ${{ github.event_path }}
-#
-#      - name: Upload Test Results
-#        if: always()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: Test Results
-#          path: TestResults
-#
-#      - name: Codecov
-#        uses: codecov/codecov-action@v5.4.2
+      - name: Unit Test
+        run: dotnet test --configuration Release --no-restore --no-build --logger trx --results-directory TestResults
+
+      - name: Upload Event File
+        uses: actions/upload-artifact@v4
+        with:
+          name: Event File
+          path: ${{ github.event_path }}
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Test Results
+          path: TestResults
+
+      - name: Codecov
+        uses: codecov/codecov-action@v5.4.2
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3.2.0

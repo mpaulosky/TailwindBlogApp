@@ -6,6 +6,12 @@ name: Build and Test .NET projects
 on:
   push:
 
+    paths-ignore:
+      - "**/*.docs"
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+
   workflow_dispatch:
     inputs:
       reason:
@@ -16,58 +22,63 @@ on:
 jobs:
   build:
 
-    permissions:
-      checks: write
-      pull-requests: write
-
     runs-on: ubuntu-latest
+
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          global-json-file: ./global.json
+          global-json-file: global.json
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --no-restore
 
-      - name: Unit Test
-        run: dotnet test --configuration Release --no-restore --no-build --logger trx --results-directory TestResults
-
-      - name: Upload Event File
-        uses: actions/upload-artifact@v4
-        with:
-          name: Event File
-          path: ${{ github.event_path }}
+      - name: Run Tests
+        run: dotnet test --no-build --logger trx --results-directory "test-results" --settings runsettings.xml
 
       - name: Upload Test Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Test Results
-          path: TestResults
+          path: test-results
 
       - name: Codecov
         uses: codecov/codecov-action@v5.4.2
 
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        id: test-results
+        if: always()
+        with:
+          files: |
+            test-results/**/*.trx
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3.2.0
         with:
-          versionSpec: "5.x"
+          versionSpec: '6.0'
 
       - name: Use GitVersion
-        id: gitversion
+        id: gitversion # step id used as reference for output values
         uses: gittools/actions/gitversion/execute@v3.2.0
+
       - run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
-
-        # Use always() to always run this step to
-        # publish test results when there are test failures
-        if: ${{ always() }}
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"

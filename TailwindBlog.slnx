@@ -9,6 +9,7 @@
     <File Path="global.json" />
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
+    <File Path="runsettings.xml" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="MyMediator\MyMediator.csproj" Type="Classic C#" />

@@ -7,8 +7,6 @@
         <OutputType>Exe</OutputType>
         <RootNamespace>TailwindBlog.Domain</RootNamespace>
         <TargetFramework>net9.0</TargetFramework>
-        <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-        <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
 
     </PropertyGroup>
 

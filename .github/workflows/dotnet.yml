@@ -38,10 +38,10 @@ jobs:
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build --configuration Release --no-restore
 
       - name: Run Tests
-        run: dotnet test --no-build --logger trx --results-directory "test-results" --settings runsettings.xml
+        run: dotnet test --configuration Release --no-restore --no-build --settings runsettings.xml
 
       - name: Upload Test Results
         if: always()

@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RunSettings>
     <RunConfiguration>
-        <ResultsDirectory>./test-results</ResultsDirectory>
-        <TestSessionTimeout>350000</TestSessionTimeout>
+        <ResultsDirectory>./TestResults</ResultsDirectory>
     </RunConfiguration>
     <LoggerRunSettings>
         <Loggers>
@@ -33,7 +32,7 @@
                         <CollectAspDotNet>False</CollectAspDotNet>
                     </CodeCoverage>
                 </Configuration>
-            </DataCollector>
-        </DataCollectors>
-    </DataCollectionRunSettings>
+            </Logger>
+        </Loggers>
+    </LoggerRunSettings>
 </RunSettings>

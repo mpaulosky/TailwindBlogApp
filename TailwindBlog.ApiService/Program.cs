@@ -8,6 +8,7 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddProblemDetails();
 
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -18,7 +19,6 @@ app.UseExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
-
 	app.MapOpenApi();
 
 	app.UseSwaggerUI(options =>
@@ -28,31 +28,12 @@ if (app.Environment.IsDevelopment())
 
 	app.MapScalarApiReference(options =>
 	{
-
 		options.Title = "The TailwindBlog API Service";
 		options.Theme = ScalarTheme.Saturn;
 		options.HideClientButton = true;
-
 	});
 }
 
-string[] summaries =
-		["Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"];
-
-app.MapGet("/weatherforecast", () =>
-		{
-			var forecast = Enumerable.Range(1, 5).Select(index =>
-							new WeatherForecast
-							(
-									DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-									Random.Shared.Next(-20, 55),
-									summaries[Random.Shared.Next(summaries.Length)]
-							))
-					.ToArray();
-
-			return forecast;
-		})
-		.WithName("GetWeatherForecast");
 
 app.MapDefaultEndpoints();
 

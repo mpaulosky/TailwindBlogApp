@@ -3,8 +3,8 @@
 // File Name :     DependencyInjection.cs
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
-// Solution Name : BlazingBlog
-// Project Name :  BlazingBlog.Infrastructure
+// Solution Name : TailwindBlog
+// Project Name :  TailwindBlog.ApiService
 // =======================================================
 
 using static TailwindBlog.Domain.Constants.ServiceNames;

@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     Entities.cs
+// File Name :     Entity.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog

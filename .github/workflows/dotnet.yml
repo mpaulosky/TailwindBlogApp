@@ -39,8 +39,7 @@ jobs:
           node-version: "18"
           cache: "npm"
           cache-dependency-path: |
-            **/package-lock.json
-            **/yarn.lock
+            **/TailwindBlog.Web/package-lock.json
 
       - name: Install Node.js dependencies
         run: npm install

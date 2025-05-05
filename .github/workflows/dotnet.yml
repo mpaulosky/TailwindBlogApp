@@ -27,6 +27,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -38,14 +39,17 @@ jobs:
           node-version: "18"
           cache: "npm"
           cache-dependency-path: |
-            package-lock.json
-            yarn.lock
-      - run: npm install
+            **/package-lock.json
+            **/yarn.lock
+
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
+      - name: Create Test Results Directory
+        run: mkdir -p TestResults
 
       - name: Run Tests
         run: dotnet test --settings runsettings.xml
@@ -63,6 +67,8 @@ jobs:
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
+        with:
+          files: TestResults/test-results.xml
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2

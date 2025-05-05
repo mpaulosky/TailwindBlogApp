@@ -33,7 +33,7 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Setup Node.js dependencies
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "18"
@@ -42,9 +42,11 @@ jobs:
             **/TailwindBlog.Web/package-lock.json
 
       - name: Install Node.js dependencies
+        working-directory: TailwindBlog.Web
         run: npm install
-      
-      - name: Build CSS
+
+      - name: Build Tailwind CSS
+        working-directory: TailwindBlog.Web
         run: npm run build:css
 
       - name: Restore dependencies

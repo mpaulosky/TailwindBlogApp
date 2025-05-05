@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <RootNamespace>TailwindBlog.Web</RootNamespace>
+
+    </PropertyGroup>
+
+    <ItemGroup>
+
+        <Using Include="Bunit"/>
+        <Using Include="Bunit.TestDoubles"/>
+        <Using Include="Microsoft.Extensions.DependencyInjection"/>
+        <Using Include="Xunit"/>
+
+    </ItemGroup>
+
+    <ItemGroup>
+
+        <PackageReference Include="Bogus"/>
+        <PackageReference Include="bunit"/>
+        <PackageReference Include="coverlet.collector"/>
+        <PackageReference Include="FluentAssertions"/>
+        <PackageReference Include="JetBrains.Annotations"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
+        <PackageReference Include="NSubstitute"/>
+        <PackageReference Include="WaffleGenerator.Bogus"/>
+        <PackageReference Include="xunit.v3"/>
+        <PackageReference Include="xunit.runner.visualstudio"/>
+
+    </ItemGroup>
+
+</Project>

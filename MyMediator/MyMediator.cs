@@ -6,26 +6,28 @@ namespace MyMediator;
 
 public static class MyMediator
 {
-    public static IServiceCollection AddMyMediator(this IServiceCollection services, Assembly? assembly = null)
-    {
-        assembly ??= Assembly.GetCallingAssembly();
 
-        services.AddScoped<ISender, Sender>();
+	public static IServiceCollection AddMyMediator(this IServiceCollection services, Assembly? assembly = null)
+	{
+		assembly ??= Assembly.GetCallingAssembly();
 
-        var handlerInterfaceType = typeof(IRequestHandler<,>);
+		services.AddScoped<ISender, Sender>();
 
-        var handlerTypes = assembly
-            .GetTypes()
-            .Where(type => !type.IsAbstract && !type.IsInterface)
-            .SelectMany(type => type.GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
-                .Select(i => new { Interface = i, Implementation = type }));
+		var handlerInterfaceType = typeof(IRequestHandler<,>);
 
-        foreach (var handler in handlerTypes)
-        {
-            services.AddScoped(handler.Interface, handler.Implementation);
-        }
+		var handlerTypes = assembly
+				.GetTypes()
+				.Where(type => !type.IsAbstract && !type.IsInterface)
+				.SelectMany(type => type.GetInterfaces()
+						.Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == handlerInterfaceType)
+						.Select(i => new { Interface = i, Implementation = type }));
 
-        return services;
-    }
+		foreach (var handler in handlerTypes)
+		{
+			services.AddScoped(handler.Interface, handler.Implementation);
+		}
+
+		return services;
+	}
+
 }

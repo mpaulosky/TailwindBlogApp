@@ -1,0 +1,127 @@
+{
+    "version": "1.0",
+    "rules": {
+        "csharp": {
+            "style": {
+                "preferredModifierOrder": ["public", "private", "protected", "internal", "static", "readonly", "const"],
+                "useExplicitType": true,
+                "useVar": true,
+                "preferNullCheck": {
+                    "useIsNull": true,
+                    "useIsNotNull": true
+                },
+                "preferPrimaryConstructors": true,
+                "preferRecords": true,
+                "preferMinimalApis": true,
+                "preferFileScopedNamespaces": true,
+                "useGlobalUsings": true,
+                "useNullableReferenceTypes": true,
+                "usePatternMatching": true
+            },
+            "naming": {
+                "interfacePrefix": "I",
+                "asyncSuffix": "Async",
+                "privateFieldPrefix": "_",
+                "constantCase": "UPPER_CASE",
+                "componentSuffix": "Component",
+                "blazorPageSuffix": "Page"
+            },
+            "security": {
+                "requireHttps": true,
+                "requireAuthentication": true,
+                "requireAuthorization": true,
+                "useAntiforgeryTokens": true,
+                "useCors": true,
+                "useSecureHeaders": true
+            },
+            "architecture": {
+                "enforceSOLID": true,
+                "enforceDependencyInjection": true,
+                "enforceAsyncAwait": true,
+                "enforceStronglyTypedConfig": true,
+                "enforceCQRS": true,
+                "enforceUnitTests": true,
+                "enforceIntegrationTests": true,
+                "enforceCleanArchitecture": true,
+                "enforceVerticalSliceArchitecture": true,
+                "enforceAspire": true
+            },
+            "blazor": {
+                "enforceStateManagement": true,
+                "useInteractiveServerRendering": true,
+                "useStreamRendering": true,
+                "enforceComponentLifecycle": true,
+                "useCascadingParameters": true,
+                "useRenderFragments": true,
+                "useVirtualization": true,
+                "useErrorBoundaries": true
+            },
+            "documentation": {
+                "requireXmlDocs": true,
+                "requireSwagger": true,
+                "requireOpenApi": true,
+                "requireComponentDocumentation": true,
+                "requireReadme": true
+            },
+            "logging": {
+                "requireStructuredLogging": true,
+                "requireHealthChecks": true,
+                "useOpenTelemetry": true,
+                "useApplicationInsights": true
+            },
+            "database": {
+                "useEntityFrameworkCore": true,
+                "preferAsyncOperations": true,
+                "useMigrations": true,
+                "useChangeTracking": true,
+                "useDbContextPooling": true
+            },
+            "versioning": {
+                "requireApiVersioning": true,
+                "useSemanticVersioning": true
+            },
+            "caching": {
+                "requireCachingStrategy": true,
+                "useDistributedCache": true,
+                "useOutputCaching": true
+            },
+            "middleware": {
+                "requireCrossCuttingConcerns": true,
+                "useExceptionHandling": true,
+                "useRequestLogging": true
+            },
+            "backgroundServices": {
+                "requireBackgroundService": true
+            },
+            "environment": {
+                "requireEnvironmentConfig": true,
+                "useUserSecrets": true,
+                "useKeyVault": true
+            },
+            "validation": {
+                "requireModelValidation": true,
+                "useFluentValidation": true
+            },
+            "testing": {
+                "requireUnitTests": true,
+                "requireIntegrationTests": true,
+                "requireArchitectureTests": true,
+                "requireSecurityTests": false,
+                "useXUnit": true,
+                "useFluentAssertions": true,
+                "useNSubstitute": true,
+                "useBUnit": true,
+                "usePlaywright": true
+            }
+        },
+        "general": {
+            "maxLineLength": 120,
+            "indentStyle": "tab",
+            "indentSize": 4,
+            "endOfLine": "lf",
+            "trimTrailingWhitespace": true,
+            "insertFinalNewline": true,
+            "charset": "utf-8"
+        }
+    }
+} 

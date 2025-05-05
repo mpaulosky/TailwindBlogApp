@@ -37,7 +37,7 @@ those tools as well. The folders are configured as follows:
 
 /src                                    -- Usage Samples
   AspireBlog.AppHost                    -- AspireBlog App Host
-  AspireBlog.Web                        -- Blazor Server UI  
+  AspireBlog.Web                        -- Blazor Server UI
   AspireBlog.Common                     -- Common Library
   AspireBlog.Mongo                      -- MongoDb Data Access
   AspireBlog.ServiceDefaults            -- Default Services for the App

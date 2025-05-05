@@ -10,6 +10,7 @@
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
     <File Path="runsettings.xml" />
+    <File Path=".cursorrules" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="MyMediator\MyMediator.csproj" Type="Classic C#" />
@@ -21,5 +22,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.MyMediator.Tests.Unit\TailwindBlog.MyMediator.Tests.Unit.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" Type="Classic C#" />
   </Folder>
 </Solution>

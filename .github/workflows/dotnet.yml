@@ -5,7 +5,6 @@ name: Build and Test .NET projects
 
 on:
   push:
-
     paths-ignore:
       - "**/*.docs"
       - "**/*.md"
@@ -21,7 +20,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     env:
@@ -34,6 +32,15 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Install Node.js dependencies
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            yarn.lock
+      - run: npm install
       - name: Restore dependencies
         run: dotnet restore
 
@@ -73,7 +80,7 @@ jobs:
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v3.2.1
         with:
-          versionSpec: '6.0'
+          versionSpec: "6.0"
 
       - name: Use GitVersion
         id: gitversion # step id used as reference for output values

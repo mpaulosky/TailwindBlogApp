@@ -33,4 +33,12 @@
 
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="Components\Features\Articles\Models\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
+    </ItemGroup>
+
 </Project>

@@ -1,7 +1,19 @@
-<header class="mx-auto max-w-7xl mb-6 px-4 py-4 sm:px-4 md:px-6 lg:px-8">
+<header class="mb-6 px-4 py-4">
 
 	@switch (Level)
 	{
+		case "1":
+
+			<h1 class="@($"font-bold tracking-tight py-4 {TextColorClass}")">@HeaderText</h1>
+
+			break;
+
+		case "2":
+
+			<h2 class="@($"font-bold tracking-tight py-4 {TextColorClass}")">@HeaderText</h2>
+
+			break;
+
 		case "3":
 
 			<h3 class="@($"font-bold tracking-tight py-4 {TextColorClass}")">@HeaderText</h3>
@@ -10,8 +22,9 @@
 
 		case "4":
 
-			<h4 class="@($"font- bold tracking-tight py-4 {TextColorClass}")">@HeaderText</h4>
-			< break;
+			<h4 class="@($"font-bold tracking-tight py-4 {TextColorClass}")">@HeaderText</h4>
+
+			break;
 
 		case "5":
 
@@ -30,4 +43,4 @@
 
 	[Parameter] public string TextColorClass { get; set; } = "text-gray-50";
 
-}  
+}

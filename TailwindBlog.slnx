@@ -17,12 +17,13 @@
     <Project Path="TailwindBlog.ApiService\TailwindBlog.ApiService.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Domain\TailwindBlog.Domain.csproj" Type="Classic C#" />
+    <Project Path="TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" Type="Classic C#" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.MyMediator.Tests.Unit\TailwindBlog.MyMediator.Tests.Unit.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" Type="Classic C#" />
   </Folder>
 </Solution>

@@ -7,14 +7,6 @@
 // Project Name :  TailwindBlog.Domain
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
-using MongoDB.EntityFrameworkCore;
-
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Models;
-
 namespace TailwindBlog.Domain.Entities;
 
 [Collection("articles")]

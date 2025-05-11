@@ -4,14 +4,8 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Domain
+// Project Name :  TailwindBlog.ApiService
 // =======================================================
-
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
-
-using TailwindBlog.Domain.Abstractions;
 
 namespace TailwindBlog.Domain.Entities;
 

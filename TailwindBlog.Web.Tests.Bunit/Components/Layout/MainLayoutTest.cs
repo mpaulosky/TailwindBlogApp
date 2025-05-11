@@ -12,6 +12,8 @@ namespace TailwindBlog.Web.Components.Layout;
 /// <summary>
 ///   bUnit tests for MainLayout.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(MainLayout))]
 public class MainLayoutTest : BunitContext
 {
 

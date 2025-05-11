@@ -13,6 +13,7 @@ namespace TailwindBlog.Web.Components.Shared;
 ///   bUnit tests for NotAuthorizedComponent.
 /// </summary>
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(NotAuthorizedComponent))]
 public class NotAuthorizedComponentTest : BunitContext
 {
 

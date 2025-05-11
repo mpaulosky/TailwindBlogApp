@@ -7,15 +7,13 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
-#endregion
-
 namespace TailwindBlog.Web.Components.Pages;
 
 /// <summary>
 ///   bUnit tests for the Contact page.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Contact))]
 public class ContactPageTest : BunitContext
 {
 

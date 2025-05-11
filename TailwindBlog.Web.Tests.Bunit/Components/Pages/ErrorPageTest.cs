@@ -7,15 +7,13 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
-#endregion
-
 namespace TailwindBlog.Web.Components.Pages;
 
 /// <summary>
 ///   bUnit tests for the Error page.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Error))]
 public class ErrorPageTest : BunitContext
 {
 

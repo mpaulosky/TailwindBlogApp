@@ -12,6 +12,8 @@ namespace TailwindBlog.Web.Components.Pages;
 /// <summary>
 ///   bUnit tests for the Home page.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Home))]
 public class HomePageTest : BunitContext
 {
 

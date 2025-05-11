@@ -13,6 +13,7 @@ namespace TailwindBlog.Web.Components.Shared;
 ///   bUnit tests for PageHeadingComponent.
 /// </summary>
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(PageHeadingComponent))]
 public class PageHeadingComponentTest : BunitContext
 {
 

@@ -16,6 +16,8 @@ namespace TailwindBlog.Web.Components.Layout;
 /// <summary>
 ///   bUnit tests for FooterComponent.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(FooterComponent))]
 public class FooterComponentTest : BunitContext
 {
 

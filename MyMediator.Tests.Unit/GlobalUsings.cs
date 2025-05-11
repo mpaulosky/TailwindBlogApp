@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.MyMediator.Tests.Unit
+// Project Name :  MyMediator.Tests.Unit
 // =======================================================
 
 global using System.Diagnostics.CodeAnalysis;

@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyMediator\MyMediator.csproj" />
     <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+    <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
     <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
   </ItemGroup>
 
@@ -19,6 +20,12 @@
     <PackageReference Include="MongoDB.EntityFrameworkCore" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
     <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Feature\Article\" />
+    <Folder Include="Feature\Category\" />
+    <Folder Include="Repository\" />
   </ItemGroup>
 
 </Project>

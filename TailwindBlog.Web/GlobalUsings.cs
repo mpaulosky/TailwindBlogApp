@@ -30,9 +30,12 @@ global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Microsoft.JSInterop;
 
+global using MongoDB.Bson;
+
 global using TailwindBlog.Domain.Abstractions;
 global using TailwindBlog.Domain.Entities;
 global using TailwindBlog.Domain.Models;
+global using TailwindBlog.Web;
 global using TailwindBlog.Web.Components;
 global using TailwindBlog.Web.Components.Features;
 global using TailwindBlog.Web.Components.Shared;

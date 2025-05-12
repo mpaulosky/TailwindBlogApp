@@ -16,4 +16,9 @@
       <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="TailwindBlog.Persistence.MongoDb.Tests.Unit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
+    </ItemGroup>
+
 </Project>

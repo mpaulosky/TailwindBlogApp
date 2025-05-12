@@ -73,10 +73,9 @@ public class ResultTests
 
 		// Act
 		var result = Result.Ok(value);
-
 		// Assert
 		result.Success.Should().BeTrue();
-		result.Error.Should().BeEmpty();
+		result.Error.Should().BeNull();
 		result.Value.Should().Be(value);
 	}
 

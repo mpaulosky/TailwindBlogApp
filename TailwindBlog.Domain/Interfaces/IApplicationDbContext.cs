@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-using TailwindBlog.Domain.Entities;
-
-namespace TailwindBlog.Domain.Interfaces;
+﻿namespace TailwindBlog.Domain.Interfaces;
 
 public interface IApplicationDbContext
 {

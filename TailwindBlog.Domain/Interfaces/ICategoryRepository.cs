@@ -7,10 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using System.Linq.Expressions;
-
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.Domain.Interfaces;
 
 public interface ICategoryRepository

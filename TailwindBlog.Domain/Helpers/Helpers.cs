@@ -11,8 +11,6 @@ using System.Web;
 
 using Bogus;
 
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.Domain.Helpers;
 
 public static class Helpers

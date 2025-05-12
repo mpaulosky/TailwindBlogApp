@@ -9,7 +9,7 @@
 
 namespace TailwindBlog.Domain.Abstractions;
 
-public abstract class Result
+public class Result
 {
 	public bool Success { get; }
 	public bool Failure => !Success;
@@ -20,10 +20,13 @@ public abstract class Result
 		Success = success;
 		Error = errorMessage;
 	}
-
+	public static Result Ok() => new (true);
+	public static Result Fail(string errorMessage) => new (false, errorMessage);
+	
 	public static Result<T> Ok<T>(T value) => new(value, true);
 	public static Result<T> Fail<T>(string errorMessage) => new(default, false, errorMessage);
 	public static Result<T> FromValue<T>(T? value) => value is not null ? Ok(value) : Fail<T>("Provided value is null.");
+
 }
 
 public sealed class Result<T> : Result
@@ -37,9 +40,11 @@ public sealed class Result<T> : Result
 	}
 
 	public static Result<T> Ok(T value) => new(value, true);
-	public static Result<T> Fail(string errorMessage) => new(default, false, errorMessage);
+	
+	public new static Result<T> Fail(string errorMessage) => new(default, false, errorMessage);
 
 	public static implicit operator T?(Result<T> result) => result.Value;
+	
 	public static implicit operator Result<T>(T value) => Ok(value);
 
 }

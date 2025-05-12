@@ -24,9 +24,12 @@
         <PackageReference Include="JetBrains.Annotations"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="NSubstitute" />
-        <PackageReference Include="WaffleGenerator.Bogus" />
-        <PackageReference Include="xunit.v3"/>
+        <PackageReference Include="Testcontainers.MongoDb" />
+        <PackageReference Include="WaffleGenerator.Bogus" />        <PackageReference Include="xunit.v3"/>
         <PackageReference Include="xunit.runner.visualstudio"/>
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 
     </ItemGroup>
 

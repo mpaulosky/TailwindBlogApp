@@ -8,13 +8,19 @@
 
     <ItemGroup>
       <PackageReference Include="Bogus" />
-        <PackageReference Include="WaffleGenerator.Bogus" />
+      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+      <PackageReference Include="MongoDB.Driver" />
       <PackageReference Include="MongoDB.EntityFrameworkCore" />
+      <PackageReference Include="WaffleGenerator.Bogus" />
     </ItemGroup>
 
     <ItemGroup>
         <InternalsVisibleTo Include="TailwindBlog.Domain.Tests.Unit" />
         <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\MyMediator\MyMediator.csproj" />
     </ItemGroup>
 
 </Project>

@@ -9,7 +9,7 @@
 
 namespace TailwindBlog.Domain.Entities;
 
-[Collection("articles")]
+[BsonCollection("articles")]
 public class Article : Entity
 {
 
@@ -39,14 +39,14 @@ public class Article : Entity
 	public static Article Empty =>
 			new()
 			{
-					Id = ObjectId.Empty,
-					Title = string.Empty,
-					Introduction = string.Empty,
-					CoverImageUrl = string.Empty,
-					UrlSlug = string.Empty,
-					Author = AppUserModel.Empty,
-					IsPublished = false,
-					PublishedOn = null
+				Id = ObjectId.Empty,
+				Title = string.Empty,
+				Introduction = string.Empty,
+				CoverImageUrl = string.Empty,
+				UrlSlug = string.Empty,
+				Author = AppUserModel.Empty,
+				IsPublished = false,
+				PublishedOn = null
 			};
 
 }

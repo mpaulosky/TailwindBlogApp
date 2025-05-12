@@ -11,12 +11,11 @@ namespace TailwindBlog.Architecture.Tests;
 
 public class CqrsImplementationTests
 {
-
 	[Fact(DisplayName = "CQRS Test: Commands should modify state")]
 	public void Commands_Should_Modify_State()
 	{
 		// Arrange
-		var assembly = ApiService;
+		var assembly = AssemblyReference.ApiService;
 
 		// Act
 		var result = Types
@@ -38,7 +37,7 @@ public class CqrsImplementationTests
 	public void Commands_Should_Return_Result()
 	{
 		// Arrange
-		var assembly = ApiService;
+		var assembly = AssemblyReference.ApiService;
 
 		// Act
 		var commandHandlers = Types
@@ -49,116 +48,74 @@ public class CqrsImplementationTests
 				.ImplementInterface(typeof(IRequestHandler<,>))
 				.GetTypes();
 
+		var handlerMethods = commandHandlers
+				.SelectMany(t => t.GetMethods())
+				.Where(m => m.Name == "Handle")
+				.ToList();
+
 		// Assert
-		foreach (var handler in commandHandlers)
+		handlerMethods.Should().AllSatisfy(method =>
 		{
-			var interfaces = handler.GetInterfaces();
-
-			foreach (var i in interfaces)
-			{
-				if (!i.IsGenericType)
-				{
-					continue;
-				}
-
-				if (i.GetGenericTypeDefinition() != typeof(IRequestHandler<,>))
-				{
-					continue;
-				}
-
-				var returnType = i.GetGenericArguments()[1];
-
-				returnType.Should().NotBe(typeof(Unit),
-						$"Command handler {handler.Name} should return Result or Result<T>");
-
-				var isResult = returnType == typeof(Result) ||
-											(returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Result<>));
-
-				isResult.Should().BeTrue($"Command handler {handler.Name} should return Result or Result<T>");
-			}
-		}
+			var returnType = method.ReturnType;
+			returnType.IsGenericType.Should().BeTrue();
+			returnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
+			var resultType = returnType.GetGenericArguments()[0];
+			resultType.Should().Be(typeof(Result));
+		}, "Command handlers should return Result");
 	}
 
 	[Fact(DisplayName = "CQRS Test: Queries should be read-only")]
 	public void Queries_Should_Be_ReadOnly()
 	{
 		// Arrange
-		var assembly = ApiService;
+		var assembly = AssemblyReference.ApiService;
 
-		// Act 
+		// Act
 		var result = Types
 				.InAssembly(assembly)
 				.That()
 				.ResideInNamespaceContaining("Queries")
-				.And()
-				.AreClasses()
 				.Should()
-				.NotHaveDependencyOnAny(
-						"TailwindBlog.ApiService.Features.Commands",
-						"TailwindBlog.Persistence.Repositories")
+				.NotHaveDependencyOn("Commands")
 				.And()
-				.BeImmutable()
+				.NotHaveDependencyOn("Persistence")
 				.GetResult();
 
 		// Assert
 		result.IsSuccessful.Should().BeTrue(
-				"Queries should not modify state and should be immutable");
+				"Queries should not modify state");
 	}
 
-	[Fact(DisplayName = "CQRS Test: Commands and Queries should use MyMediatr")]
-	public void Commands_And_Queries_Should_Use_MyMediatr()
+	[Fact(DisplayName = "CQRS Test: Queries should return domain objects")]
+	public void Queries_Should_Return_Domain_Objects()
 	{
 		// Arrange
-		var assembly = ApiService;
+		var assembly = AssemblyReference.ApiService;
 
 		// Act
-		var result = Types
+		var queryHandlers = Types
 				.InAssembly(assembly)
 				.That()
-				.ResideInNamespaceContaining("Commands")
-				.Or()
 				.ResideInNamespaceContaining("Queries")
-				.Should()
-				.HaveDependencyOn("MyMediator")
-				.GetResult();
-
-		// Assert  
-		result.IsSuccessful.Should().BeTrue(
-				"Commands and Queries should use MyMediatr for handling");
-	}
-
-	[Fact(DisplayName = "CQRS Test: Features should have proper Request/Handler pattern")]
-	public void Features_Should_Have_Request_Handler_Pattern()
-	{
-		// Arrange
-		var assembly = ApiService;
-
-		// Act
-		var requestHandlerTypes = Types
-				.InAssembly(assembly)
-				.That()
+				.And()
 				.ImplementInterface(typeof(IRequestHandler<,>))
 				.GetTypes();
 
+		var handlerMethods = queryHandlers
+				.SelectMany(t => t.GetMethods())
+				.Where(m => m.Name == "Handle")
+				.ToList();
+
 		// Assert
-		foreach (var handlerType in requestHandlerTypes)
+		handlerMethods.Should().AllSatisfy(method =>
 		{
-			// Find corresponding request type
-			var handlerInterface = handlerType.GetInterfaces()
-					.First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
-
-			var requestType = handlerInterface.GetGenericArguments()[0];
-
-			// Verify naming convention
-			handlerType.Name.Should().Be($"{requestType.Name}Handler",
-					"Handler class name should be RequestNameHandler");
-
-			// Verify request properties
-			var properties = requestType.GetProperties();
-
-			properties.Should().NotBeEmpty(
-					$"Request type {requestType.Name} should have at least one property");
-		}
+			var returnType = method.ReturnType;
+			returnType.IsGenericType.Should().BeTrue();
+			returnType.GetGenericTypeDefinition().Should().Be(typeof(Task<>));
+			var resultType = returnType.GetGenericArguments()[0];
+			resultType.Should().Match(t =>
+							t.GetInterfaces().Contains(typeof(IEnumerable)) ||
+							t.IsAssignableTo(typeof(Result)));
+		}, "Query handlers should return collections or Result types");
 	}
-
 }

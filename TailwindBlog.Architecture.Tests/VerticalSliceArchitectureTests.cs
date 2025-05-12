@@ -7,59 +7,60 @@
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
 
+#region
+
+#endregion
+
 namespace TailwindBlog.Architecture.Tests;
 
 public class VerticalSliceArchitectureTests
 {
-
-	[Fact(DisplayName = "Architecture Test: Verify Vertical Slice folder structure")]
-	public void FoldersFollowVerticalSliceArchitecture()
+	[Fact(DisplayName = "Architecture Test: Vertical slices should be isolated")]
+	public void Features_Should_Be_Isolated()
 	{
-		// Act
-		var featureTypes = Types
-				.InAssembly(AssemblyReference.ApiService)
-				.That()
-				.ResideInNamespace("TailwindBlog.ApiService.Features")
-				.GetTypes();
+		// Arrange
+		var assembly = AssemblyReference.ApiService;
+		var features = new[] { "Articles", "Categories" };
 
-		var featureStructure = featureTypes
-				.Where(t => t.Namespace != null)
-				.GroupBy(t => t.Namespace!.Split('.')[4]) // Get feature name (e.g., "Articles", "Categories")
-				.ToDictionary(
-						g => g.Key,
-						g => g.Select(t => t.Namespace).Where(n => n != null).ToList()
-				);
-
-		// Assert
-		featureStructure.Should().NotBeEmpty("Features should be organized in Features folder");
-
-		foreach (var (featureName, namespaces) in featureStructure)
+		// Act & Assert
+		foreach (var feature in features)
 		{
-			var foundRequiredLayers = namespaces.Any(n =>
-					n!.Contains($"Features.{featureName}.Commands") ||
-					n.Contains($"Features.{featureName}.Queries") ||
-					n.Contains($"Features.{featureName}.Models"));
+			var featureNamespace = $"TailwindBlog.ApiService.Features.{feature}";
 
-			foundRequiredLayers.Should().BeTrue(
-					$"Feature '{featureName}' should have Commands, Queries, and Models folders");
+			// Verify feature structure
+			var result = Types
+					.InAssembly(assembly)
+					.That()
+					.ResideInNamespace(featureNamespace)
+					.Should()
+					.ResideInNamespaceEndingWith("Commands")
+					.Or()
+					.ResideInNamespaceEndingWith("Queries")
+					.Or()
+					.ResideInNamespaceEndingWith("Models")
+					.Or()
+					.ResideInNamespaceEndingWith("Validators")
+					.GetResult();
+
+			result.IsSuccessful.Should().BeTrue(
+					$"Feature {feature} should follow vertical slice architecture structure");
+
+			// Verify feature isolation
+			var otherFeatures = features.Where(f => f != feature);
+			foreach (var otherFeature in otherFeatures)
+			{
+				var dependencyResult = Types
+						.InAssembly(assembly)
+						.That()
+						.ResideInNamespace(featureNamespace)
+						.Should()
+						.NotHaveDependencyOn($"TailwindBlog.ApiService.Features.{otherFeature}")
+						.GetResult();
+
+				dependencyResult.IsSuccessful.Should().BeTrue(
+						$"Feature {feature} should not depend on feature {otherFeature}");
+			}
 		}
-	}
-
-	[Fact(DisplayName = "Architecture Test: Verify feature encapsulation")]
-	public void Features_Should_Be_Encapsulated()
-	{
-		var result = Types
-				.InAssembly(AssemblyReference.ApiService)
-				.That()
-				.ResideInNamespace("TailwindBlog.ApiService.Features")
-				.Should()
-				.NotHaveDependencyOnAny(
-						"TailwindBlog.ApiService.Features.Articles.Commands",
-						"TailwindBlog.ApiService.Features.Categories.Commands")
-				.GetResult();
-
-		result.IsSuccessful.Should().BeTrue(
-				"Features should not have direct dependencies on other features");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Verify clean domain layer")]
@@ -68,29 +69,119 @@ public class VerticalSliceArchitectureTests
 		var result = Types
 				.InAssembly(AssemblyReference.Domain)
 				.Should()
-				.NotHaveDependencyOnAny(
-						"TailwindBlog.ApiService",
-						"TailwindBlog.Infrastructure",
-						"TailwindBlog.Web")
+				.NotHaveDependencyOnAny(new[]
+				{
+								"TailwindBlog.ApiService",
+								"TailwindBlog.Infrastructure",
+								"TailwindBlog.Web"
+				})
 				.GetResult();
 
 		result.IsSuccessful.Should().BeTrue(
 				"Domain layer should not have dependencies on outer layers");
 	}
-
 	[Fact(DisplayName = "Architecture Test: Verify interface implementation")]
 	public void Interfaces_Should_Follow_DependencyInversion()
 	{
 		var result = Types
-				.InAssembly(AssemblyReference.ApiService)
+				.InAssembly(AssemblyReference.MongoDb)
 				.That()
-				.ImplementInterface(GenericRepositoryType)
-				.Should()
 				.ResideInNamespace("TailwindBlog.Persistence.Repositories")
+				.Should()
+				.ImplementInterface(typeof(ICategoryRepository))
+				.Or()
+				.ImplementInterface(typeof(IArticleRepository))
 				.GetResult();
 
 		result.IsSuccessful.Should().BeTrue(
-				"Repository implementations should be in the correct namespace");
+				"Repository implementations should implement the domain interfaces");
 	}
 
+	[Fact(DisplayName = "Architecture Test: Command handlers should be well encapsulated")]
+	public void Command_Handlers_Should_BeWellEncapsulated()
+	{
+		var assembly = AssemblyReference.ApiService;
+
+		var result = Types
+				.InAssembly(assembly)
+				.That()
+				.ResideInNamespaceContaining("Commands")
+				.And()
+				.ImplementInterface(typeof(IRequestHandler<,>))
+				.Should()
+				.BeSealed()
+				.And()
+				.HaveNameEndingWith("Handler")
+				.GetResult();
+
+		result.IsSuccessful.Should().BeTrue(
+				"Command handlers should be sealed and follow naming convention");
+	}
+
+	[Fact(DisplayName = "Architecture Test: Each feature should have proper dependencies")]
+	public void Features_Should_Have_ProperDependencies()
+	{
+		var assembly = AssemblyReference.ApiService;
+
+		var result = Types
+				.InAssembly(assembly)
+				.That()
+				.ResideInNamespace("TailwindBlog.ApiService.Features")
+				.Should()
+				.HaveDependencyOn(typeof(Result<>).Namespace!)
+				.And()
+				.HaveDependencyOn(typeof(IRequestHandler<,>).Namespace!)
+				.GetResult();
+
+		result.IsSuccessful.Should().BeTrue(
+				"Features should depend on core abstractions and CQRS interfaces");
+	}
+
+	[Fact(DisplayName = "Architecture Test: Feature handlers should be registered")]
+	public void Feature_Handlers_Should_BeRegistered()
+	{
+		// Arrange
+		var assembly = AssemblyReference.ApiService;
+		var services = new ServiceCollection();
+
+		// Add MyMediator
+		services.AddMyMediator(assembly);
+
+		// Get all handlers
+		var handlers = Types
+				.InAssembly(assembly)
+				.That()
+				.ImplementInterface(typeof(IRequestHandler<,>))
+				.GetTypes();
+
+		// Assert
+		foreach (var handler in handlers)
+		{
+			var descriptor = services
+					.SingleOrDefault(d => d.ServiceType.IsGenericType &&
+															d.ServiceType.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
+
+			descriptor.Should().NotBeNull(
+					$"Handler {handler.Name} should be registered with dependency injection");
+		}
+	}
+	[Fact(DisplayName = "Architecture Test: Persistence layer dependencies")]
+	public void PersistenceShouldImplementCorrectInterfaces()
+	{
+		var assembly = AssemblyReference.MongoDb;
+		var result = Types
+				.InAssembly(assembly)
+				.That()
+				.ResideInNamespace("TailwindBlog.Persistence.Repositories")
+				.Should()
+				.ResideInNamespaceStartingWith("TailwindBlog.Persistence")
+				.And()
+				.ImplementInterface(typeof(IArticleRepository))
+				.Or()
+				.ImplementInterface(typeof(ICategoryRepository))
+				.GetResult();
+
+		result.IsSuccessful.Should().BeTrue(
+				"Repository implementations should implement the correct domain interfaces");
+	}
 }

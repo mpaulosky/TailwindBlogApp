@@ -10,100 +10,95 @@
 namespace TailwindBlog.Architecture.Tests;
 
 /// <summary>
-///   Extensions for architecture tests to help with common test patterns
+/// Extensions for architecture tests to help with common test patterns
 /// </summary>
 internal static class ArchitectureTestExtensions
 {
+	// Assembly helper
+	public static Assembly GetAssembly<T>() => typeof(T).Assembly;
 
-	public static Assembly GetAssembly<T>()
-	{
-		return typeof(T).Assembly;
-	}
-
+	// Dependency checks
 	public static bool HasDependencyOn(this string dependency, Assembly assembly)
 	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.NotHaveDependencyOn(dependency)
-				.GetResult()
-				.IsSuccessful;
+		var types = Types.InAssembly(assembly)
+				.That()
+				.HaveDependencyOn(dependency)
+				.GetTypes();
+
+		return types.Any();
 	}
 
 	public static bool HasDependencyOnAny(this IEnumerable<string> dependencies, Assembly assembly)
 	{
-		var deps = dependencies.ToArray();
+		var types = Types.InAssembly(assembly)
+				.That()
+				.HaveDependencyOnAny(dependencies.ToArray())
+				.GetTypes();
 
-		return Types.InAssembly(assembly)
-				.Should()
-				.NotHaveDependencyOnAny(deps)
-				.GetResult()
-				.IsSuccessful;
+		return types.Any();
 	}
 
 	public static bool HasDependencyOnAll(this IEnumerable<string> dependencies, Assembly assembly)
 	{
-		var deps = dependencies.ToArray();
+		var types = Types.InAssembly(assembly)
+				.That()
+				.HaveDependencyOnAll(dependencies.ToArray())
+				.GetTypes();
 
-		return Types.InAssembly(assembly)
-				.Should()
-				.NotHaveDependencyOnAll(deps)
-				.GetResult()
-				.IsSuccessful;
+		return types.Any();
 	}
 
-	public static bool ResideInNamespace(this Assembly assembly, string @namespace)
+	// Layer dependency checks
+	public static bool HasCleanArchitecture(this Assembly assembly, string baseNamespace)
 	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.ResideInNamespace(@namespace)
-				.GetResult()
-				.IsSuccessful;
+		var domainTypes = Types.InAssembly(assembly)
+				.That()
+				.ResideInNamespace($"{baseNamespace}.Domain")
+				.GetTypes();
+
+		var forbiddenDependencies = new[]
+		{
+						$"{baseNamespace}.Infrastructure",
+						$"{baseNamespace}.Application",
+						$"{baseNamespace}.Web"
+				};
+
+		// A clean architecture is violated if any domain types have forbidden dependencies
+		return !domainTypes.Any(t =>
+				HasDependencyOnAny(forbiddenDependencies, t.Assembly));
 	}
 
-	public static bool HaveNameEndingWith(this Assembly assembly, string suffix)
+	// Type reference checks
+	public static IEnumerable<Type> GetReferencedTypes(this Type type)
 	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.HaveNameEndingWith(suffix)
-				.GetResult()
-				.IsSuccessful;
+		var referencedTypes = new HashSet<Type>();
+
+		foreach (var prop in type.GetProperties())
+		{
+			referencedTypes.Add(prop.PropertyType);
+			if (prop.PropertyType.IsGenericType)
+			{
+				referencedTypes.UnionWith(prop.PropertyType.GetGenericArguments());
+			}
+		}
+
+		foreach (var method in type.GetMethods())
+		{
+			referencedTypes.Add(method.ReturnType);
+			referencedTypes.UnionWith(method.GetParameters().Select(p => p.ParameterType));
+		}
+
+		return referencedTypes;
 	}
 
-	public static bool ImplementInterface(this Assembly assembly, Type interfaceType)
+	// Pattern checks
+	public static bool MatchesPattern(this Assembly assembly, string ns)
 	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.ImplementInterface(interfaceType)
-				.GetResult()
-				.IsSuccessful;
+		var types = Types.InAssembly(assembly)
+				.That()
+				.ResideInNamespace(ns)
+				.GetTypes();
+
+		return types.Any();
 	}
-
-	public static bool BeImmutable(this Assembly assembly)
-	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.BeImmutable()
-				.GetResult()
-				.IsSuccessful;
-	}
-
-	public static bool HaveCustomAttribute(this Assembly assembly, Type attributeType)
-	{
-		return Types.InAssembly(assembly)
-				.Should()
-				.HaveCustomAttribute(attributeType)
-				.GetResult()
-				.IsSuccessful;
-	}
-
-	public static bool MeetAllConditions(this Assembly assembly, params Func<Types, PredicateList>[] conditions)
-	{
-		var types = Types.InAssembly(assembly);
-
-		return conditions.All(condition =>
-				condition(types)
-						.GetResult()
-						.IsSuccessful);
-	}
-
 }

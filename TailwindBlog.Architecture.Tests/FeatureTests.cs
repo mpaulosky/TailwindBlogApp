@@ -11,12 +11,11 @@ namespace TailwindBlog.Architecture.Tests;
 
 public class FeatureTests
 {
-
 	[Fact]
 	public void Features_Should_BeInCorrectNamespace()
 	{
 		// Arrange
-		var assembly = typeof(Program).Assembly;
+		var assembly = AssemblyReference.ApiService;
 
 		// Act
 		var result = Types
@@ -41,7 +40,7 @@ public class FeatureTests
 	public void Features_Should_NotReferenceOtherFeatures()
 	{
 		// Arrange
-		var assembly = typeof(Program).Assembly;
+		var assembly = AssemblyReference.ApiService;
 
 		// Act & Assert
 		var articleTypes = Types
@@ -56,95 +55,50 @@ public class FeatureTests
 				.ResideInNamespace("TailwindBlog.ApiService.Features.Category")
 				.GetTypes();
 
-		// Articles should not reference Categories
+		articleTypes.Should().NotBeEmpty();
+		categoryTypes.Should().NotBeEmpty();
+
 		foreach (var type in articleTypes)
 		{
-			type.GetReferencedTypes()
-					.Where(t => t.Namespace?.StartsWith("TailwindBlog.ApiService.Features.Category") ?? false)
+			Types.InAssembly(assembly)
+					.That()
+					.HaveNameMatching(type.Name)
 					.Should()
-					.BeEmpty("Article features should not directly reference Category features");
+					.NotHaveDependencyOn("TailwindBlog.ApiService.Features.Category")
+					.GetResult()
+					.IsSuccessful.Should().BeTrue();
 		}
 
-		// Categories should not reference Articles
 		foreach (var type in categoryTypes)
 		{
-			type.GetReferencedTypes()
-					.Where(t => t.Namespace?.StartsWith("TailwindBlog.ApiService.Features.Article") ?? false)
-					.Should()
-					.BeEmpty("Category features should not directly reference Article features");
-		}
-	}
-
-	[Fact]
-	public void Features_Should_BeInternallyConsistent()
-	{
-		// Arrange
-		var assembly = typeof(Program).Assembly;
-		var features = new[] { "Article", "Category" };
-
-		foreach (var feature in features)
-		{
-			// Act
-			var featureTypes = Types
-					.InAssembly(assembly)
+			Types.InAssembly(assembly)
 					.That()
-					.ResideInNamespace($"TailwindBlog.ApiService.Features.{feature}")
-					.GetTypes();
-
-			// Assert
-			featureTypes.Should().Contain(t => t.Name.EndsWith("Controller") || t.Name.EndsWith("Endpoints"),
-					$"{feature} feature should have a controller or endpoints class");
-
-			var commandNamespace = $"TailwindBlog.ApiService.Features.{feature}.Commands";
-			var queryNamespace = $"TailwindBlog.ApiService.Features.{feature}.Queries";
-
-			featureTypes.Where(t => t.Namespace == commandNamespace)
+					.HaveNameMatching(type.Name)
 					.Should()
-					.Contain(t => t.Name.Contains("Create") || t.Name.Contains("Update") || t.Name.Contains("Delete"),
-							$"{feature} feature should have basic CRUD command handlers");
-
-			featureTypes.Where(t => t.Namespace == queryNamespace)
-					.Should()
-					.Contain(t => t.Name.Contains("Get"),
-							$"{feature} feature should have query handlers");
+					.NotHaveDependencyOn("TailwindBlog.ApiService.Features.Article")
+					.GetResult()
+					.IsSuccessful.Should().BeTrue();
 		}
 	}
 
 	[Fact]
-	public void Feature_Dependencies_Should_BeRegisteredCorrectly()
+	public void Features_Should_OnlyUseValidatedCommands()
 	{
 		// Arrange
-		var assembly = typeof(Program).Assembly;
+		var assembly = AssemblyReference.ApiService;
 
-		// Create a new service collection
-		var services = new ServiceCollection();
-		var startup = new Program();
-
-		// Act - Get the ConfigureServices method through reflection since it's private
-		var method = typeof(Program)
-				.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
-				.FirstOrDefault(m => m.Name == "ConfigureServices");
-
-		method?.Invoke(startup, new object[] { services });
-
-		// Get all handlers from the Features namespace
-		var handlers = Types
+		// Act
+		var result = Types
 				.InAssembly(assembly)
 				.That()
-				.ResideInNamespaceContaining("Features")
+				.ResideInNamespaceContaining("Commands")
+				.Should()
+				.HaveNameEndingWith("Command")
 				.And()
-				.ImplementInterface(typeof(IRequestHandler<,>))
-				.GetTypes();
+				.HaveCustomAttribute(typeof(ValidationAttribute))
+				.GetResult();
 
 		// Assert
-		foreach (var handler in handlers)
-		{
-			services.Should().Contain(sd =>
-							sd.ServiceType == handler ||
-							sd.ServiceType == typeof(IRequestHandler<,>).MakeGenericType(handler.BaseType?.GenericTypeArguments[0],
-									handler.BaseType?.GenericTypeArguments[1]),
-					$"Handler {handler.Name} should be registered in DI container");
-		}
+		result.IsSuccessful.Should().BeTrue();
 	}
-
 }

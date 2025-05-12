@@ -11,12 +11,6 @@
 
     <ItemGroup>
 
-        <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest"/>
-
-    </ItemGroup>
-
-    <ItemGroup>
-
         <Using Include="Xunit"/>
 
     </ItemGroup>
@@ -38,10 +32,14 @@
 
         <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
         <ProjectReference Include="..\TailwindBlog.ApiService\TailwindBlog.ApiService.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj"/>
         <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
-        <ProjectReference Include="..\MyMediator\MyMediator.csproj"/>
+        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj"/>
+    </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="xunit.runner.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

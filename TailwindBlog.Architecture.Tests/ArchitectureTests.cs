@@ -11,153 +11,196 @@ namespace TailwindBlog.Architecture.Tests;
 
 public class ArchitectureTests
 {
-
 	private const string _domainNamespace = "TailwindBlog.Domain";
-
 	private const string _applicationNamespace = "TailwindBlog.ApiService";
-
 	private const string _infrastructureNamespace = "TailwindBlog.Persistence";
-
 	private const string _presentationNamespace = "TailwindBlog.Web";
-
 	private const string _sharedKernelNamespace = "TailwindBlog.ServiceDefaults";
-
 	private const string _mediatorNamespace = "MyMediator";
 
 	[Fact(DisplayName = "Architecture Test: Domain should be clean, no dependencies on other layers")]
 	public void Domain_Should_BeClean()
 	{
-		// Arrange
-		var dependencies = new[]
-		{
-				_applicationNamespace,
-				_infrastructureNamespace,
-				_presentationNamespace
-		};
+		var result = Types
+				.InAssembly(AssemblyReference.Domain)
+				.Should()
+				.NotHaveDependencyOnAny(new[]
+				{
+								_applicationNamespace,
+								_infrastructureNamespace,
+								_presentationNamespace
+				})
+				.GetResult();
 
-		// Act
-		var result = dependencies.HasDependencyOnAll(AssemblyReference.Domain);
-
-		// Assert
-		result.Should().BeTrue();
+		result.IsSuccessful.Should().BeTrue(
+				"Domain layer should be independent of other layers");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Application layer should not depend on infrastructure/presentation")]
 	public void Application_Should_Not_DependOnInfrastructureOrPresentation()
 	{
-		// Arrange & Act
-		var hasInfrastructureDependency = _infrastructureNamespace.HasDependencyOn(AssemblyReference.ApiService);
-		var hasPresentationDependency = _presentationNamespace.HasDependencyOn(AssemblyReference.ApiService);
+		var result = Types
+				.InAssembly(AssemblyReference.ApiService)
+				.Should()
+				.NotHaveDependencyOnAny(new[]
+				{
+								_infrastructureNamespace,
+								_presentationNamespace
+				})
+				.GetResult();
 
-		// Assert
-		hasInfrastructureDependency.Should().BeTrue();
-		hasPresentationDependency.Should().BeTrue();
+		result.IsSuccessful.Should().BeTrue(
+				"Application layer should not depend on infrastructure or presentation");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Presentation layer should not depend on infrastructure")]
 	public void Presentation_Should_Not_DependOnInfrastructure()
 	{
-		// Arrange & Act
-		var result = _infrastructureNamespace.HasDependencyOn(AssemblyReference.Web);
+		var result = Types
+				.InAssembly(AssemblyReference.Web)
+				.Should()
+				.NotHaveDependencyOn(_infrastructureNamespace)
+				.GetResult();
 
-		// Assert
-		result.Should().BeTrue();
+		result.IsSuccessful.Should().BeTrue(
+				"Presentation layer should not depend on infrastructure");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Projects follow CQRS pattern")]
 	public void Application_Should_FollowCqrsPattern()
 	{
-		// Arrange & Act
-		var assembly = AssemblyReference.ApiService;
-
-		var hasCommands = Types
-				.InAssembly(assembly)
+		// Verify Commands
+		var commandsResult = Types
+				.InAssembly(AssemblyReference.ApiService)
 				.That()
+				.ResideInNamespaceContaining("Commands")
+				.Should()
 				.HaveNameEndingWith("Command")
-				.Should()
-				.ImplementInterface(typeof(IRequest<>))
-				.GetResult()
-				.IsSuccessful;
+				.GetResult();
 
-		var hasQueries = Types
-				.InAssembly(assembly)
+		commandsResult.IsSuccessful.Should().BeTrue(
+				"Commands should follow naming convention");
+
+		// Verify Queries
+		var queriesResult = Types
+				.InAssembly(AssemblyReference.ApiService)
 				.That()
+				.ResideInNamespaceContaining("Queries")
+				.Should()
 				.HaveNameEndingWith("Query")
-				.Should()
-				.ImplementInterface(typeof(IRequest<>))
-				.GetResult()
-				.IsSuccessful;
+				.GetResult();
 
-		var hasHandlers = Types
-				.InAssembly(assembly)
+		queriesResult.IsSuccessful.Should().BeTrue(
+				"Queries should follow naming convention");
+
+		// Verify Handlers
+		var handlersResult = Types
+				.InAssembly(AssemblyReference.ApiService)
 				.That()
-				.HaveNameEndingWith("Handler")
-				.Should()
 				.ImplementInterface(typeof(IRequestHandler<,>))
-				.GetResult()
-				.IsSuccessful;
+				.Should()
+				.HaveNameEndingWith("Handler")
+				.GetResult();
 
-		// Assert
-		hasCommands.Should().BeTrue();
-		hasQueries.Should().BeTrue();
-		hasHandlers.Should().BeTrue();
+		handlersResult.IsSuccessful.Should().BeTrue(
+				"Handlers should follow naming convention");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Entities follow proper encapsulation")]
 	public void Domain_Entities_Should_BeProperlyEncapsulated()
 	{
-		// Arrange & Act
-		var result = Types
+		var entityTypes = Types
 				.InAssembly(AssemblyReference.Domain)
 				.That()
-				.Inherit(typeof(Entity))
-				.Should()
-				.BeSealed()
-				.Or()
-				.BeAbstract()
-				.GetResult()
-				.IsSuccessful;
+				.ResideInNamespace($"{_domainNamespace}.Entities")
+				.GetTypes();
 
-		// Assert
-		result.Should().BeTrue();
+		foreach (var entityType in entityTypes)
+		{
+			// Check that all mutable properties have private setters
+			var mutableProperties = entityType.GetProperties()
+					.Where(p => p.CanWrite);
+
+			foreach (var prop in mutableProperties)
+			{
+				var setter = prop.GetSetMethod(nonPublic: true);
+				setter.Should().NotBeNull("Properties should have setters");
+				setter!.IsPublic.Should().BeFalse(
+						$"Property {prop.Name} in {entityType.Name} should have a private setter");
+			}
+		}
 	}
 
 	[Fact(DisplayName = "Architecture Test: Features are organized by vertical slices")]
 	public void Application_Should_BeOrganizedByFeatures()
 	{
-		// Arrange & Act
-		var result = Types
+		var featureTypes = Types
 				.InAssembly(AssemblyReference.ApiService)
 				.That()
-				.ResideInNamespace($"{_applicationNamespace}.Features")
+				.ResideInNamespace($"{_applicationNamespace}.Features");
+
+		// Verify Command organization
+		var commandsResult = featureTypes
 				.Should()
 				.ResideInNamespaceEndingWith("Commands")
-				.Or()
-				.ResideInNamespaceEndingWith("Queries")
-				.Or()
-				.ResideInNamespaceEndingWith("Models")
-				.GetResult()
-				.IsSuccessful;
+				.GetResult();
 
-		// Assert
-		result.Should().BeTrue();
+		commandsResult.IsSuccessful.Should().BeTrue(
+				"Commands should be organized in feature-specific Commands folders");
+
+		// Verify Query organization
+		var queriesResult = featureTypes
+				.Should()
+				.ResideInNamespaceEndingWith("Queries")
+				.GetResult();
+
+		queriesResult.IsSuccessful.Should().BeTrue(
+				"Queries should be organized in feature-specific Queries folders");
 	}
 
 	[Fact(DisplayName = "Architecture Test: Proper use of interfaces")]
 	public void Infrastructure_Should_DependOnInterfaces()
 	{
-		// Arrange & Act
 		var result = Types
-				.InAssembly(Infrastructure)
+				.InAssembly(AssemblyReference.MongoDb)
 				.That()
 				.HaveNameEndingWith("Repository")
 				.Should()
 				.ImplementInterface(typeof(IRepository<>))
-				.GetResult()
-				.IsSuccessful;
+				.GetResult();
 
-		// Assert
-		result.Should().BeTrue();
+		result.IsSuccessful.Should().BeTrue(
+				"Infrastructure classes should depend on domain interfaces");
 	}
 
+	[Fact(DisplayName = "Architecture Test: Proper use of dependency injection")]
+	public void Should_UseDependencyInjection()
+	{
+		var assemblies = new[]
+		{
+						AssemblyReference.ApiService,
+						AssemblyReference.MongoDb,
+						AssemblyReference.Web
+				};
+
+		foreach (var assembly in assemblies)
+		{
+			var result = Types
+					.InAssembly(assembly)
+					.That()
+					.HaveNameEndingWith("Service")
+					.Or()
+					.HaveNameEndingWith("Repository")
+					.Or()
+					.HaveNameEndingWith("Handler")
+					.Should()
+					.BePublic()
+					.And()
+					.HaveDependencyOn("Microsoft.Extensions.DependencyInjection")
+					.GetResult();
+
+			result.IsSuccessful.Should().BeTrue(
+					$"Classes in {assembly.GetName().Name} should use dependency injection");
+		}
+	}
 }

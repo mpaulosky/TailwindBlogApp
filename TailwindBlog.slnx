@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/solution/">
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
@@ -13,18 +13,20 @@
     <File Path=".cursorrules" />
   </Folder>
   <Folder Name="/src/">
-    <Project Path="MyMediator\MyMediator.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.ApiService\TailwindBlog.ApiService.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Domain\TailwindBlog.Domain.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" Type="Classic C#" />
+    <Project Path="MyMediator\MyMediator.csproj" />
+    <Project Path="TailwindBlog.ApiService\TailwindBlog.ApiService.csproj" />
+    <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" />
+    <Project Path="TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+    <Project Path="TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
+    <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
+    <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" Type="Classic C#" />
+    <Project Path="MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" />
+    <Project Path="TailwindBlog.Architecture.Tests/TailwindBlog.Architecture.Tests.csproj" />
+    <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" />
+    <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" />
+    <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" />
+    <Project Path="TailwindBlog.Web.Tests.E2E/TailwindBlog.Web.Tests.E2E.csproj" />
   </Folder>
 </Solution>

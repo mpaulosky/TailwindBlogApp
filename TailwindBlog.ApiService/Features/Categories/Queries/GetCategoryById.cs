@@ -7,9 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.ApiService.Features.Categories.Queries;
 
 public record GetCategoryByIdQuery(ObjectId CategoryId) : IRequest<Result<Category>>;

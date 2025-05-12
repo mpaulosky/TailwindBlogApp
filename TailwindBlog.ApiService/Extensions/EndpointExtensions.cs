@@ -7,7 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using Microsoft.AspNetCore.Builder;
 using TailwindBlog.ApiService.Features.Articles;
 using TailwindBlog.ApiService.Features.Categories;
 

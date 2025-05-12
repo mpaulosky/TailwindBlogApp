@@ -7,10 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using MyMediator;
-
 namespace TailwindBlog.ApiService.Extensions;
 
 public static class ServiceCollectionExtensions

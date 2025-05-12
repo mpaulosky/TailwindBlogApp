@@ -7,9 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.ApiService.Features.Articles.Commands;
 
 public record CreateArticleCommand(Article Article) : IRequest<Result<Article>>;

@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-
 namespace TailwindBlog.ApiService.Features.Categories.Commands;
 
 public record DeleteCategoryCommand(ObjectId CategoryId) : IRequest<Result<bool>>;

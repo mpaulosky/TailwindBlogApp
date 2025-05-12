@@ -7,21 +7,36 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-global using System.ComponentModel.DataAnnotations;
-global using System.Linq.Expressions;
-global using System.Reflection;
+#region
 
-global using Microsoft.AspNetCore.Http.HttpResults;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Reflection;
+global using System.Threading;
+global using System.Threading.Tasks;
+
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Routing;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 
 global using MongoDB.Bson;
-global using MongoDB.EntityFrameworkCore;
+
 global using MyMediator;
 
+global using Scalar.AspNetCore;
+
+global using TailwindBlog.ApiService.Extensions;
 global using TailwindBlog.Domain.Abstractions;
+global using static TailwindBlog.Domain.Constants.ServiceNames;
 global using TailwindBlog.Domain.Entities;
 global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Models;
 global using TailwindBlog.Persistence;
 global using TailwindBlog.Persistence.Repositories;
+
+#endregion

@@ -7,13 +7,8 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using TailwindBlog.ApiService.Features.Categories.Commands;
 using TailwindBlog.ApiService.Features.Categories.Queries;
-using TailwindBlog.Domain.Entities;
 
 namespace TailwindBlog.ApiService.Features.Categories;
 

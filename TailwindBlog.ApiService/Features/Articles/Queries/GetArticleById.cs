@@ -7,9 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.ApiService.Features.Articles.Queries;
 
 public record GetArticleByIdQuery(ObjectId ArticleId) : IRequest<Result<Article>>;

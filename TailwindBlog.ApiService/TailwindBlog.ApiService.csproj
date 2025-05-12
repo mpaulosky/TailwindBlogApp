@@ -8,23 +8,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\MyMediator\MyMediator.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\MyMediator\MyMediator.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
+        <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
-        <PackageReference Include="MongoDB.EntityFrameworkCore"/>
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI"/>
-        <PackageReference Include="Scalar.AspNetCore"/>
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="MongoDB.EntityFrameworkCore" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
+        <PackageReference Include="Scalar.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="TailwindBlog.Domain.Tests.Unit"/>
-        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests"/>
+        <InternalsVisibleTo Include="TailwindBlog.Domain.Tests.Unit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
     </ItemGroup>
 
 </Project>

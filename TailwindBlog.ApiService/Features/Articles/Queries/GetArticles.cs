@@ -7,10 +7,7 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Entities;
 using TailwindBlog.Domain.Extensions;
-using TailwindBlog.Domain.Models;
 
 namespace TailwindBlog.ApiService.Features.Articles.Queries;
 

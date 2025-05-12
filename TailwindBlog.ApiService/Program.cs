@@ -1,13 +1,3 @@
-using System.Reflection;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.EntityFrameworkCore;
-using MyMediator;
-using Scalar.AspNetCore;
-using TailwindBlog.ApiService.Extensions;
-using TailwindBlog.Domain.Interfaces;
-using TailwindBlog.Persistence;
-using TailwindBlog.Persistence.Repositories;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.

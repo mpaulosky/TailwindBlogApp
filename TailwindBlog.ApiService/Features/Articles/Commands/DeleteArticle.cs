@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using TailwindBlog.Domain.Abstractions;
-
 namespace TailwindBlog.ApiService.Features.Articles.Commands;
 
 public record DeleteArticleCommand(ObjectId ArticleId) : IRequest<Result<bool>>;

@@ -22,10 +22,4 @@
     <PackageReference Include="Scalar.AspNetCore" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Feature\Article\" />
-    <Folder Include="Feature\Category\" />
-    <Folder Include="Repository\" />
-  </ItemGroup>
-
 </Project>

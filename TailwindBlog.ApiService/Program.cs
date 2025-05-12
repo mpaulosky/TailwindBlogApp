@@ -1,4 +1,12 @@
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.EntityFrameworkCore;
+using MyMediator;
 using Scalar.AspNetCore;
+using TailwindBlog.ApiService.Extensions;
+using TailwindBlog.Domain.Interfaces;
+using TailwindBlog.Persistence;
+using TailwindBlog.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,10 +15,22 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddProblemDetails();
-
-
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Register MongoDB and Repository Services
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+	var connectionString = builder.Configuration.GetConnectionString("MongoDb") ??
+			throw new InvalidOperationException("Connection string 'MongoDb' not found.");
+	options.UseMongoDB(connectionString, "TailwindBlog");
+});
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IArticleRepository, ArticleRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+// Register MyMediator and handlers
+builder.Services.AddMyMediator(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
@@ -34,19 +54,9 @@ if (app.Environment.IsDevelopment())
 	});
 }
 
-
+// Map API Endpoints
+app.MapArticleEndpoints();
+app.MapCategoryEndpoints();
 app.MapDefaultEndpoints();
 
 app.Run();
-
-record WeatherForecast
-(
-		DateOnly Date,
-		int TemperatureC,
-		string? Summary
-)
-{
-
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-
-}

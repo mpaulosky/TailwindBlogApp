@@ -15,6 +15,11 @@
       <PackageReference Include="Mapster" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="TailwindBlog.Web.Tests.Bunit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
+    </ItemGroup>
+
     <Target Name="BuildTailwind" BeforeTargets="Build">
         <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css"/>
     </Target>

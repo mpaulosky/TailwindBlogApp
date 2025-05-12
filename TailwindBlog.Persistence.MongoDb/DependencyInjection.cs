@@ -17,7 +17,7 @@ public static class DependencyInjection
 			IConfiguration configuration)
 	{
 
-		var connectionString = configuration.GetConnectionString("tailwind-blog") ??
+		var connectionString = configuration.GetConnectionString(DatabaseName) ??
 													throw new InvalidOperationException(
 															"Connection string 'tailwind-blog' not found.");
 

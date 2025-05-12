@@ -27,6 +27,5 @@
     <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" />
     <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" />
     <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" />
-    <Project Path="TailwindBlog.Web.Tests.E2E/TailwindBlog.Web.Tests.E2E.csproj" />
   </Folder>
 </Solution>

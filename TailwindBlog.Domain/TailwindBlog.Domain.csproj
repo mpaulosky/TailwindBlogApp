@@ -12,4 +12,9 @@
       <PackageReference Include="MongoDB.EntityFrameworkCore" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="TailwindBlog.Domain.Tests.Unit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
+    </ItemGroup>
+
 </Project>

@@ -10,4 +10,9 @@
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="MyMediator.Tests.Unit"/>
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests"/>
+    </ItemGroup>
+
 </Project>

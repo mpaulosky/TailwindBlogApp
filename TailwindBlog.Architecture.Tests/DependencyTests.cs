@@ -1,19 +1,17 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     DependencyTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
-
-using System.Reflection;
-using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using NetArchTest.Rules;
-using Xunit;
-using TailwindBlog.ApiService;
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class DependencyTests
 {
+
 	[Fact]
 	public void MyMediator_Handlers_Should_BeInCorrectNamespace()
 	{
@@ -77,6 +75,7 @@ public class DependencyTests
 
 		// Assert
 		services.Should().NotBeEmpty("Services should be registered in DI container");
+
 		services.Any(s => s.ServiceType == typeof(MyMediator.MyMediator))
 				.Should().BeTrue("MyMediator should be registered");
 	}
@@ -127,7 +126,9 @@ public class DependencyTests
 				.FirstOrDefault(s => s.ServiceType == typeof(MyMediator.MyMediator));
 
 		mediatorDescriptor.Should().NotBeNull("MyMediator should be registered");
+
 		mediatorDescriptor?.Lifetime.Should().Be(ServiceLifetime.Scoped,
 				"MyMediator should be registered as scoped");
 	}
+
 }

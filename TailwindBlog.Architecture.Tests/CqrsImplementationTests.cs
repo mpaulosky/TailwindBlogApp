@@ -1,20 +1,17 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     CqrsImplementationTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
-
-using System.Reflection;
-using FluentAssertions;
-using MyMediator;
-using NetArchTest.Rules;
-using TailwindBlog.Domain.Abstractions;
-using static TailwindBlog.Architecture.Tests.AssemblyReference;
-using Xunit;
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class CqrsImplementationTests
 {
+
 	[Fact(DisplayName = "CQRS Test: Commands should modify state")]
 	public void Commands_Should_Modify_State()
 	{
@@ -56,17 +53,26 @@ public class CqrsImplementationTests
 		foreach (var handler in commandHandlers)
 		{
 			var interfaces = handler.GetInterfaces();
+
 			foreach (var i in interfaces)
 			{
-				if (!i.IsGenericType) continue;
-				if (i.GetGenericTypeDefinition() != typeof(IRequestHandler<,>)) continue;
+				if (!i.IsGenericType)
+				{
+					continue;
+				}
+
+				if (i.GetGenericTypeDefinition() != typeof(IRequestHandler<,>))
+				{
+					continue;
+				}
 
 				var returnType = i.GetGenericArguments()[1];
+
 				returnType.Should().NotBe(typeof(Unit),
 						$"Command handler {handler.Name} should return Result or Result<T>");
 
 				var isResult = returnType == typeof(Result) ||
-										 (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Result<>));
+											(returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Result<>));
 
 				isResult.Should().BeTrue($"Command handler {handler.Name} should return Result or Result<T>");
 			}
@@ -149,8 +155,10 @@ public class CqrsImplementationTests
 
 			// Verify request properties
 			var properties = requestType.GetProperties();
+
 			properties.Should().NotBeEmpty(
 					$"Request type {requestType.Name} should have at least one property");
 		}
 	}
+
 }

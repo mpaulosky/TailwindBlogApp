@@ -1,30 +1,28 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     ArchitectureTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
-
-#region
-
-using System.Reflection;
-using FluentAssertions;
-using MyMediator;
-using NetArchTest.Rules;
-using TailwindBlog.Domain.Abstractions;
-using TailwindBlog.Domain.Interfaces;
-using Xunit;
-
-#endregion
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class ArchitectureTests
 {
-	private const string DomainNamespace = "TailwindBlog.Domain";
-	private const string ApplicationNamespace = "TailwindBlog.ApiService";
-	private const string InfrastructureNamespace = "TailwindBlog.Persistence";
-	private const string PresentationNamespace = "TailwindBlog.Web";
-	private const string SharedKernelNamespace = "TailwindBlog.ServiceDefaults";
-	private const string MediatorNamespace = "MyMediator";
+
+	private const string _domainNamespace = "TailwindBlog.Domain";
+
+	private const string _applicationNamespace = "TailwindBlog.ApiService";
+
+	private const string _infrastructureNamespace = "TailwindBlog.Persistence";
+
+	private const string _presentationNamespace = "TailwindBlog.Web";
+
+	private const string _sharedKernelNamespace = "TailwindBlog.ServiceDefaults";
+
+	private const string _mediatorNamespace = "MyMediator";
 
 	[Fact(DisplayName = "Architecture Test: Domain should be clean, no dependencies on other layers")]
 	public void Domain_Should_BeClean()
@@ -32,10 +30,10 @@ public class ArchitectureTests
 		// Arrange
 		var dependencies = new[]
 		{
-						ApplicationNamespace,
-						InfrastructureNamespace,
-						PresentationNamespace
-				};
+				_applicationNamespace,
+				_infrastructureNamespace,
+				_presentationNamespace
+		};
 
 		// Act
 		var result = dependencies.HasDependencyOnAll(AssemblyReference.Domain);
@@ -48,8 +46,8 @@ public class ArchitectureTests
 	public void Application_Should_Not_DependOnInfrastructureOrPresentation()
 	{
 		// Arrange & Act
-		var hasInfrastructureDependency = InfrastructureNamespace.HasDependencyOn(AssemblyReference.ApiService);
-		var hasPresentationDependency = PresentationNamespace.HasDependencyOn(AssemblyReference.ApiService);
+		var hasInfrastructureDependency = _infrastructureNamespace.HasDependencyOn(AssemblyReference.ApiService);
+		var hasPresentationDependency = _presentationNamespace.HasDependencyOn(AssemblyReference.ApiService);
 
 		// Assert
 		hasInfrastructureDependency.Should().BeTrue();
@@ -60,7 +58,7 @@ public class ArchitectureTests
 	public void Presentation_Should_Not_DependOnInfrastructure()
 	{
 		// Arrange & Act
-		var result = InfrastructureNamespace.HasDependencyOn(AssemblyReference.Web);
+		var result = _infrastructureNamespace.HasDependencyOn(AssemblyReference.Web);
 
 		// Assert
 		result.Should().BeTrue();
@@ -131,7 +129,7 @@ public class ArchitectureTests
 		var result = Types
 				.InAssembly(AssemblyReference.ApiService)
 				.That()
-				.ResideInNamespace($"{ApplicationNamespace}.Features")
+				.ResideInNamespace($"{_applicationNamespace}.Features")
 				.Should()
 				.ResideInNamespaceEndingWith("Commands")
 				.Or()
@@ -150,7 +148,7 @@ public class ArchitectureTests
 	{
 		// Arrange & Act
 		var result = Types
-				.InAssembly(AssemblyReference.Infrastructure)
+				.InAssembly(Infrastructure)
 				.That()
 				.HaveNameEndingWith("Repository")
 				.Should()
@@ -161,4 +159,5 @@ public class ArchitectureTests
 		// Assert
 		result.Should().BeTrue();
 	}
+
 }

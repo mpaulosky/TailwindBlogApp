@@ -1,24 +1,17 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     CqrsAndConfigurationTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
-
-#region
-
-using System.Reflection;
-using FluentAssertions;
-using MyMediator;
-using NetArchTest.Rules;
-using TailwindBlog.Domain.Abstractions;
-using static TailwindBlog.Architecture.Tests.AssemblyReference;
-using Xunit;
-
-#endregion
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class CqrsAndConfigurationTests
 {
+
 	[Fact(DisplayName = "CQRS Test: Commands should return Result")]
 	public void Commands_Should_Return_Result()
 	{
@@ -38,17 +31,26 @@ public class CqrsAndConfigurationTests
 		foreach (var handler in commandHandlers)
 		{
 			var interfaces = handler.GetInterfaces();
+
 			foreach (var i in interfaces)
 			{
-				if (!i.IsGenericType) continue;
-				if (i.GetGenericTypeDefinition() != typeof(IRequestHandler<,>)) continue;
+				if (!i.IsGenericType)
+				{
+					continue;
+				}
+
+				if (i.GetGenericTypeDefinition() != typeof(IRequestHandler<,>))
+				{
+					continue;
+				}
 
 				var returnType = i.GetGenericArguments()[1];
+
 				returnType.Should().NotBe(typeof(Unit),
 						$"Command handler {handler.Name} should return Result or Result<T>");
 
 				var isResult = returnType == typeof(Result) ||
-										 (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Result<>));
+											(returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Result<>));
 
 				isResult.Should().BeTrue($"Command handler {handler.Name} should return Result or Result<T>");
 			}
@@ -116,11 +118,11 @@ public class CqrsAndConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-						Domain,
-						ApiService,
-						Infrastructure,
-						Web
-				};
+				Domain,
+				ApiService,
+				Infrastructure,
+				Web
+		};
 
 		// Act & Assert
 		foreach (var assembly in assemblies)
@@ -145,6 +147,7 @@ public class CqrsAndConfigurationTests
 					$"Configuration classes in {assembly.GetName().Name} should follow naming conventions");
 		}
 	}
+
 }
 
 // Helper class for command handlers

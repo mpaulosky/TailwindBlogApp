@@ -1,32 +1,34 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     ApplicationConfigurationTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
 
-using System.Reflection;
-using FluentAssertions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using NetArchTest.Rules;
-using TailwindBlog.Domain.Abstractions;
-using static TailwindBlog.Architecture.Tests.AssemblyReference;
-using Xunit;
+#region
+
+using System.ComponentModel.DataAnnotations;
+
+#endregion
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class ApplicationConfigurationTests
 {
+
 	[Fact(DisplayName = "Config Test: Configuration classes should follow naming convention")]
 	public void Configuration_Classes_Should_Follow_Naming_Convention()
 	{
 		// Arrange
 		var assemblies = new[]
 		{
-						Domain,
-						ApiService,
-						Infrastructure,
-						Web
-				};
+				Domain,
+				ApiService,
+				Infrastructure,
+				Web
+		};
 
 		// Act & Assert
 		foreach (var assembly in assemblies)
@@ -58,11 +60,11 @@ public class ApplicationConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-						Domain,
-						ApiService,
-						Infrastructure,
-						Web
-				};
+				Domain,
+				ApiService,
+				Infrastructure,
+				Web
+		};
 
 		// Act & Assert
 		foreach (var assembly in assemblies)
@@ -76,14 +78,15 @@ public class ApplicationConfigurationTests
 					.Or()
 					.HaveNameEndingWith("Options")
 					.Should()
-					.HaveCustomAttribute(typeof(System.ComponentModel.DataAnnotations.ValidationAttribute))
+					.HaveCustomAttribute(typeof(ValidationAttribute))
 					.GetResult();
 
 			// Optional validation attribute check as not all config classes need validation
 			if (!result.IsSuccessful)
 			{
 				// Log warning but don't fail the test
-				Console.WriteLine($"Warning: Some configuration classes in {assembly.GetName().Name} lack validation attributes");
+				Console.WriteLine(
+						$"Warning: Some configuration classes in {assembly.GetName().Name} lack validation attributes");
 			}
 		}
 	}
@@ -121,11 +124,11 @@ public class ApplicationConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-						Domain,
-						ApiService,
-						Infrastructure,
-						Web
-				};
+				Domain,
+				ApiService,
+				Infrastructure,
+				Web
+		};
 
 		foreach (var assembly in assemblies)
 		{
@@ -145,6 +148,7 @@ public class ApplicationConfigurationTests
 			{
 				// Check that properties are strongly typed (not string unless explicitly needed)
 				var properties = configClass.GetProperties();
+
 				foreach (var prop in properties)
 				{
 					prop.PropertyType.Should().NotBe(typeof(object),
@@ -154,16 +158,17 @@ public class ApplicationConfigurationTests
 					if (prop.PropertyType == typeof(string))
 					{
 						prop.Name.Should().Match(n =>
-								n.EndsWith("Name") ||
-								n.EndsWith("Path") ||
-								n.EndsWith("ConnectionString") ||
-								n.EndsWith("Url") ||
-								n.EndsWith("Key") ||
-								n.EndsWith("Id"),
+										n.EndsWith("Name") ||
+										n.EndsWith("Path") ||
+										n.EndsWith("ConnectionString") ||
+										n.EndsWith("Url") ||
+										n.EndsWith("Key") ||
+										n.EndsWith("Id"),
 								$"String property {prop.Name} should have a clear purpose indicated in its name");
 					}
 				}
 			}
 		}
 	}
+
 }

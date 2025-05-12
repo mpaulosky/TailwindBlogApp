@@ -1,18 +1,17 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
+// File Name :     FeatureTests.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
-
-using FluentAssertions;
-using NetArchTest.Rules;
-using Xunit;
-using TailwindBlog.ApiService;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace TailwindBlog.Architecture.Tests;
 
 public class FeatureTests
 {
+
 	[Fact]
 	public void Features_Should_BeInCorrectNamespace()
 	{
@@ -123,7 +122,7 @@ public class FeatureTests
 
 		// Act - Get the ConfigureServices method through reflection since it's private
 		var method = typeof(Program)
-				.GetMethods(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+				.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
 				.FirstOrDefault(m => m.Name == "ConfigureServices");
 
 		method?.Invoke(startup, new object[] { services });
@@ -141,9 +140,11 @@ public class FeatureTests
 		foreach (var handler in handlers)
 		{
 			services.Should().Contain(sd =>
-					sd.ServiceType == handler ||
-					sd.ServiceType == typeof(IRequestHandler<,>).MakeGenericType(handler.BaseType?.GenericTypeArguments[0], handler.BaseType?.GenericTypeArguments[1]),
+							sd.ServiceType == handler ||
+							sd.ServiceType == typeof(IRequestHandler<,>).MakeGenericType(handler.BaseType?.GenericTypeArguments[0],
+									handler.BaseType?.GenericTypeArguments[1]),
 					$"Handler {handler.Name} should be registered in DI container");
 		}
 	}
+
 }

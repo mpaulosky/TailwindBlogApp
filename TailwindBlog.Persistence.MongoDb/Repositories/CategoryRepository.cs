@@ -4,12 +4,12 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.ApiService
+// Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
 namespace TailwindBlog.Persistence.Repositories;
 
-internal sealed class CategoryRepository : Repository<Category>, ICategoryRepository
+public sealed class CategoryRepository : Repository<Category>, ICategoryRepository
 {
 
 	public CategoryRepository(AppDbContext context)

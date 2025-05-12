@@ -4,12 +4,12 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.ApiService
+// Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
 namespace TailwindBlog.Persistence.Repositories;
 
-internal sealed class ArticleRepository : Repository<Article>, IArticleRepository
+public sealed class ArticleRepository : Repository<Article>, IArticleRepository
 {
 
 	public ArticleRepository(AppDbContext context)
@@ -19,7 +19,7 @@ internal sealed class ArticleRepository : Repository<Article>, IArticleRepositor
 	public async Task<List<Article>?> GetByUserAsync(string userId)
 	{
 
-		return await Context.Articles
+		return await Context.Set<Article>()
 				.Where(a => a.Author.Id == userId)
 				.ToListAsync();
 

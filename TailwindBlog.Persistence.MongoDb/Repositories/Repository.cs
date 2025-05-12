@@ -4,12 +4,12 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.ApiService
+// Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
 namespace TailwindBlog.Persistence.Repositories;
 
-internal abstract class Repository<TEntity>
+public abstract class Repository<TEntity>
 		where TEntity : Entity
 {
 

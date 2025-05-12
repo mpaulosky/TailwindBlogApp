@@ -10,6 +10,7 @@ These instructions define the required coding, architecture, and project rules f
 
 ### Style
 
+- **Use .editorconfig:** `true`
 - **Preferred Modifier Order:** `public`, `private`, `protected`, `internal`, `static`, `readonly`, `const`
 
   - _Example:_

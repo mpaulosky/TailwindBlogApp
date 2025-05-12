@@ -7,11 +7,6 @@
 // Project Name :  TailwindBlog.Web
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
 namespace TailwindBlog.Domain.Abstractions;
 
 public abstract class Entity

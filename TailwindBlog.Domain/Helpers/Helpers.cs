@@ -11,10 +11,7 @@ using System.Web;
 
 using Bogus;
 
-using MongoDB.Bson;
-
 using TailwindBlog.Domain.Entities;
-using TailwindBlog.Domain.Models;
 
 namespace TailwindBlog.Domain.Helpers;
 
@@ -37,7 +34,7 @@ public static class Helpers
 
 	private static readonly Faker<AppUserModel> _userGenerator = new Faker<AppUserModel>()
 			.UseSeed(421)
-			.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
+			.RuleFor(x => x.Id, f => ObjectId.GenerateNewId().ToString())
 			.RuleFor(x => x.UserName, f => f.Internet.UserName())
 			.RuleFor(x => x.Email, f => f.Internet.Email());
 

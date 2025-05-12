@@ -22,6 +22,7 @@ namespace TailwindBlog.Web.Components.Shared;
 ///   bUnit tests for PostInfoComponent.
 /// </summary>
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(PostInfoComponent))]
 public class PostInfoComponentTest : BunitContext
 {
 

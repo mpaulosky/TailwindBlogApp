@@ -1,53 +1,46 @@
 @page "/articles"
 
 <div class="grid grid-cols-1 lg:grid-cols-3 mt-6">
-
 	<div class="lg:col-span-2 text-gray-60 bg-gray-800">
-
 		@if (_articles is null)
 		{
-
 			<p><em>Loading articles...</em></p>
-
 		}
 		else if (_articles.Count == 0)
 		{
-
 			<p><em>No articles found</em></p>
-
 		}
 		else
 		{
-
 			@foreach (var article in _articles)
 			{
 
-				<div class="overflow-hidden rounded-md shadow-md shadow-blue-600 mb-6">
+				<div class="rounded-2xl shadow-md hover:shadow-blue-500">
+					<article class="md:grid md:grid-cols-1 md:items-baseline">
+						<div
+							class="relative isolate flex flex-col items-start rounded-2xl px-4 py-6 hover:bg-blue-500/10">
+							<h2 class="text-base font-semibold tracking-tight text-gray-50">
+								<a href="@article.UrlSlug">
+									<span class="absolute inset-0 z-10"></span>
+									@article.Title
+								</a>
+							</h2>
 
-					<img class="w-full" src="@article.CoverImageUrl" height="100" alt="@article.Title">
+							<p class="mt-2 text-sm text-gray-50 py-2">
+								@article.Introduction
+							</p>
 
-					<div class="px-6 py-4">
+							<PostInfoComponent Article="@article" CategoryType="Blog"/>
 
-						<div class="font-bold text-xl mb-2 test-gray-800">@article.Title</div>
+						</div>
 
-						<p class="text-gray-70 text-base shadow-lg">
-							@article.Introduction
-						</p>
-
-					</div>
-
-					<div class="px-6 pt-4 pb-2 test-gray-800">
-						<PostInfoComponent Article="@article" CategoryType="Blog"/>
-					</div>
-
+					</article>
 				</div>
-
 			}
 
 		}
-
+		}
 	</div>
-
 	<div class="pl-6 pt-12 lg:pt-4">
 		<ConnectWithUsComponent/>
 		<RecentRelatedComponent/>
@@ -64,34 +57,9 @@
 
 		for (int i = 0; i < 3; i++)
 		{
-
 			var article = Helpers.ArticleGenerator.Generate(1).First();
-
-			switch (i)
-			{
-
-				case 0:
-
-					article.CoverImageUrl = $"https://picsum.photos/600/100/?random1";
-
-					break;
-
-				case 1:
-
-					article.CoverImageUrl = $"https://picsum.photos/600/100/?random2";
-
-					break;
-
-				case 2:
-
-					article.CoverImageUrl = $"https://picsum.photos/600/100/?random3";
-
-					break;
-
-			}
-
+			article.CoverImageUrl = $"https://picsum.photos/600/100/?random{i + 1}";
 			_articles?.Add(article.Adapt<ArticleModel>());
-
 		}
 
 	}

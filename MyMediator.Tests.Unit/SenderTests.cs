@@ -4,10 +4,10 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.MyMediator.Tests.Unit
+// Project Name :  MyMediator.Tests.Unit
 // =======================================================
 
-namespace TailwindBlog.MyMediator;
+namespace MyMediator;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Sender))]

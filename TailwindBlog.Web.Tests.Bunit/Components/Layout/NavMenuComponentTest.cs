@@ -7,15 +7,13 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
-#endregion
-
 namespace TailwindBlog.Web.Components.Layout;
 
 /// <summary>
 ///   bUnit tests for NavMenuComponent.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(NavMenuComponent))]
 public class NavMenuComponentTest : BunitContext
 {
 

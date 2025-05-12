@@ -12,6 +12,8 @@ namespace TailwindBlog.Web.Components.Pages;
 /// <summary>
 ///   bUnit tests for the About page.
 /// </summary>
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(About))]
 public class AboutPageTest : BunitContext
 {
 

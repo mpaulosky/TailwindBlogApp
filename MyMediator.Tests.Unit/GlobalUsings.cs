@@ -7,7 +7,13 @@
 // Project Name :  MyMediator.Tests.Unit
 // =======================================================
 
+#region
+
+global using System;
+global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
+global using System.Threading;
+global using System.Threading.Tasks;
 
 global using FluentAssertions;
 
@@ -15,4 +21,8 @@ global using JetBrains.Annotations;
 
 global using Microsoft.Extensions.DependencyInjection;
 
-global using MyMediator;
+global using NSubstitute;
+
+global using Xunit;
+
+#endregion

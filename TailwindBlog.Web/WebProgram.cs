@@ -6,8 +6,9 @@
 
 namespace TailwindBlog.Web;
 
-public partial class WebProgram
+public static partial class WebProgram
 {
+	public static void Main(string[] args) => Run(args);
 
 	private static void Run(string[] args) { }
 

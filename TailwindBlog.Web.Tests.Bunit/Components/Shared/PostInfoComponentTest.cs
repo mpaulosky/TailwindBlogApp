@@ -9,8 +9,6 @@
 
 #region
 
-using System;
-
 using TailwindBlog.Domain.Models;
 using TailwindBlog.Web.Components.Features.Articles.Models;
 

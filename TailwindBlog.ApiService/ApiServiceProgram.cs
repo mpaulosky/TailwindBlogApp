@@ -8,7 +8,6 @@ namespace TailwindBlog.ApiService;
 
 public partial class ApiServiceProgram
 {
-	private static partial void Run(string[] args)
-	{
-	}
+	private static void Run(string[] args) { }
+
 }

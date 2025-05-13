@@ -145,7 +145,7 @@ public class ArticleApiTests : ApiTestBase
 	public async Task Post_ShouldReturn400_WhenDataIsInvalid()
 	{
 		// Arrange
-		var invalidArticle = new Article(); // Missing required fields
+		var invalidArticle = Article.Empty; // Missing required fields
 
 		// Act
 		var response = await _client.PostAsJsonAsync("/api/articles", invalidArticle);

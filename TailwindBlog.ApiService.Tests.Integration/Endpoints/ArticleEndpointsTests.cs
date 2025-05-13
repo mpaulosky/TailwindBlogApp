@@ -42,14 +42,15 @@ public class ArticleEndpointsTests : ApiTestBase
 	public async Task Create_Article_Returns_Success()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Introduction = "Test Introduction",
-			UrlSlug = "test-article",
-			Author = AppUserModel.Empty,
-			CreatedOn = DateTime.UtcNow
-		};
+		var article = new Article(
+			"Test Article",
+			"Test Introduction",
+			string.Empty,
+			"test-article",
+			AppUserModel.Empty
+		);
+		// Set CreatedOn via reflection
+		article.GetType().GetProperty("CreatedOn")?.SetValue(article, DateTime.UtcNow);
 
 		// Act
 		var response = await _client.PostAsJsonAsync("/articles", article);
@@ -64,14 +65,15 @@ public class ArticleEndpointsTests : ApiTestBase
 	public async Task Update_Article_Returns_Success()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Introduction = "Test Introduction",
-			UrlSlug = "test-article",
-			Author = AppUserModel.Empty,
-			CreatedOn = DateTime.UtcNow
-		};
+		var article = new Article(
+			"Test Article",
+			"Test Introduction",
+			string.Empty,
+			"test-article",
+			AppUserModel.Empty
+		);
+		// Set CreatedOn via reflection
+		article.GetType().GetProperty("CreatedOn")?.SetValue(article, DateTime.UtcNow);
 		var createResponse = await _client.PostAsJsonAsync("/articles", article);
 		var location = createResponse.Headers.Location;
 
@@ -88,14 +90,15 @@ public class ArticleEndpointsTests : ApiTestBase
 	public async Task Delete_Article_Returns_Success()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Introduction = "Test Introduction",
-			UrlSlug = "test-article",
-			Author = AppUserModel.Empty,
-			CreatedOn = DateTime.UtcNow
-		};
+		var article = new Article(
+			"Test Article",
+			"Test Introduction",
+			string.Empty,
+			"test-article",
+			AppUserModel.Empty
+		);
+		// Set CreatedOn via reflection
+		article.GetType().GetProperty("CreatedOn")?.SetValue(article, DateTime.UtcNow);
 		var createResponse = await _client.PostAsJsonAsync("/articles", article);
 		var location = createResponse.Headers.Location;
 

@@ -139,7 +139,7 @@ public class CategoryApiTests : ApiTestBase
 	public async Task Post_ShouldReturn400_WhenDataIsInvalid()
 	{
 		// Arrange
-		var invalidCategory = new Category(); // Missing required fields
+		var invalidCategory = Category.Empty; // Missing required fields
 
 		// Act
 		var response = await _client.PostAsJsonAsync("/api/categories", invalidCategory);

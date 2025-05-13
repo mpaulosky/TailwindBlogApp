@@ -18,10 +18,13 @@ public class ArticleTests
 	public void Article_WhenCreated_ShouldHaveEmptyProperties()
 	{
 		// Arrange & Act
-		var article = new Article
-		{
-				Author = AppUserModel.Empty
-		};
+		var article = new Article(
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			AppUserModel.Empty
+		);
 
 		// Assert
 		article.Id.Should().Be(ObjectId.Empty);
@@ -71,16 +74,16 @@ public class ArticleTests
 		// Arrange
 		var date = new DateTime(2025, 1, 1);
 
-		var article = new Article
-		{
-				Title = title,
-				Introduction = introduction,
-				CoverImageUrl = coverImageUrl,
-				UrlSlug = urlSlug,
-				Author = AppUserModel.Empty,
-				CreatedOn = date,
-				ModifiedOn = date,
-		};
+		var article = new Article(
+			title,
+			introduction,
+			coverImageUrl,
+			urlSlug,
+			AppUserModel.Empty
+		);
+		// Set CreatedOn and ModifiedOn if needed
+		article.GetType().GetProperty("CreatedOn")?.SetValue(article, date);
+		article.GetType().GetProperty("ModifiedOn")?.SetValue(article, date);
 
 		// Assert
 		article.Title.Should().Be(title);
@@ -95,16 +98,20 @@ public class ArticleTests
 	public void Article_WhenPublished_ShouldSetPublishedProperties()
 	{
 		// Arrange
-		var article = new Article
-		{
-				Author = AppUserModel.Empty,
-				IsPublished = true,
-				PublishedOn = DateTime.Now
-		};
+		var now = DateTime.Now;
+		var article = new Article(
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			AppUserModel.Empty,
+			true,
+			now
+		);
 
 		// Assert
 		article.IsPublished.Should().BeTrue();
-		article.PublishedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.PublishedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(1));
 	}
 
 }

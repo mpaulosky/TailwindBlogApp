@@ -17,18 +17,22 @@ public static class Helpers
 {
 
 	public static readonly Faker<Article> ArticleGenerator =
-			new Faker<Article>()
-					.UseSeed(421)
-					.RuleFor(x => x.Id, ObjectId.GenerateNewId)
-					.RuleFor(x => x.Title, f => f.WaffleTitle())
-					.RuleFor(x => x.UrlSlug, (_, x) => x.Title.GetSlug())
-					.RuleFor(x => x.Introduction, f => f.WaffleTitle())
-					.RuleFor(x => x.CreatedOn, GetStaticDate())
-					.RuleFor(x => x.IsPublished, f => f.Random.Bool())
-					.RuleFor(x => x.CreatedOn, GetStaticDate())
-					.RuleFor(x => x.PublishedOn, (_, x) => x.IsPublished ? GetStaticDate() : null)
-					.RuleFor(x => x.ModifiedOn, GetStaticDate())
-					.RuleFor(x => x.Author, _ => _userGenerator?.Generate());
+		new Faker<Article>()
+			.UseSeed(421)
+			.CustomInstantiator(f =>
+				new Article(
+					title: f.WaffleTitle(),
+					introduction: f.WaffleTitle(),
+					coverImageUrl: f.Image.PicsumUrl(),
+					urlSlug: f.WaffleTitle().GetSlug(),
+					author: _userGenerator.Generate(),
+					isPublished: f.Random.Bool(),
+					publishedOn: f.Random.Bool() ? GetStaticDate() : null
+				)
+			)
+			.RuleFor(x => x.Id, _ => ObjectId.GenerateNewId())
+			.RuleFor(x => x.CreatedOn, _ => GetStaticDate())
+			.RuleFor(x => x.ModifiedOn, _ => GetStaticDate());
 
 	private static readonly Faker<AppUserModel> _userGenerator = new Faker<AppUserModel>()
 			.UseSeed(421)

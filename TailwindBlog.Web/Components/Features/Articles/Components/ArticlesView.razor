@@ -17,8 +17,7 @@
 
 				<div class="rounded-2xl shadow-md hover:shadow-blue-500">
 					<article class="md:grid md:grid-cols-1 md:items-baseline">
-						<div
-							class="relative isolate flex flex-col items-start rounded-2xl px-4 py-6 hover:bg-blue-500/10">
+						<div class="relative isolate flex flex-col items-start rounded-2xl px-4 py-6 hover:bg-blue-500/10">
 							<h2 class="text-base font-semibold tracking-tight text-gray-50">
 								<a href="@article.UrlSlug">
 									<span class="absolute inset-0 z-10"></span>
@@ -30,7 +29,7 @@
 								@article.Introduction
 							</p>
 
-							<PostInfoComponent Article="@article" CategoryType="Blog"/>
+							<PostInfoComponent Article="@article" CategoryType="Blog" />
 
 						</div>
 
@@ -42,8 +41,8 @@
 		}
 	</div>
 	<div class="pl-6 pt-12 lg:pt-4">
-		<ConnectWithUsComponent/>
-		<RecentRelatedComponent/>
+		<ConnectWithUsComponent />
+		<RecentRelatedComponent />
 	</div>
 
 </div>
@@ -58,8 +57,9 @@
 		for (int i = 0; i < 3; i++)
 		{
 			var article = Helpers.ArticleGenerator.Generate(1).First();
-			article.CoverImageUrl = $"https://picsum.photos/600/100/?random{i + 1}";
-			_articles?.Add(article.Adapt<ArticleModel>());
+			var articleModel = article.Adapt<ArticleModel>();
+			articleModel.CoverImageUrl = $"https://picsum.photos/600/100/?random{i + 1}";
+			_articles?.Add(articleModel);
 		}
 
 	}

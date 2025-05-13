@@ -18,7 +18,7 @@ public class CategoryTests
 	public void Category_WhenCreated_ShouldHaveEmptyProperties()
 	{
 		// Arrange & Act
-		var category = new Category();
+		var category = Category.Empty;
 
 		// Assert
 		category.Id.Should().Be(ObjectId.Empty);
@@ -48,13 +48,10 @@ public class CategoryTests
 		// Arrange
 		var date = new DateTime(2025, 1, 1);
 
-		var category = new Category
-		{
-				Name = name,
-				Description = description,
-				CreatedOn = date,
-				ModifiedOn = date
-		};
+		var category = new Category(name, description);
+		// Set CreatedOn and ModifiedOn if needed
+		category.GetType().GetProperty("CreatedOn")?.SetValue(category, date);
+		category.GetType().GetProperty("ModifiedOn")?.SetValue(category, date);
 
 		// Assert
 		category.Name.Should().Be(name);

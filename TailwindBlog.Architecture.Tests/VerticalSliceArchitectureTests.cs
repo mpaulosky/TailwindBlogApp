@@ -9,6 +9,15 @@
 
 #region
 
+using System.Reflection;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using NetArchTest.Rules;
+using TailwindBlog.Domain;
+using TailwindBlog.Domain.Abstractions;
+using TailwindBlog.Domain.Interfaces;
+using Xunit;
+
 #endregion
 
 namespace TailwindBlog.Architecture.Tests;
@@ -20,7 +29,7 @@ public class VerticalSliceArchitectureTests
 	{
 		// Arrange
 		var assembly = AssemblyReference.ApiService;
-		var features = new[] { "Articles", "Categories" };
+		var features = new[] { "Article", "Category" };  // Changed from "Articles", "Categories"
 
 		// Act & Assert
 		foreach (var feature in features)
@@ -86,7 +95,7 @@ public class VerticalSliceArchitectureTests
 		var result = Types
 				.InAssembly(AssemblyReference.MongoDb)
 				.That()
-				.ResideInNamespace("TailwindBlog.Persistence.Repositories")
+				.ResideInNamespace("TailwindBlog.Persistence.MongoDb.Repositories")
 				.Should()
 				.ImplementInterface(typeof(ICategoryRepository))
 				.Or()
@@ -155,14 +164,21 @@ public class VerticalSliceArchitectureTests
 				.GetTypes();
 
 		// Assert
+		// There should be at least one handler
+		handlers.Should().NotBeEmpty("There should be at least one request handler in the assembly");
+		
 		foreach (var handler in handlers)
 		{
+			// Check that the handler type itself is registered as a service
 			var descriptor = services
-					.SingleOrDefault(d => d.ServiceType.IsGenericType &&
-															d.ServiceType.GetGenericTypeDefinition() == typeof(IRequestHandler<,>));
-
+					.FirstOrDefault(d => d.ImplementationType == handler);
+			
 			descriptor.Should().NotBeNull(
 					$"Handler {handler.Name} should be registered with dependency injection");
+			
+			// Check lifetime - handlers should typically be transient
+			descriptor.Lifetime.Should().Be(ServiceLifetime.Transient,
+					$"Handler {handler.Name} should have a Transient lifetime");
 		}
 	}
 	[Fact(DisplayName = "Architecture Test: Persistence layer dependencies")]
@@ -172,9 +188,9 @@ public class VerticalSliceArchitectureTests
 		var result = Types
 				.InAssembly(assembly)
 				.That()
-				.ResideInNamespace("TailwindBlog.Persistence.Repositories")
+				.ResideInNamespace("TailwindBlog.Persistence.MongoDb.Repositories")
 				.Should()
-				.ResideInNamespaceStartingWith("TailwindBlog.Persistence")
+				.ResideInNamespaceStartingWith("TailwindBlog.Persistence.MongoDb")
 				.And()
 				.ImplementInterface(typeof(IArticleRepository))
 				.Or()

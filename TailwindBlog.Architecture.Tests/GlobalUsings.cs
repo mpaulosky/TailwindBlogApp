@@ -8,17 +8,12 @@
 
 global using System;
 global using System.Collections;
-global using System.ComponentModel.DataAnnotations;
 global using System.Collections.Generic;
-global using System.Diagnostics.CodeAnalysis;
 global using System.Linq;
 global using System.Reflection;
 
 global using FluentAssertions;
 
-global using JetBrains.Annotations;
-
-global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 
 global using MyMediator;
@@ -27,8 +22,6 @@ global using NetArchTest.Rules;
 
 global using TailwindBlog.ApiService;
 global using TailwindBlog.Domain.Abstractions;
-global using static TailwindBlog.Domain.Constants.ServiceNames;
-global using TailwindBlog.Domain.Entities;
 global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Web;
 

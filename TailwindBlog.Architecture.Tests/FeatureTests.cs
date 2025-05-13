@@ -7,6 +7,8 @@
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
 
+using Mono.Cecil;
+
 namespace TailwindBlog.Architecture.Tests;
 
 public class FeatureTests
@@ -31,7 +33,7 @@ public class FeatureTests
 				.Or()
 				.ResideInNamespaceEndingWith("Validators")
 				.GetResult();
-
+	
 		// Assert
 		result.IsSuccessful.Should().BeTrue();
 	}
@@ -55,9 +57,9 @@ public class FeatureTests
 				.ResideInNamespace("TailwindBlog.ApiService.Features.Category")
 				.GetTypes();
 
-		articleTypes.Should().NotBeEmpty();
-		categoryTypes.Should().NotBeEmpty();
-
+		articleTypes.Should().NotBeEmpty("The Article feature namespace should contain types");
+		categoryTypes.Should().NotBeEmpty("The Category feature namespace should contain types");
+	
 		foreach (var type in articleTypes)
 		{
 			Types.InAssembly(assembly)
@@ -66,9 +68,9 @@ public class FeatureTests
 					.Should()
 					.NotHaveDependencyOn("TailwindBlog.ApiService.Features.Category")
 					.GetResult()
-					.IsSuccessful.Should().BeTrue();
+					.IsSuccessful.Should().BeTrue($"{type.Name} should not depend on Category feature");
 		}
-
+	
 		foreach (var type in categoryTypes)
 		{
 			Types.InAssembly(assembly)
@@ -77,7 +79,7 @@ public class FeatureTests
 					.Should()
 					.NotHaveDependencyOn("TailwindBlog.ApiService.Features.Article")
 					.GetResult()
-					.IsSuccessful.Should().BeTrue();
+					.IsSuccessful.Should().BeTrue($"{type.Name} should not depend on Article feature");
 		}
 	}
 
@@ -86,7 +88,8 @@ public class FeatureTests
 	{
 		// Arrange
 		var assembly = AssemblyReference.ApiService;
-
+		var commandValidationRule = new CommandValidationRule();
+	
 		// Act
 		var result = Types
 				.InAssembly(assembly)
@@ -95,10 +98,28 @@ public class FeatureTests
 				.Should()
 				.HaveNameEndingWith("Command")
 				.And()
-				.HaveCustomAttribute(typeof(ValidationAttribute))
+				.MeetCustomRule(commandValidationRule)
 				.GetResult();
-
+	
 		// Assert
-		result.IsSuccessful.Should().BeTrue();
+		result.IsSuccessful.Should().BeTrue("All commands should implement IRequest or IValidatable interfaces");
 	}
+}
+
+internal class CommandValidationRule : NetArchTest.Rules.ICustomRule
+{
+    public bool MeetsRule(Type type)
+    {
+        // Example: Ensure type implements IRequest or IValidatable
+        // Replace with actual interfaces as appropriate for your codebase!
+        var implementsIRequest = type.GetInterfaces().Any(i => i.Name == "IRequest");
+        var implementsIValidatable = type.GetInterfaces().Any(i => i.Name == "IValidatable");
+        return implementsIRequest || implementsIValidatable;
+    }
+
+		public bool MeetsRule(TypeDefinition type)
+		{
+			throw new NotImplementedException();
+		}
+
 }

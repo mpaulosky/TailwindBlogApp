@@ -9,23 +9,30 @@
 
 namespace TailwindBlog.Domain.Entities;
 
+
 public class Category : Entity
 {
+	public Category(string name, string description)
+	{
+		Name = name;
+		Description = description;
+	}
 
-	[Required(ErrorMessage = "Name is required"),
-	MaxLength(80)]
-	public string Name { get; set; } = string.Empty;
+	// Parameterless constructor for EF Core and serialization
+	private Category() { }
 
-	[Required(ErrorMessage = "Description is required"),
-	MaxLength(100)]
-	public string Description { get; set; } = string.Empty;
+	[Required(ErrorMessage = "Name is required")]
+	[MaxLength(80)]
+	public string Name { get; private set; } = string.Empty;
+
+	[Required(ErrorMessage = "Description is required")]
+	[MaxLength(100)]
+	public string Description { get; private set; } = string.Empty;
 
 	public static Category Empty =>
-			new()
-			{
-					Id = ObjectId.Empty,
-					Name = string.Empty,
-					Description = string.Empty,
-			};
+		new(string.Empty, string.Empty)
+		{
+			Id = ObjectId.Empty
+		};
 
 }

@@ -30,9 +30,9 @@ public class ArticleRepositoryTests
 		const string userId = "user123";
 		var articles = new List<Article>
 		{
-			new() { Author = new AppUserModel { Id = userId } },
-			new() { Author = new AppUserModel { Id = userId } },
-			new() { Author = new AppUserModel { Id = "other" } }
+			new Article(string.Empty, string.Empty, string.Empty, string.Empty, new AppUserModel { Id = userId }),
+			new Article(string.Empty, string.Empty, string.Empty, string.Empty, new AppUserModel { Id = userId }),
+			new Article(string.Empty, string.Empty, string.Empty, string.Empty, new AppUserModel { Id = "other" })
 		}.AsQueryable();
 
 		var mockSet = Substitute.For<DbSet<Article>, IAsyncEnumerable<Article>, IQueryable<Article>>();
@@ -71,11 +71,13 @@ public class ArticleRepositoryTests
 	public void Add_ShouldAddArticle()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
+		var article = new Article(
+			"Test Article",
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			new AppUserModel { Id = "user1" }
+		);
 		var mockSet = Substitute.For<DbSet<Article>>();
 		_dbContext.Set<Article>().Returns(mockSet);
 
@@ -92,11 +94,13 @@ public class ArticleRepositoryTests
 	public void Update_ShouldUpdateArticle()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
+		var article = new Article(
+			"Test Article",
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			new AppUserModel { Id = "user1" }
+		);
 		var mockSet = Substitute.For<DbSet<Article>>();
 		_dbContext.Set<Article>().Returns(mockSet);
 
@@ -113,11 +117,13 @@ public class ArticleRepositoryTests
 	public void Remove_ShouldRemoveArticle()
 	{
 		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
+		var article = new Article(
+			"Test Article",
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			new AppUserModel { Id = "user1" }
+		);
 		var mockSet = Substitute.For<DbSet<Article>>();
 		_dbContext.Set<Article>().Returns(mockSet);
 
@@ -136,9 +142,9 @@ public class ArticleRepositoryTests
 		// Arrange
 		var articles = new List<Article>
 		{
-			new() { Title = "Test1", Author = new AppUserModel { Id = "user1" } },
-			new() { Title = "Test2", Author = new AppUserModel { Id = "user1" } },
-			new() { Title = "Test3", Author = new AppUserModel { Id = "user2" } }
+			new Article("Test1", string.Empty, string.Empty, string.Empty, new AppUserModel { Id = "user1" }),
+			new Article("Test2", string.Empty, string.Empty, string.Empty, new AppUserModel { Id = "user1" }),
+			new Article("Test3", string.Empty, string.Empty, string.Empty, new AppUserModel { Id = "user2" })
 		}.AsQueryable();
 
 		var mockSet = Substitute.For<DbSet<Article>, IAsyncEnumerable<Article>, IQueryable<Article>>();

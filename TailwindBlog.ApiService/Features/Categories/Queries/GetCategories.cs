@@ -13,7 +13,7 @@ namespace TailwindBlog.ApiService.Features.Categories.Queries;
 
 public record GetCategoriesQuery(int PageNumber = 1, int PageSize = 10) : IRequest<Result<PaginationModel<Category>>>;
 
-public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Result<PaginationModel<Category>>>
+public sealed class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, Result<PaginationModel<Category>>>
 {
 	private readonly ICategoryRepository _categoryRepository;
 

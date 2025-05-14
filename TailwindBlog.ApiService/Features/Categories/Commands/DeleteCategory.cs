@@ -9,9 +9,9 @@
 
 namespace TailwindBlog.ApiService.Features.Categories.Commands;
 
-public record DeleteCategoryCommand(ObjectId CategoryId) : IRequest<Result<bool>>;
+public record DeleteCategoryCommand(Guid CategoryId) : IRequest<Result<bool>>;
 
-public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result<bool>>
+public sealed class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result<bool>>
 {
 	private readonly ICategoryRepository _categoryRepository;
 	private readonly IUnitOfWork _unitOfWork;

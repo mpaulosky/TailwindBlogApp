@@ -9,9 +9,9 @@
 
 namespace TailwindBlog.ApiService.Features.Categories.Queries;
 
-public record GetCategoryByIdQuery(ObjectId CategoryId) : IRequest<Result<Category>>;
+public record GetCategoryByIdQuery(Guid CategoryId) : IRequest<Result<Category>>;
 
-public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<Category>>
+public sealed class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<Category>>
 {
 	private readonly ICategoryRepository _categoryRepository;
 

@@ -11,7 +11,7 @@ namespace TailwindBlog.ApiService.Features.Categories.Commands;
 
 public record CreateCategoryCommand(Category Category) : IRequest<Result<Category>>;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Result<Category>>
+public sealed class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Result<Category>>
 {
 	private readonly ICategoryRepository _categoryRepository;
 	private readonly IUnitOfWork _unitOfWork;

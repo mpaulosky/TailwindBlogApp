@@ -7,8 +7,12 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
+using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using TailwindBlog.ApiService.Features.Articles.Commands;
 using TailwindBlog.ApiService.Features.Articles.Queries;
+using TailwindBlog.Domain.Entities;
 
 namespace TailwindBlog.ApiService.Features.Articles;
 
@@ -17,24 +21,24 @@ public static class ArticleEndpoints
 	public static void MapArticleEndpoints(this IEndpointRouteBuilder app)
 	{
 		var group = app.MapGroup("/api/articles")
-				.WithTags("Articles")
-				.WithOpenApi()
-				.RequireAuthorization();
+			.WithTags("Articles")
+			.WithOpenApi()
+			.RequireAuthorization();
 
 		group.MapGet("/", async ([FromServices] ISender sender, CancellationToken ct) =>
 		{
-			var query = new GetArticlesQuery();
+			var query = new GetAllArticlesQuery();
 			var result = await sender.Send(query, ct);
 			return result.Success ? Results.Ok(result.Value) : Results.BadRequest(result.Error);
 		})
-		.WithName("GetArticles")
+		.WithName("GetAllArticles")
 		.WithDisplayName("Get all articles")
 		.Produces<IEnumerable<Article>>(StatusCodes.Status200OK)
 		.Produces(StatusCodes.Status400BadRequest);
 
 		group.MapGet("/{id}", async ([FromRoute] string id, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var articleId))
+			if (!Guid.TryParse(id, out var articleId))
 			{
 				return Results.BadRequest("Invalid article ID format");
 			}
@@ -52,9 +56,10 @@ public static class ArticleEndpoints
 		group.MapPost("/", async ([FromBody] Article article, [FromServices] ISender sender, CancellationToken ct) =>
 		{
 			var command = new CreateArticleCommand(article);
-			var result = await sender.Send(command, ct); return result.Success && result.Value is not null
-							? Results.Created($"/api/articles/{result.Value.Id}", result.Value)
-							: Results.BadRequest(result.Error ?? "Failed to create article");
+			var result = await sender.Send(command, ct);
+			return result.Success && result.Value is not null
+				? Results.Created($"/api/articles/{result.Value.Id}", result.Value)
+				: Results.BadRequest(result.Error ?? "Failed to create article");
 		})
 		.WithName("CreateArticle")
 		.WithDisplayName("Create a new article")
@@ -63,12 +68,12 @@ public static class ArticleEndpoints
 
 		group.MapPut("/{id}", async ([FromRoute] string id, [FromBody] Article article, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var articleId) || article.Id != articleId)
+			if (!Guid.TryParse(id, out var articleId) || article.Id != articleId)
 			{
 				return Results.BadRequest("Invalid article ID format or ID mismatch");
 			}
 
-			var command = new UpdateArticleCommand(article);
+			var command = new UpdateArticleCommand(articleId, article);
 			var result = await sender.Send(command, ct);
 			return result.Success ? Results.Ok(result.Value) : Results.NotFound(result.Error);
 		})
@@ -80,7 +85,7 @@ public static class ArticleEndpoints
 
 		group.MapDelete("/{id}", async ([FromRoute] string id, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var articleId))
+			if (!Guid.TryParse(id, out var articleId))
 			{
 				return Results.BadRequest("Invalid article ID format");
 			}

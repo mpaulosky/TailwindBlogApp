@@ -29,7 +29,7 @@ public class VerticalSliceArchitectureTests
 	{
 		// Arrange
 		var assembly = AssemblyReference.ApiService;
-		var features = new[] { "Article", "Category" };  // Changed from "Articles", "Categories"
+		var features = new[] { "Articles", "Categories" };  // Using plural form to match actual namespaces
 
 		// Act & Assert
 		foreach (var feature in features)
@@ -166,16 +166,16 @@ public class VerticalSliceArchitectureTests
 		// Assert
 		// There should be at least one handler
 		handlers.Should().NotBeEmpty("There should be at least one request handler in the assembly");
-		
+
 		foreach (var handler in handlers)
 		{
 			// Check that the handler type itself is registered as a service
 			var descriptor = services
 					.FirstOrDefault(d => d.ImplementationType == handler);
-			
+
 			descriptor.Should().NotBeNull(
 					$"Handler {handler.Name} should be registered with dependency injection");
-			
+
 			// Check lifetime - handlers should typically be transient
 			descriptor.Lifetime.Should().Be(ServiceLifetime.Transient,
 					$"Handler {handler.Name} should have a Transient lifetime");

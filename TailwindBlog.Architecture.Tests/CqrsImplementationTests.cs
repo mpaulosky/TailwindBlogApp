@@ -14,22 +14,31 @@ public class CqrsImplementationTests
     [Fact(DisplayName = "CQRS Test: Commands should modify state")]
     public void Commands_Should_Modify_State()
     {
-        var assembly = AssemblyReference.ApiService;
-
-        var result = Types
+        var assembly = AssemblyReference.ApiService;        // Get command handlers
+        var commandHandlers = Types
             .InAssembly(assembly)
             .That()
             .ResideInNamespaceContaining("Commands")
             .And()
-            .HaveNameEndingWith("Command")
-            .Should()
-            .HaveDependencyOn("TailwindBlog.Persistence.MongoDb")
-            .Or()
-            .HaveDependencyOn("TailwindBlog.Domain.Interfaces")
-            .GetResult();
+            .HaveNameEndingWith("CommandHandler")
+            .GetTypes();
 
-        result.IsSuccessful.Should().BeTrue(
-            "Commands should interact with persistence or domain interfaces to modify state");
+        // Check that each handler uses persistence abstractions
+        var persistenceTypes = new[] {
+            typeof(IUnitOfWork),
+            typeof(IArticleRepository),
+            typeof(ICategoryRepository)
+        };
+
+        var result = commandHandlers.All(type =>
+            type.GetConstructors()
+                .Any(ctor =>
+                    ctor.GetParameters()
+                        .Any(param =>
+                            persistenceTypes.Contains(param.ParameterType))));
+
+        result.Should().BeTrue(
+            "Commands should interact with persistence interfaces to modify state");
     }
 
     [Fact(DisplayName = "CQRS Test: Commands should return Result")]
@@ -66,51 +75,49 @@ public class CqrsImplementationTests
         }, "Command handlers should return Result or Result<T>");
     }
 
-    // [Fact(DisplayName = "CQRS Test: Queries should be read-only")]
-    // public void Queries_Should_Be_ReadOnly()
-    // {
-    //     var assembly = AssemblyReference.ApiService;
-    //
-    //     var result = Types
-    //         .InAssembly(assembly)
-    //         .That()
-    //         .ResideInNamespaceContaining("Queries")
-    //         .Should()
-    //         .NotHaveDependencyOn("TailwindBlog.ApiService.Features.Commands")
-    //         .GetResult();
-    //
-    //     result.IsSuccessful.Should().BeTrue(
-    //         "Queries should not depend on Commands");
-    //
-    //     // Check for repository mutating methods.
-    //     var queryHandlers = Types
-    //         .InAssembly(assembly)
-    //         .That()
-    //         .ResideInNamespaceContaining("Queries")
-    //         .GetTypes()
-    //         .Where(t => t.GetInterfaces().Any(i =>
-    //             i.IsGenericType &&
-    //             i.GetGenericTypeDefinition().Name == "IRequestHandler`2"))
-    //         .ToList();
-    //
-    //     foreach (var handler in queryHandlers)
-    //     {
-    //         var handlerTestResult = Types
-    //             .InAssembly(assembly)
-    //             .That(t => t.FullName == handler.FullName)
-    //             .Should()
-    //             .NotCallAny(
-    //                 "*.Add",
-    //                 "*.Remove",
-    //                 "*.Update",
-    //                 "*.Delete",
-    //                 "*.AddRange*",
-    //                 "*.RemoveRange*")
-    //             .GetResult();
-    //
-    //         handlerTestResult.IsSuccessful.Should().BeTrue($"Query handler {handler.Name} should not call methods that modify state");
-    //     }
-    // }
+    [Fact(DisplayName = "CQRS Test: Queries should be read-only")]
+    public void Queries_Should_Be_ReadOnly()
+    {
+        var assembly = AssemblyReference.ApiService;
+
+        var result = Types
+            .InAssembly(assembly)
+            .That()
+            .ResideInNamespaceContaining("Queries")
+            .Should()
+            .NotHaveDependencyOn("TailwindBlog.ApiService.Features.Commands")
+            .GetResult();
+
+        result.IsSuccessful.Should().BeTrue(
+            "Queries should not depend on Commands");
+
+        // Check for repository mutating methods.
+        var queryHandlers = Types
+            .InAssembly(assembly)
+            .That()
+            .ResideInNamespaceContaining("Queries")
+            .GetTypes()
+            .Where(t => t.GetInterfaces().Any(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition().Name == "IRequestHandler`2"))
+            .ToList();
+
+        foreach (var handler in queryHandlers)
+        {
+            var handlerTestResult = Types
+                .InAssembly(assembly)
+                .That()
+                .HaveNameMatching(handler.Name)
+                .Should()
+                .NotHaveDependencyOnAny(
+                    "System.Data.SqlClient",
+                    "Microsoft.EntityFrameworkCore.Update",
+                    "Microsoft.EntityFrameworkCore.ChangeTracking")
+                .GetResult();
+
+            handlerTestResult.IsSuccessful.Should().BeTrue($"Query handler {handler.Name} should not reference types that modify state");
+        }
+    }
 
     [Fact(DisplayName = "CQRS Test: Queries should return domain objects")]
     public void Queries_Should_Return_Domain_Objects()

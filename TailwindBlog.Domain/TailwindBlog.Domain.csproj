@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="Bogus" />
+      <PackageReference Include="FluentValidation" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
       <PackageReference Include="MongoDB.Driver" />
       <PackageReference Include="MongoDB.EntityFrameworkCore" />

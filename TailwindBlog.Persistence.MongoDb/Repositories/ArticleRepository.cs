@@ -7,6 +7,11 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using TailwindBlog.Domain.Entities;
+using TailwindBlog.Domain.Interfaces;
+
 namespace TailwindBlog.Persistence.Repositories;
 
 public sealed class ArticleRepository : Repository<Article>, IArticleRepository
@@ -25,4 +30,8 @@ public sealed class ArticleRepository : Repository<Article>, IArticleRepository
 
 	}
 
+	public async Task<IEnumerable<Article>> GetAllAsync()
+	{
+		return await DbSet.ToListAsync();
+	}
 }

@@ -19,7 +19,7 @@ public static class DependencyInjection
 
 		var connectionString = configuration.GetConnectionString(DatabaseName) ??
 													throw new InvalidOperationException(
-															"Connection string 'tailwind-blog' not found.");
+															$"Connection string '{DatabaseName}' not found.");
 
 		services.AddDbContext<AppDbContext>(options =>
 				options.UseMongoDB(connectionString, DatabaseName));

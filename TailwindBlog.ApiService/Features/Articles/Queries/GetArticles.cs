@@ -13,7 +13,7 @@ namespace TailwindBlog.ApiService.Features.Articles.Queries;
 
 public record GetArticlesQuery(int PageNumber = 1, int PageSize = 10) : IRequest<Result<PaginationModel<Article>>>;
 
-public class GetArticlesQueryHandler : IRequestHandler<GetArticlesQuery, Result<PaginationModel<Article>>>
+public sealed class GetArticlesQueryHandler : IRequestHandler<GetArticlesQuery, Result<PaginationModel<Article>>>
 {
 	private readonly IArticleRepository _articleRepository;
 

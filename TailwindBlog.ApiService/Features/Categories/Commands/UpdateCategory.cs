@@ -11,7 +11,7 @@ namespace TailwindBlog.ApiService.Features.Categories.Commands;
 
 public record UpdateCategoryCommand(Category Category) : IRequest<Result<Category>>;
 
-public class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<Category>>
+public sealed class UpdateCategoryCommandHandler : IRequestHandler<UpdateCategoryCommand, Result<Category>>
 {
 	private readonly ICategoryRepository _categoryRepository;
 	private readonly IUnitOfWork _unitOfWork;

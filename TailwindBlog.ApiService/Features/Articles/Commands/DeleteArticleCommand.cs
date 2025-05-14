@@ -7,11 +7,17 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
+using MongoDB.Bson;
+using TailwindBlog.Domain.Abstractions;
+
 namespace TailwindBlog.ApiService.Features.Articles.Commands;
 
-public record DeleteArticleCommand(ObjectId ArticleId) : IRequest<Result<bool>>;
+/// <summary>
+/// Command to delete an article by its ObjectId.
+/// </summary>
+public record DeleteArticleCommand(Guid ArticleId) : IRequest<Result<bool>>;
 
-public class DeleteArticleCommandHandler : IRequestHandler<DeleteArticleCommand, Result<bool>>
+public sealed class DeleteArticleCommandHandler : IRequestHandler<DeleteArticleCommand, Result<bool>>
 {
 	private readonly IArticleRepository _articleRepository;
 	private readonly IUnitOfWork _unitOfWork;

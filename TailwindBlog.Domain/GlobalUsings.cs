@@ -32,4 +32,7 @@ global using TailwindBlog.Domain.Helpers;
 global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Models;
 
+global using FluentValidation;
+global using FluentValidation.Results;
+
 #endregion

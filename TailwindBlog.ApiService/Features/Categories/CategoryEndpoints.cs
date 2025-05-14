@@ -7,8 +7,13 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
+using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using TailwindBlog.ApiService.Features.Categories.Commands;
 using TailwindBlog.ApiService.Features.Categories.Queries;
+using TailwindBlog.Domain.Entities;
+using TailwindBlog.Domain.Models;
 
 namespace TailwindBlog.ApiService.Features.Categories;
 
@@ -17,24 +22,24 @@ public static class CategoryEndpoints
 	public static void MapCategoryEndpoints(this IEndpointRouteBuilder app)
 	{
 		var group = app.MapGroup("/api/categories")
-				.WithTags("Categories")
-				.WithOpenApi()
-				.RequireAuthorization();
+			.WithTags("Categories")
+			.WithOpenApi()
+			.RequireAuthorization();
 
-		group.MapGet("/", async ([FromServices] ISender sender, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, CancellationToken ct = default) =>
+		group.MapGet("/", async ([FromServices] ISender sender, [FromQuery] PagingParameters parameters, CancellationToken ct) =>
 		{
-			var query = new GetCategoriesQuery(pageNumber, pageSize);
+			var query = new GetCategoriesQuery(parameters.PageNumber, parameters.PageSize);
 			var result = await sender.Send(query, ct);
 			return result.Success ? Results.Ok(result.Value) : Results.BadRequest(result.Error);
 		})
-		.WithName("GetCategories")
+		.WithName("GetAllCategories")
 		.WithDisplayName("Get all categories")
 		.Produces<PaginationModel<Category>>(StatusCodes.Status200OK)
 		.Produces(StatusCodes.Status400BadRequest);
 
 		group.MapGet("/{id}", async ([FromRoute] string id, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var categoryId))
+			if (!Guid.TryParse(id, out var categoryId))
 			{
 				return Results.BadRequest("Invalid category ID format");
 			}
@@ -52,9 +57,10 @@ public static class CategoryEndpoints
 		group.MapPost("/", async ([FromBody] Category category, [FromServices] ISender sender, CancellationToken ct) =>
 		{
 			var command = new CreateCategoryCommand(category);
-			var result = await sender.Send(command, ct); return result.Success && result.Value is not null
-													? Results.Created($"/api/categories/{result.Value.Id}", result.Value)
-													: Results.BadRequest(result.Error ?? "Failed to create category");
+			var result = await sender.Send(command, ct);
+			return result.Success && result.Value is not null
+				? Results.Created($"/api/categories/{result.Value.Id}", result.Value)
+				: Results.BadRequest(result.Error ?? "Failed to create category");
 		})
 		.WithName("CreateCategory")
 		.WithDisplayName("Create a new category")
@@ -63,7 +69,7 @@ public static class CategoryEndpoints
 
 		group.MapPut("/{id}", async ([FromRoute] string id, [FromBody] Category category, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var categoryId) || category.Id != categoryId)
+			if (!Guid.TryParse(id, out var categoryId) || category.Id != categoryId)
 			{
 				return Results.BadRequest("Invalid category ID format or ID mismatch");
 			}
@@ -80,7 +86,7 @@ public static class CategoryEndpoints
 
 		group.MapDelete("/{id}", async ([FromRoute] string id, [FromServices] ISender sender, CancellationToken ct) =>
 		{
-			if (!ObjectId.TryParse(id, out var categoryId))
+			if (!Guid.TryParse(id, out var categoryId))
 			{
 				return Results.BadRequest("Invalid category ID format");
 			}

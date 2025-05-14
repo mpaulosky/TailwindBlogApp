@@ -22,7 +22,7 @@ public class UnitOfWorkTests
 		var unitOfWork = new UnitOfWork(dbContext);
 
 		// Act
-		var result = await unitOfWork.SaveChangesAsync(TestContext.Current.CancellationToken);
+		var result = await unitOfWork.SaveChangesAsync(CancellationToken.None);
 
 		// Assert
 		result.Should().Be(1);

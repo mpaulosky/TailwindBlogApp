@@ -9,9 +9,9 @@
 
 namespace TailwindBlog.ApiService.Features.Articles.Queries;
 
-public record GetArticleByIdQuery(ObjectId ArticleId) : IRequest<Result<Article>>;
+public record GetArticleByIdQuery(Guid ArticleId) : IRequest<Result<Article>>;
 
-public class GetArticleByIdQueryHandler : IRequestHandler<GetArticleByIdQuery, Result<Article>>
+public sealed class GetArticleByIdQueryHandler : IRequestHandler<GetArticleByIdQuery, Result<Article>>
 {
 	private readonly IArticleRepository _articleRepository;
 

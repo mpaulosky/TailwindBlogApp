@@ -8,16 +8,20 @@
 // =======================================================
 
 using FluentValidation;
+using MongoDB.Bson;
+using TailwindBlog.ApiService.Features.Articles.Commands;
 
 namespace TailwindBlog.ApiService.Features.Articles.Validators;
 
-public class UpdateArticleCommandValidator : AbstractValidator<Commands.UpdateArticleCommand>
+public sealed class UpdateArticleCommandValidator : AbstractValidator<UpdateArticleCommand>
 {
 	public UpdateArticleCommandValidator()
 	{
+		RuleFor(x => x.ArticleId)
+			.NotEqual(Guid.Empty).WithMessage("ArticleId is required.");
 		RuleFor(x => x.Article.Title)
 			.NotEmpty().WithMessage("Title is required.")
-			.MaximumLength(100);
+			.MaximumLength(120);
 		RuleFor(x => x.Article.Introduction)
 			.NotEmpty().WithMessage("Introduction is required.");
 		RuleFor(x => x.Article.CoverImageUrl)

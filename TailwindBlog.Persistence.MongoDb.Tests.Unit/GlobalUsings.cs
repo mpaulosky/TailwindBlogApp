@@ -16,11 +16,15 @@ global using System.Runtime.CompilerServices;
 global using System.Threading;
 global using System.Threading.Tasks;
 
+global using Bogus;
+
 global using FluentAssertions;
+global using FluentAssertions.Extensions;
 
 global using JetBrains.Annotations;
 
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Query;
 global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
@@ -32,12 +36,8 @@ global using MongoDB.EntityFrameworkCore;
 global using NSubstitute;
 
 global using TailwindBlog.Domain.Abstractions;
-global using TailwindBlog.Domain.Constants;
 global using TailwindBlog.Domain.Entities;
-global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Models;
-global using TailwindBlog.Persistence;
-global using TailwindBlog.Persistence.Repositories;
 
 global using Xunit;
 

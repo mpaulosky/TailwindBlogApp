@@ -11,7 +11,7 @@ namespace TailwindBlog.ApiService.Features.Articles.Commands;
 
 public record CreateArticleCommand(Article Article) : IRequest<Result<Article>>;
 
-public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand, Result<Article>>
+public sealed class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand, Result<Article>>
 {
 	private readonly IArticleRepository _articleRepository;
 	private readonly IUnitOfWork _unitOfWork;

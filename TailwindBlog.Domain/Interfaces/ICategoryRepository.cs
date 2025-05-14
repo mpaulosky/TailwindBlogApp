@@ -24,7 +24,7 @@ public interface ICategoryRepository
 
 	Task<IEnumerable<Category>> GetAllAsync();
 
-	Task<Category?> GetByIdAsync(ObjectId id);
+	Task<Category?> GetByIdAsync(Guid id);
 
 	void Remove(Category entity);
 

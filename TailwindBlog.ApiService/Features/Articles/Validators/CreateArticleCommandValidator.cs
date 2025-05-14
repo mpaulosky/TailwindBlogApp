@@ -8,16 +8,17 @@
 // =======================================================
 
 using FluentValidation;
+using TailwindBlog.ApiService.Features.Articles.Commands;
 
 namespace TailwindBlog.ApiService.Features.Articles.Validators;
 
-public class CreateArticleCommandValidator : AbstractValidator<Commands.CreateArticleCommand>
+public sealed class CreateArticleCommandValidator : AbstractValidator<CreateArticleCommand>
 {
 	public CreateArticleCommandValidator()
 	{
 		RuleFor(x => x.Article.Title)
 			.NotEmpty().WithMessage("Title is required.")
-			.MaximumLength(100);
+			.MaximumLength(120);
 		RuleFor(x => x.Article.Introduction)
 			.NotEmpty().WithMessage("Introduction is required.");
 		RuleFor(x => x.Article.CoverImageUrl)

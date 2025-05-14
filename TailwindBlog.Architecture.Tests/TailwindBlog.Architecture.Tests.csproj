@@ -1,35 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <OutputType>Exe</OutputType>
-
+        <IsTestProject>true</IsTestProject>
     </PropertyGroup>
 
     <ItemGroup>
-
         <Using Include="Xunit"/>
-
     </ItemGroup>
 
     <ItemGroup>
-
         <PackageReference Include="coverlet.collector"/>
         <PackageReference Include="FluentAssertions"/>
         <PackageReference Include="JetBrains.Annotations"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk"/>
         <PackageReference Include="NSubstitute"/>
-        <PackageReference Include="xunit.v3"/>
+        <PackageReference Include="xunit"/>
         <PackageReference Include="xunit.runner.visualstudio"/>
         <PackageReference Include="NetArchTest.Rules"/>
-
     </ItemGroup>
 
     <ItemGroup>
-
         <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
         <ProjectReference Include="..\TailwindBlog.ApiService\TailwindBlog.ApiService.csproj"/>
         <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>

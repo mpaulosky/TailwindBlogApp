@@ -8,14 +8,16 @@
 // =======================================================
 
 using FluentValidation;
+using MongoDB.Bson;
+using TailwindBlog.ApiService.Features.Articles.Commands;
 
 namespace TailwindBlog.ApiService.Features.Articles.Validators;
 
-public class DeleteArticleCommandValidator : AbstractValidator<Commands.DeleteArticleCommand>
+public sealed class DeleteArticleCommandValidator : AbstractValidator<DeleteArticleCommand>
 {
 	public DeleteArticleCommandValidator()
 	{
 		RuleFor(x => x.ArticleId)
-			.NotEmpty().WithMessage("ArticleId is required.");
+			.NotEqual(Guid.Empty).WithMessage("ArticleId is required.");
 	}
 }

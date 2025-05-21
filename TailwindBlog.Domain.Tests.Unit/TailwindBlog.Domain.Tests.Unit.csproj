@@ -26,6 +26,7 @@
         <PackageReference Include="NSubstitute" />
         <PackageReference Include="WaffleGenerator.Bogus" />
         <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.extensibility.execution" />
         <PackageReference Include="xunit.runner.visualstudio"/>
     </ItemGroup>
 

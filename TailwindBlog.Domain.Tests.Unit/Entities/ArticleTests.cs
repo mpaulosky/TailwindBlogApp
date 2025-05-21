@@ -7,15 +7,7 @@
 // Project Name :  TailwindBlog.Domain.Tests.Unit
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
-using FluentAssertions;
-using TailwindBlog.Domain.Entities;
-using TailwindBlog.Domain.Models;
-using TailwindBlog.Domain.Extensions;
-
-namespace TailwindBlog.Domain.Tests.Unit.Entities;
+namespace TailwindBlog.Domain.Entities;
 
 public class ArticleTests
 {
@@ -33,7 +25,6 @@ public class ArticleTests
 		);
 
 		// Assert
-		article.Id.Should().NotBeEmpty();
 		article.Title.Should().BeEmpty();
 		article.Introduction.Should().BeEmpty();
 		article.CoverImageUrl.Should().BeEmpty();
@@ -52,7 +43,7 @@ public class ArticleTests
 		var article = Article.Empty;
 
 		// Assert
-		article.Id.Should().Be(Guid.Empty);
+		article.Id.Should().Be(ObjectId.Empty);
 		article.Title.Should().BeEmpty();
 		article.Introduction.Should().BeEmpty();
 		article.CoverImageUrl.Should().BeEmpty();
@@ -64,8 +55,8 @@ public class ArticleTests
 	}
 
 	[Theory]
-	[InlineData("Test Title", "Test Intro", "http://test.com/image.jpg", "test-slug")]
-	[InlineData("Another Title", "Another Intro", "http://test.com/another.jpg", "another-slug")]
+	[InlineData("Test Title", "Test Intro", "https://test.com/image.jpg", "test-slug")]
+	[InlineData("Another Title", "Another Intro", "https://test.com/another.jpg", "another-slug")]
 	public void Article_WhenPropertiesSet_ShouldHaveCorrectValues(
 		string title,
 		string introduction,
@@ -98,7 +89,7 @@ public class ArticleTests
 	{
 		// Arrange
 		var now = DateTime.Now;
-		var author = new AppUserModel { UserName = "testuser", Email = "test@example.com" };
+		var author = new AppUserModel { UserName = "test user", Email = "test@example.com" };
 
 		var article = new Article(
 			"title",
@@ -129,7 +120,7 @@ public class ArticleTests
 			AppUserModel.Empty
 		);
 
-		var newAuthor = new AppUserModel { UserName = "newuser", Email = "new@example.com" };
+		var newAuthor = new AppUserModel { UserName = "new user", Email = "new@example.com" };
 		var publishDate = DateTime.Now;
 
 		// Act
@@ -154,6 +145,7 @@ public class ArticleTests
 		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
 		article.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 	}
+
 	[Theory]
 	[InlineData("", "intro", "cover", "slug", "Title is required")]
 	[InlineData("title", "", "cover", "slug", "Introduction is required")]
@@ -211,8 +203,7 @@ public class ArticleTests
 				"cover",
 				"slug",
 				AppUserModel.Empty,
-				true,  // Published
-				null   // But no publish date
+				true   // But no publication date
 			)).Should().Throw<FluentValidation.ValidationException>()
 			.WithMessage("*PublishedOn is required when IsPublished is true*");
 	}

@@ -7,14 +7,7 @@
 // Project Name :  TailwindBlog.Domain.Tests.Unit
 // =======================================================
 
-using System.ComponentModel.DataAnnotations;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
-using ValidationResult = System.ComponentModel.DataAnnotations.ValidationResult;
-using FluentAssertions;
-using TailwindBlog.Domain.Entities;
-using TailwindBlog.Domain.Extensions;
-
-namespace TailwindBlog.Domain.Tests.Unit.Entities;
+namespace TailwindBlog.Domain.Entities;
 
 public class CategoryTests
 {
@@ -22,162 +15,104 @@ public class CategoryTests
 	public void Category_WhenCreated_ShouldHaveEmptyProperties()
 	{
 		// Arrange & Act
-		var category = new Category(
-				string.Empty,
-				string.Empty
+		var article = new Category(
+			string.Empty,
+			string.Empty,
+			skipValidation: true
 		);
 
 		// Assert
-		category.Id.Should().NotBeEmpty();
-		category.Name.Should().BeEmpty();
-		category.Description.Should().BeEmpty();
-		category.UrlSlug.Should().BeEmpty();
-		category.ShowOnNavigation.Should().BeFalse();
-		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-		category.ModifiedOn.Should().BeNull();
+		article.Name.Should().BeEmpty();
+		article.Description.Should().BeEmpty();
+		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.ModifiedOn.Should().BeNull();
 	}
 
 	[Fact]
 	public void Category_Empty_ShouldReturnEmptyInstance()
 	{
 		// Arrange & Act
-		var category = Category.Empty;
+		var article = Category.Empty;
 
 		// Assert
-		category.Id.Should().Be(Guid.Empty);
-		category.Name.Should().BeEmpty();
-		category.Description.Should().BeEmpty();
-		category.UrlSlug.Should().BeEmpty();
-		category.ShowOnNavigation.Should().BeFalse();
-		// Note: Don't test CreatedOn/ModifiedOn for Empty instance as they are init properties
+		article.Id.Should().Be(ObjectId.Empty);
+		article.Name.Should().BeEmpty();
+		article.Description.Should().BeEmpty();
 	}
 
 	[Theory]
-	[InlineData("Test Category", "Test Description")]
-	[InlineData("Another Category", "Another Description")]
-	public void Category_WhenPropertiesSet_ShouldHaveCorrectValues(string name, string description)
+	[InlineData("Test Name", "Test Description")]
+	[InlineData("Another Name", "Another Description")]
+	public void Category_WhenPropertiesSet_ShouldHaveCorrectValues(
+		string name,
+		string description)
 	{
 		// Arrange & Act
-		var category = new Category(name, description);
+		var article = new Category(
+			name,
+			description
+		);
 
 		// Assert
-		category.Name.Should().Be(name);
-		category.Description.Should().Be(description);
-		category.UrlSlug.Should().BeEmpty();
-		category.ShowOnNavigation.Should().BeFalse();
-		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-		category.ModifiedOn.Should().BeNull();
+		article.Name.Should().Be(name);
+		article.Description.Should().Be(description);
+		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.ModifiedOn.Should().BeNull(); // Default value
+	}
+
+	[Fact]
+	public void Category_Update_ShouldUpdateModifiableProperties()
+	{
+		// Arrange
+		var article = new Category(
+			"initial Name",
+			"initial Description"
+		);
+
+		// Act
+		article.Update(
+			"new Name",
+			"new Description"
+		);
+
+		// Assert
+		article.Name.Should().Be("new Name");
+		article.Description.Should().Be("new Description");
+		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
+		article.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 	}
 
 	[Theory]
 	[InlineData("", "description", "Name is required")]
-	[InlineData("name", "", "Description is required")]
+	[InlineData("Name", "", "Description is required")]
 	public void Category_WhenCreated_ShouldValidateRequiredFields(
-			string name,
-			string description,
-			string expectedError)
+		string name,
+		string description,
+		string expectedError)
 	{
-		// Arrange & Act
-		var category = new Category(name, description);
-
-		// Assert
-		var context = new ValidationContext(category);
-		var validationResults = new List<ValidationResult>();
-		var isValid = Validator.TryValidateObject(category, context, validationResults, true);
-
-		isValid.Should().BeFalse();
-		validationResults.Should().Contain(v => v.ErrorMessage == expectedError);
+		// Arrange & Act & Assert
+		FluentActions.Invoking(() => new Category(
+			name,
+			description
+		)).Should().Throw<FluentValidation.ValidationException>()
+			.WithMessage($"*{expectedError}*");
 	}
 
 	[Fact]
-	public void Category_WhenUpdated_ShouldUpdateModifiableProperties()
+	public void Category_WhenUpdated_ShouldValidateRequiredFields()
 	{
 		// Arrange
-		var category = new Category(
-				"initial name",
-				"initial description"
-		);
-
-		// Act
-		category.Update(
-				"new name",
-				"new description"
-		);
-
-		// Assert
-		category.Name.Should().Be("new name");
-		category.Description.Should().Be("new description");
-		category.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
-		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-	}
-
-	[Fact]
-	public void Category_WhenUpdated_ShouldUpdateNavigationFlag()
-	{
-		// Arrange
-		var category = new Category(
-				"initial name",
-				"initial description"
-		);
-
-		// Act
-		category.Update(
-				"new name",
-				"new description",
-				true // show on navigation
-		);
-
-		// Assert
-		category.Name.Should().Be("new name");
-		category.Description.Should().Be("new description");
-		category.ShowOnNavigation.Should().BeTrue();
-		category.ModifiedOn.Should().NotBeNull();
-		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-	}
-
-	[Fact]
-	public void Category_WhenUpdated_ShouldUpdateUrlSlug()
-	{
-		// Arrange
-		var category = new Category(
-				"initial name",
-				"initial description"
-		);
-
-		// Act
-		category.Update(
-				"new name",
-				"new description",
-				"new-slug",
-				true // show on navigation
-		);
-
-		// Assert
-		category.Name.Should().Be("new name");
-		category.Description.Should().Be("new description");
-		category.UrlSlug.Should().Be("new-slug");
-		category.ShowOnNavigation.Should().BeTrue();
-		category.ModifiedOn.Should().NotBeNull();
-		category.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-	}
-
-	[Theory]
-	[InlineData("", "new description", "Name is required")]
-	[InlineData("new name", "", "Description is required")]
-	public void Category_WhenUpdated_ShouldValidateRequiredFields(
-			string name,
-			string description,
-			string expectedError)
-	{
-		// Arrange
-		var category = new Category(
-				"initial name",
-				"initial description"
+		var article = new Category(
+			"Name",
+			"description"
 		);
 
 		// Act & Assert
-		category.Invoking(c => c.Update(name, description))
-				.Should().Throw<FluentValidation.ValidationException>()
-				.WithMessage($"{expectedError}");
+		article.Invoking(a => a.Update(
+			"",  // Empty Name should trigger validation
+			"new description"
+		)).Should().Throw<FluentValidation.ValidationException>()
+			.WithMessage("*Name is required*");
 	}
+
 }

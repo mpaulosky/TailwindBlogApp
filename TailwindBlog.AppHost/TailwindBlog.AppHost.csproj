@@ -11,7 +11,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TailwindBlog.ApiService\TailwindBlog.ApiService.csproj"/>
         <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" IsAspireProjectResource="false"/>
         <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
     </ItemGroup>

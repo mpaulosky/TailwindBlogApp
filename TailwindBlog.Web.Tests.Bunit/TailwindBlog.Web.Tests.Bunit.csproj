@@ -6,6 +6,7 @@
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
         <RootNamespace>TailwindBlog.Web</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +27,7 @@
         <PackageReference Include="NSubstitute.Analyzers.CSharp" />
         <PackageReference Include="WaffleGenerator.Bogus"/>
         <PackageReference Include="xunit"/>
+        <PackageReference Include="xunit.extensibility.execution"/>
         <PackageReference Include="xunit.runner.visualstudio"/>
     </ItemGroup>
 

@@ -7,11 +7,6 @@
 // Project Name :  TailwindBlog.ApiService
 // =======================================================
 
-using FluentValidation;
-using TailwindBlog.Domain.Extensions;
-using TailwindBlog.Domain.Validators;
-using ValidationException = FluentValidation.ValidationException;
-
 namespace TailwindBlog.Domain.Entities;
 
 /// <summary>
@@ -24,10 +19,15 @@ public class Category : Entity
 	/// </summary>
 	/// <param name="name">The name of the category.</param>
 	/// <param name="description">A description of what the category represents.</param>
-	public Category(string name, string description)
+	/// <param name="skipValidation">If true, skips validation on construction.</param>
+	public Category(string name, string description, bool skipValidation = false)
 	{
 		Name = name;
 		Description = description;
+		if (!skipValidation)
+		{
+			ValidateState();
+		}
 	}
 
 	// Parameterless constructor for EF Core and serialization
@@ -48,25 +48,12 @@ public class Category : Entity
 	public string Description { get; private set; } = string.Empty;
 
 	/// <summary>
-	/// Gets the URL-friendly version of the category name.
-	/// </summary>
-	[Display(Name = "Url Slug")]
-	[MaxLength(100)]
-	public string UrlSlug { get; private set; } = string.Empty;
-
-	/// <summary>
-	/// Gets a value indicating whether this category should be shown in navigation menus.
-	/// </summary>
-	[Display(Name = "Show On Navigation")]
-	public bool ShowOnNavigation { get; private set; }
-
-	/// <summary>
 	/// Gets an empty category instance.
 	/// </summary>
 	public static Category Empty =>
-		new(string.Empty, string.Empty)
+		new(string.Empty, string.Empty, skipValidation: true)
 		{
-			Id = Guid.Empty
+			Id = ObjectId.Empty
 		};
 
 	/// <summary>
@@ -74,7 +61,8 @@ public class Category : Entity
 	/// </summary>
 	/// <param name="name">The new name for the category.</param>
 	/// <param name="description">The new description for the category.</param>
-	/// <exception cref="ValidationException">Thrown when name or description is empty or whitespace.</exception>
+	/// <prram name="skipValidation">If true, skips validation on update.</prram>
+	/// <exception cref="ValidationException">Thrown when the name or description is empty or whitespace.</exception>
 	public void Update(string name, string description)
 	{
 		if (string.IsNullOrWhiteSpace(name))
@@ -85,55 +73,17 @@ public class Category : Entity
 		Name = name;
 		Description = description;
 		ModifiedOn = DateTime.Now;
+		ValidateState();
 	}
 
-	/// <summary>
-	/// Updates the category properties including navigation visibility.
-	/// </summary>
-	/// <param name="name">The new name for the category.</param>
-	/// <param name="description">The new description for the category.</param>
-	/// <param name="showOnNavigation">Whether to show this category in navigation menus.</param>
-	/// <exception cref="ValidationException">Thrown when name or description is empty or whitespace.</exception>
-	public void Update(string name, string description, bool showOnNavigation)
+	public void UpdateName(string name)
 	{
-		Update(name, description);
-		ShowOnNavigation = showOnNavigation;
-	}
+		if (string.IsNullOrWhiteSpace(name))
+			throw new ValidationException("Name is required");
 
-	/// <summary>
-	/// Updates all properties of the category.
-	/// </summary>
-	/// <param name="name">The new name for the category.</param>
-	/// <param name="description">The new description for the category.</param>
-	/// <param name="urlSlug">The URL-friendly version of the name.</param>
-	/// <param name="showOnNavigation">Whether to show this category in navigation menus.</param>
-	/// <exception cref="ValidationException">Thrown when name or description is empty or whitespace.</exception>
-	public void Update(string name, string description, string urlSlug, bool showOnNavigation)
-	{
-		Update(name, description);
-		UrlSlug = urlSlug;
-		ShowOnNavigation = showOnNavigation;
-	}
-
-	/// <summary>
-	/// Updates the category properties and automatically generates a URL slug from the name.
-	/// </summary>
-	/// <param name="name">The new name for the category.</param>
-	/// <param name="description">The new description for the category.</param>
-	/// <param name="showOnNavigation">Whether to show this category in navigation menus.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
-	public void UpdateWithSlug(string name, string description, bool showOnNavigation = false)
-	{
-		Update(name, description);
-		UrlSlug = name.GenerateSlug();
-		ShowOnNavigation = showOnNavigation;
-
-		var validator = new CategoryValidator();
-		var validationResult = validator.Validate(this);
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(validationResult.Errors);
-		}
+		Name = name;
+		ModifiedOn = DateTime.Now;
+		ValidateState();
 	}
 
 	/// <summary>

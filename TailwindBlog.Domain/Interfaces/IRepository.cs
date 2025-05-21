@@ -11,7 +11,7 @@ public interface IRepository<T> where T : class
 	/// </summary>
 	/// <param name="id">The identifier</param>
 	/// <returns>The entity or null if not found</returns>
-	Task<T?> GetByIdAsync(Guid id);
+	Task<T?> GetByIdAsync(ObjectId id);
 
 	/// <summary>
 	/// Retrieves entities matching specified criteria
@@ -19,7 +19,13 @@ public interface IRepository<T> where T : class
 	/// <param name="criteria">The search criteria</param>
 	/// <returns>Matching entities</returns>
 	Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> criteria);
-
+	
+	/// <summary>
+	/// Retrieves all entities
+	/// </summary>
+	/// <returns>Matching entities</returns>
+	Task<IEnumerable<T>> GetAllAsync();
+	
 	/// <summary>
 	/// Adds a new entity
 	/// </summary>

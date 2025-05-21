@@ -7,8 +7,6 @@
 // Project Name:  TailwindBlog.Domain
 // =======================================================
 
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.Domain.Interfaces;
 
 /// <summary>
@@ -22,19 +20,19 @@ public interface ICategoryCache
 	/// <param name="id">The category ID.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>The cached category, or null if not found.</returns>
-	Task<Category?> GetAsync(Guid id, CancellationToken cancellationToken = default);
-
+	Task<Category?> GetAsync(ObjectId id, CancellationToken cancellationToken = default);
+	
 	/// <summary>
 	/// Sets a category in the cache.
 	/// </summary>
 	/// <param name="category">The category to cache.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	Task SetAsync(Category category, CancellationToken cancellationToken = default);
-
+	
 	/// <summary>
 	/// Removes a category from the cache.
 	/// </summary>
 	/// <param name="id">The category ID.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
-	Task RemoveAsync(Guid id, CancellationToken cancellationToken = default);
+	Task RemoveAsync(ObjectId id, CancellationToken cancellationToken = default);
 }

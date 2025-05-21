@@ -7,16 +7,20 @@
 // Project Name :  TailwindBlog.Domain
 // =======================================================
 
-using FluentValidation;
-using TailwindBlog.Domain.Validators;
-using ValidationException = FluentValidation.ValidationException;
-
 namespace TailwindBlog.Domain.Entities;
 
-[BsonCollection("articles")]
 public class Article : Entity
 {
-	public Article(string title, string introduction, string coverImageUrl, string urlSlug, AppUserModel author, bool isPublished = false, DateTime? publishedOn = null, bool skipValidation = false)
+
+	public Article(
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserModel author,
+			bool isPublished = false,
+			DateTime? publishedOn = null,
+			bool skipValidation = false)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -33,7 +37,15 @@ public class Article : Entity
 
 	// Parameterless constructor for EF Core and serialization
 	private Article() { }
-	public void Update(string title, string introduction, string coverImageUrl, string urlSlug, AppUserModel author, bool isPublished, DateTime? publishedOn)
+
+	public void Update(
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserModel author,
+			bool isPublished,
+			DateTime? publishedOn)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -42,6 +54,13 @@ public class Article : Entity
 		Author = author;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
+		ModifiedOn = DateTime.Now;
+		ValidateState();
+	}
+
+	public void UpdateTitle(string title)
+	{
+		Title = title;
 		ModifiedOn = DateTime.Now;
 		ValidateState();
 	}
@@ -70,10 +89,11 @@ public class Article : Entity
 
 	[Display(Name = "Published On")]
 	public DateTime? PublishedOn { get; protected internal set; }
+
 	public static Article Empty =>
 		new(string.Empty, string.Empty, string.Empty, string.Empty, AppUserModel.Empty, false, null, true)
 		{
-			Id = Guid.Empty
+			Id = ObjectId.Empty
 		};
 
 	private void ValidateState()

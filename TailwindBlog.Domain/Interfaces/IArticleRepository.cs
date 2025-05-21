@@ -24,7 +24,7 @@ public interface IArticleRepository
 
 	Task<IEnumerable<Article>> GetAllAsync();
 
-	Task<Article?> GetByIdAsync(Guid id);
+	Task<Article?> GetByIdAsync(ObjectId id);
 
 	Task<List<Article>?> GetByUserAsync(string userId);
 

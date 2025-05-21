@@ -15,7 +15,8 @@ namespace TailwindBlog.Domain.Abstractions;
 public abstract class Entity
 { /// <summary>	/// Gets the unique identifier for this entity.
 	/// </summary>	[Key]
-	public Guid Id { get; init; } = Guid.NewGuid();
+	[BsonId]
+	public ObjectId Id { get; init; } = ObjectId.GenerateNewId();
 
 	/// <summary>
 	/// Gets the date and time when this entity was created.

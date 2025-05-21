@@ -7,9 +7,6 @@
 // Project Name:  TailwindBlog.Domain
 // =======================================================
 
-using FluentValidation;
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.Domain.Validators;
 
 /// <summary>
@@ -22,17 +19,14 @@ public class CategoryValidator : AbstractValidator<Category>
 	/// </summary>
 	public CategoryValidator()
 	{
+
 		RuleFor(x => x.Name)
 			.NotEmpty().WithMessage("Name is required")
-			.MaximumLength(80).WithMessage("Name cannot be longer than 80 characters");
+			.MaximumLength(80);
 
 		RuleFor(x => x.Description)
-			.NotEmpty().WithMessage("Description is required")
-			.MaximumLength(100).WithMessage("Description cannot be longer than 100 characters");
+				.NotEmpty().WithMessage("Description is required")
+				.MaximumLength(100);
 
-		RuleFor(x => x.UrlSlug)
-			.MaximumLength(100).WithMessage("URL slug cannot be longer than 100 characters")
-			.Matches("^[a-z0-9-]*$").When(x => !string.IsNullOrEmpty(x.UrlSlug))
-			.WithMessage("URL slug can only contain lowercase letters, numbers, and hyphens");
 	}
 }

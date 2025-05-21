@@ -12,7 +12,7 @@ namespace TailwindBlog.Web.Components.Features.Articles.Models;
 public class ArticleModel
 {
 
-	public Guid Id { get; set; }
+	public ObjectId Id { get; set; }
 
 	public string Title { get; set; } = string.Empty;
 

@@ -58,7 +58,6 @@
 		{
 			var article = Helpers.ArticleGenerator.Generate(1).First();
 			var articleModel = article.Adapt<ArticleModel>();
-			articleModel.CoverImageUrl = $"https://picsum.photos/600/100/?random{i + 1}";
 			_articles?.Add(articleModel);
 		}
 

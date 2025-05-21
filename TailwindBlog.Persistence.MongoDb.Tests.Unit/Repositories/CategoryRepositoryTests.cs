@@ -7,125 +7,175 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb.Tests.Unit
 // =======================================================
 
+using TailwindBlog.Persistence.Repositories.TestData;
 
-using Microsoft.EntityFrameworkCore;
-using FluentAssertions;
-using TailwindBlog.Domain.Entities;
-using TailwindBlog.Domain.Models;
-using TailwindBlog.Persistence.Repositories;
-using Testcontainers.MongoDb;
-using System.Threading.Tasks;
+namespace TailwindBlog.Persistence.Repositories;
 
-namespace TailwindBlog.Persistence.MongoDb.Tests.Unit.Repositories;
-
-
-public class CategoryRepositoryTests : IAsyncLifetime
+[ExcludeFromCodeCoverage]
+public sealed class CategoryRepositoryTests
 {
-	private readonly MongoDbContainer _mongoDbContainer;
-	private AppDbContext _dbContext = null!;
-	private CategoryRepository _repository = null!;
+
+	private readonly CategoryRepository _sut;
+
+	private readonly IMongoDatabase _database;
+
+	private readonly IMongoCollection<Category> _collection;
+
+	private readonly Category _testCategory;
+
+	private readonly List<Category> _testCategories;
 
 	public CategoryRepositoryTests()
 	{
-		_mongoDbContainer = new MongoDbBuilder()
-			.WithImage("mongo:7.0")
-			.WithCommand(["--replSet", "rs0"])
-			.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", "root")
-			.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", "example")
-			.WithCleanUp(true)
-			.Build();
-	}
+		_database = Substitute.For<IMongoDatabase>();
+		_collection = Substitute.For<IMongoCollection<Category>>();
+		_database.GetCollection<Category>("categories").Returns(_collection);
 
-	public async Task InitializeAsync()
-	{
-		await _mongoDbContainer.StartAsync();
-		// Initiate the replica set
-		var client = new MongoDB.Driver.MongoClient(_mongoDbContainer.GetConnectionString());
-		var adminDb = client.GetDatabase("admin");
-		var command = new MongoDB.Bson.BsonDocument("replSetInitiate", new MongoDB.Bson.BsonDocument());
-		try { await adminDb.RunCommandAsync<MongoDB.Bson.BsonDocument>(command); } catch { /* ignore if already initiated */ }
+		_sut = new CategoryRepository(_database);
 
-		var settings = new BlogDatabaseSettings
-		{
-			ConnectionString = _mongoDbContainer.GetConnectionString(),
-			DatabaseName = "test-db"
-		};
-		_dbContext = new AppDbContext(settings);
-		await _dbContext.Database.EnsureCreatedAsync();
-		_repository = new CategoryRepository(_dbContext);
-	}
-
-	public async Task DisposeAsync()
-	{
-		await _dbContext.Database.EnsureDeletedAsync();
-		await _mongoDbContainer.StopAsync();
-		_dbContext.Dispose();
+		_testCategory = CategoryTestDataBuilder.CreateDefault();
+		_testCategories = CategoryTestDataBuilder.CreateDefaultMany(3);
 	}
 
 	[Fact]
-	public async Task GetAllAsync_Should_Return_All_Categories()
+	public void Add_ShouldInsertOneCategory()
 	{
-		// Arrange
-		var category1 = new Category("Category 1", "Description 1");
-		var category2 = new Category("Category 2", "Description 2");
-		_dbContext.Categories.AddRange(category1, category2);
-		await _dbContext.SaveChangesAsync();
-
 		// Act
-		var result = await _repository.GetAllAsync();
+		_sut.Add(_testCategory);
 
 		// Assert
-		var items = result.ToList();
-		items.Should().NotBeNull();
-		items.Should().HaveCount(2);
-		items.Should().Contain(c => c.Name == "Category 1");
-		items.Should().Contain(c => c.Name == "Category 2");
+		_collection.Received(1).InsertOne(
+				Arg.Is<Category>(c => c.Equals(_testCategory)),
+				Arg.Any<InsertOneOptions>());
 	}
 
 	[Fact]
-	public async Task Add_Should_Add_Category_To_Collection()
+	public async Task GetById_ShouldReturnCategory()
 	{
 		// Arrange
-		var category = new Category("Test Category", "Test Description");
+		var cursor = Substitute.For<IAsyncCursor<Category>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns([ _testCategory ]);
+
+		_collection.FindAsync(
+						Arg.Any<FilterDefinition<Category>>(),
+						Arg.Any<FindOptions<Category>>(),
+						CancellationToken.None)
+				.Returns(cursor);
 
 		// Act
-		_repository.Add(category);
-		await _dbContext.SaveChangesAsync();
+		var result = await _sut.GetByIdAsync(_testCategory.Id);
 
 		// Assert
-		var dbCategory = await _dbContext.Categories.FirstOrDefaultAsync(c => c.Name == category.Name);
-		dbCategory.Should().NotBeNull();
-		dbCategory!.Description.Should().Be(category.Description);
+		result.Should().BeEquivalentTo(_testCategory);
 	}
 
 	[Fact]
-	public async Task GetByIdAsync_Should_Return_Category_When_Found()
+	public async Task GetById_WhenCategoryNotFound_ShouldReturnNull()
 	{
 		// Arrange
-		var category = new Category("Test", "Description");
-		_dbContext.Categories.Add(category);
-		await _dbContext.SaveChangesAsync();
+		var cursor = Substitute.For<IAsyncCursor<Category>>();
+		cursor.MoveNextAsync().Returns(false);
+
+		_collection.FindAsync(
+						Arg.Any<FilterDefinition<Category>>(),
+						Arg.Any<FindOptions<Category>>(),
+						CancellationToken.None)
+				.Returns(cursor);
 
 		// Act
-		var result = await _repository.GetByIdAsync(category.Id);
-
-		// Assert
-		result.Should().NotBeNull();
-		result!.Name.Should().Be("Test");
-		result.Description.Should().Be("Description");
-	}
-
-	[Fact]
-	public async Task GetByIdAsync_Should_Return_Null_When_Not_Found()
-	{
-		// Arrange
-		// No categories added
-
-		// Act
-		var result = await _repository.GetByIdAsync(Guid.NewGuid());
+		var result = await _sut.GetByIdAsync(ObjectId.GenerateNewId());
 
 		// Assert
 		result.Should().BeNull();
 	}
-	// IAsyncLifetime handled by xUnit
+
+	[Fact]
+	public void Update_ShouldUpdateCategory()
+	{
+		// Act
+		_sut.Update(_testCategory);
+
+		// Assert
+		_collection.Received(1).ReplaceOne(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Is<Category>(c => c.Equals(_testCategory)),
+				Arg.Any<ReplaceOptions>());
+	}
+
+	[Fact]
+	public void Remove_ShouldDeleteCategory()
+	{
+		// Act
+		_sut.Remove(_testCategory);
+
+		// Assert
+		_collection.Received(1).DeleteOne(
+				Arg.Any<FilterDefinition<Category>>(),
+				Arg.Any<CancellationToken>());
+	}
+
+	[Fact]
+	public async Task GetAll_ShouldReturnAllCategories()
+	{
+		// Arrange
+		var cursor = Substitute.For<IAsyncCursor<Category>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns(_testCategories);
+
+		_collection.FindAsync(
+						Arg.Any<FilterDefinition<Category>>(),
+						Arg.Any<FindOptions<Category>>(),
+						CancellationToken.None)
+				.Returns(cursor);
+
+		// Act
+		var result = await _sut.GetAllAsync();
+
+		// Assert
+		result.Should().BeEquivalentTo(_testCategories);
+	}
+
+	[Fact]
+	public async Task GetAll_WhenNoCategories_ShouldReturnEmptyList()
+	{
+		// Arrange
+		var cursor = Substitute.For<IAsyncCursor<Category>>();
+		cursor.MoveNextAsync().Returns(false);
+
+		_collection.FindAsync(
+						Arg.Any<FilterDefinition<Category>>(),
+						Arg.Any<FindOptions<Category>>(),
+						CancellationToken.None)
+				.Returns(cursor);
+
+		// Act
+		var result = await _sut.GetAllAsync();
+
+		// Assert
+		result.Should().BeEmpty();
+	}
+
+	[Fact]
+	public async Task FindAsync_ShouldReturnMatchingCategories()
+	{
+		// Arrange
+		var matchingCategories = _testCategories.Where(c => c.Name.Contains("Test")).ToList();
+		var cursor = Substitute.For<IAsyncCursor<Category>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns(matchingCategories);
+
+		_collection.FindAsync(
+						Arg.Any<FilterDefinition<Category>>(),
+						Arg.Any<FindOptions<Category>>(),
+						CancellationToken.None)
+				.Returns(cursor);
+
+		// Act
+		var result = await _sut.FindAsync(c => c.Name.Contains("Test"));
+
+		// Assert
+		result.Should().BeEquivalentTo(matchingCategories);
+	}
+
 }

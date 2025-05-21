@@ -7,9 +7,7 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb.Tests.Unit
 // =======================================================
 
-using System;
-
-namespace TailwindBlog.Persistence.Repositories;
+namespace TailwindBlog.Persistence;
 
 /// <summary>
 /// Attribute to mark the subject under test in a test class.

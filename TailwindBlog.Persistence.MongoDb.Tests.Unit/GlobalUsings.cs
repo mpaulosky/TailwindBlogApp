@@ -37,8 +37,11 @@ global using NSubstitute;
 
 global using TailwindBlog.Domain.Abstractions;
 global using TailwindBlog.Domain.Entities;
+global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Models;
 
 global using Xunit;
+
+global using TailwindBlog.Persistence.Repositories;
 
 #endregion

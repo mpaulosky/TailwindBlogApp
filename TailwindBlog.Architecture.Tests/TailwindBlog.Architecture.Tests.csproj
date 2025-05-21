@@ -24,7 +24,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.ApiService\TailwindBlog.ApiService.csproj"/>
         <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
         <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj"/>
     </ItemGroup>

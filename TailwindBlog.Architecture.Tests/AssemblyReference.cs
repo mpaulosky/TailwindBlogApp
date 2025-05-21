@@ -14,7 +14,6 @@ namespace TailwindBlog.Architecture.Tests;
 public static class AssemblyReference
 {
 	public static Assembly Domain => typeof(Result).Assembly;
-	public static Assembly ApiService => typeof(ApiServiceProgram).Assembly;
 	public static Assembly Web => Assembly.Load("TailwindBlog.Web");
 	public static Assembly MongoDb => typeof(MongoDbRepository<>).Assembly;
 }

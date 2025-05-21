@@ -15,7 +15,6 @@ public class ApplicationConfigurationTests
 		var assemblies = new[]
 		{
 						AssemblyReference.Domain,
-						AssemblyReference.ApiService,
 						AssemblyReference.MongoDb,
 						AssemblyReference.Web
 				};
@@ -41,7 +40,6 @@ public class ApplicationConfigurationTests
 		var assemblies = new[]
 		{
 						AssemblyReference.Domain,
-						AssemblyReference.ApiService,
 						AssemblyReference.MongoDb,
 						AssemblyReference.Web
 				};

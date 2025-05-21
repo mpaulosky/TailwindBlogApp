@@ -20,7 +20,6 @@ global using MyMediator;
 
 global using NetArchTest.Rules;
 
-global using TailwindBlog.ApiService;
 global using TailwindBlog.Domain.Abstractions;
 global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Web;

@@ -7,21 +7,14 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using TailwindBlog.Domain.Entities;
-using TailwindBlog.Domain.Interfaces;
-
 namespace TailwindBlog.Persistence.Repositories;
 
 public sealed class CategoryRepository : Repository<Category>, ICategoryRepository
 {
-	public CategoryRepository(AppDbContext context)
-		: base(context)
+	private const string _collectionName = "categories";
+
+	public CategoryRepository(IMongoDatabase database)
+		: base(database, _collectionName)
 	{ }
 
-	public async Task<IEnumerable<Category>> GetAllAsync()
-	{
-		return await DbSet.ToListAsync();
-	}
 }

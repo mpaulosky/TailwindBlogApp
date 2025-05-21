@@ -16,26 +16,19 @@ public static class DependencyInjection
 			this IServiceCollection services,
 			IConfiguration configuration)
 	{
-
 		var connectionString = configuration.GetConnectionString(DatabaseName) ??
 													throw new InvalidOperationException(
 															$"Connection string '{DatabaseName}' not found.");
 
-		services.AddDbContext<AppDbContext>(options =>
-				options.UseMongoDB(connectionString, DatabaseName));
+		var client = new MongoClient(connectionString);
+		var database = client.GetDatabase(DatabaseName);
 
-		services.AddScoped<IApplicationDbContext>(sp =>
-				sp.GetRequiredService<AppDbContext>());
-
-		services.AddScoped<IUnitOfWork>(sp =>
-				sp.GetRequiredService<AppDbContext>());
-
+		services.AddSingleton(database);
+		services.AddScoped<IApplicationDbContext, AppDbContext>();
 		services.AddScoped<IArticleRepository, ArticleRepository>();
-
 		services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 		return services;
-
 	}
 
 }

@@ -12,6 +12,7 @@ namespace TailwindBlog.Persistence.Repositories.TestData;
 /// <summary>
 /// Builder class for creating test Article data.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class ArticleTestDataBuilder
 {
     private string _title = "Test Article";

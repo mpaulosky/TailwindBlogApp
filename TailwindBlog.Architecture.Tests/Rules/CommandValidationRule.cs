@@ -12,6 +12,7 @@ namespace TailwindBlog.Architecture.Tests.Rules;
 /// <summary>
 /// A custom rule that validates whether a command type implements IRequest or IValidatable interfaces.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public class CommandValidationRule : ICustomRule
 {
 

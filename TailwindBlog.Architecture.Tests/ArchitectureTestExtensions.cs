@@ -12,6 +12,7 @@ namespace TailwindBlog.Architecture.Tests;
 /// <summary>
 /// Extensions for architecture tests to help with common test patterns
 /// </summary>
+[ExcludeFromCodeCoverage]
 internal static class ArchitectureTestExtensions
 {
 	// Assembly helper

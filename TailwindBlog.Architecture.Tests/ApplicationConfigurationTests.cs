@@ -6,6 +6,7 @@
 
 namespace TailwindBlog.Architecture.Tests;
 
+[ExcludeFromCodeCoverage]
 public class ApplicationConfigurationTests
 {
 	[Fact(DisplayName = "Config Test: Configuration classes should follow naming convention")]

@@ -9,6 +9,8 @@
 
 namespace TailwindBlog.Domain.Entities;
 
+[ExcludeFromCodeCoverage]
+[TestSubject(typeof(Article))]
 public class ArticleTests
 {
 	[Fact]

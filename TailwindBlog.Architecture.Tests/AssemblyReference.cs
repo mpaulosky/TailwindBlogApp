@@ -7,10 +7,9 @@
 // Project Name :  TailwindBlog.Architecture.Tests
 // =======================================================
 
-using TailwindBlog.Persistence;
-
 namespace TailwindBlog.Architecture.Tests;
 
+[ExcludeFromCodeCoverage]
 public static class AssemblyReference
 {
 	public static Assembly Domain => typeof(Result).Assembly;

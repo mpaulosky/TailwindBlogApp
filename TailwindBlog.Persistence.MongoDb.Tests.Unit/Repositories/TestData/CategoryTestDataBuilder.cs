@@ -12,6 +12,7 @@ namespace TailwindBlog.Persistence.Repositories.TestData;
 /// <summary>
 /// Builder class for creating test Category data.
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class CategoryTestDataBuilder
 {
     private string _name = "Test Category";

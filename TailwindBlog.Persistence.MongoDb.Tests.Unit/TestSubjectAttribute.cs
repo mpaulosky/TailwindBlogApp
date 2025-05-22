@@ -13,6 +13,7 @@ namespace TailwindBlog.Persistence;
 /// Attribute to mark the subject under test in a test class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+[ExcludeFromCodeCoverage]
 public class TestSubjectAttribute : Attribute
 {
     /// <summary>

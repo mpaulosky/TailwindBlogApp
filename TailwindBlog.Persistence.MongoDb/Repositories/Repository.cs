@@ -7,82 +7,68 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
+using MongoDB.Bson;
+
 namespace TailwindBlog.Persistence.Repositories;
 
-public abstract class Repository<TEntity>
-		where TEntity : Entity
+public abstract class Repository<TEntity> : IRepository<TEntity>
+	where TEntity : Entity
 {
+	protected readonly IMongoCollection<TEntity> Collection;
 
-	protected readonly AppDbContext Context;
-
-	protected Repository(AppDbContext context)
+	protected Repository(IMongoDatabase database, string collectionName)
 	{
-
-		Context = context;
-
+		Collection = database.GetCollection<TEntity>(collectionName);
 	}
 
 	public void Add(TEntity entity)
 	{
-
-		Context.Set<TEntity>().Add(entity);
-
+		Collection.InsertOne(entity);
 	}
 
 	public async Task AddRangeAsync(IEnumerable<TEntity> entities)
 	{
-
-		await Context.Set<TEntity>().AddRangeAsync(entities);
-
+		await Collection.InsertManyAsync(entities);
 	}
 
 	public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
 	{
-
-		return await Context.Set<TEntity>().AnyAsync(predicate);
-
+		return await Collection.Find(predicate).AnyAsync();
 	}
 
-	public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+	public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> criteria)
 	{
-
-		return await Context.Set<TEntity>().Where(predicate).ToListAsync();
-
+		return await Collection.Find(criteria).ToListAsync();
 	}
 
 	public async Task<TEntity?> FindFirstAsync(Expression<Func<TEntity, bool>> predicate)
 	{
-
-		return await Context.Set<TEntity>().FirstOrDefaultAsync(predicate);
-
-	}
-
-	public async Task<IEnumerable<TEntity>> GetAllAsync()
-	{
-
-		return await Context.Set<TEntity>().AsNoTracking().ToListAsync();
-
+		return await Collection.Find(predicate).FirstOrDefaultAsync();
 	}
 
 	public async Task<TEntity?> GetByIdAsync(ObjectId id)
 	{
-
-		return await Context.Set<TEntity>()
-				.SingleOrDefaultAsync(a => a.Id == id);
-
+		return await Collection.Find(e => e.Id == id).FirstOrDefaultAsync();
 	}
+
 	public void Remove(TEntity entity)
 	{
+		Collection.DeleteOne(e => e.Id == entity.Id);
+	}
 
-		Context.Set<TEntity>().Remove(entity);
+	public void RemoveRange(IEnumerable<TEntity> entities)
+	{
+		var ids = entities.Select(e => e.Id).ToList();
+		Collection.DeleteMany(e => ids.Contains(e.Id));
+	}
 
+	public async Task<IEnumerable<TEntity>> GetAllAsync()
+	{
+		return await Collection.Find(_ => true).ToListAsync();
 	}
 
 	public void Update(TEntity entity)
 	{
-
-		Context.Set<TEntity>().Update(entity);
-
+		Collection.ReplaceOne(e => e.Id == entity.Id, entity);
 	}
-
 }

@@ -7,60 +7,169 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb.Tests.Unit
 // =======================================================
 
+using TailwindBlog.Persistence.Repositories.TestData;
+
 namespace TailwindBlog.Persistence.Repositories;
 
 [ExcludeFromCodeCoverage]
-public class ArticleRepositoryTests
+public sealed class ArticleRepositoryTests
 {
-	private readonly AppDbContext _dbContext;
-	private readonly ArticleRepository _repository;
-	private readonly CancellationToken _cancellationToken;
+
+	private readonly IMongoDatabase _database;
+
+	private readonly IMongoCollection<Article> _collection;
+
+	private readonly ArticleRepository _sut;
+
+	private readonly AppUserModel _testUser;
+
+	private readonly Article _testArticle;
+
+	private readonly List<Article> _testArticles;
 
 	public ArticleRepositoryTests()
 	{
-		_dbContext = Substitute.For<AppDbContext>(new DbContextOptions<AppDbContext>());
-		_repository = new ArticleRepository(_dbContext);
-		_cancellationToken = new CancellationToken();
+		_database = Substitute.For<IMongoDatabase>();
+		_collection = Substitute.For<IMongoCollection<Article>>();
+		_database.GetCollection<Article>("articles").Returns(_collection);
+
+		_sut = new ArticleRepository(_database);
+
+		// Test data setup
+		_testUser = new AppUserModel { Id = "test-user" };
+		_testArticle = ArticleTestDataBuilder.CreateDefault();
+
+		_testArticles =
+		[
+				new ArticleTestDataBuilder().WithAuthor(_testUser).Build(),
+				new ArticleTestDataBuilder().WithAuthor(_testUser).Build(),
+				new ArticleTestDataBuilder().WithAuthor(new AppUserModel { Id = "different-user" }).Build()
+		];
+	}
+
+	[Fact]
+	public void Add_ShouldInsertOneArticle()
+	{
+		// Act
+		_sut.Add(_testArticle);
+
+		// Assert
+		_collection.Received(1).InsertOne(
+				Arg.Is<Article>(a => a.Id == _testArticle.Id),
+				Arg.Any<InsertOneOptions>(),
+				Arg.Any<CancellationToken>()
+		);
+	}
+
+	[Fact]
+	public async Task GetById_ShouldReturnArticle()
+	{
+		// Arrange
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns([ _testArticle ]);
+
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
+
+		// Act
+		var result = await _sut.GetByIdAsync(_testArticle.Id);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Should().BeEquivalentTo(_testArticle);
+	}
+
+	[Fact]
+	public async Task GetById_WhenArticleNotFound_ShouldReturnNull()
+	{
+		// Arrange
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(false);
+
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
+
+		// Act
+		var result = await _sut.GetByIdAsync(ObjectId.GenerateNewId());
+
+		// Assert
+		result.Should().BeNull();
+	}
+
+	[Fact]
+	public void Update_ShouldUpdateArticle()
+	{
+		// Act
+		_sut.Update(_testArticle);
+
+		// Assert
+		_collection.Received(1).ReplaceOne(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Is<Article>(a => a.Id == _testArticle.Id),
+				Arg.Any<ReplaceOptions>(),
+				Arg.Any<CancellationToken>()
+		);
+	}
+
+	[Fact]
+	public void Remove_ShouldDeleteArticle()
+	{
+		// Act
+		_sut.Remove(_testArticle);
+
+		// Assert
+		_collection.Received(1).DeleteOne(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<CancellationToken>()
+		);
 	}
 
 	[Fact]
 	public async Task GetByUserAsync_ShouldReturnArticlesForUser()
 	{
 		// Arrange
-		const string userId = "user123";
-		var articles = new List<Article>
-		{
-			new() { Author = new AppUserModel { Id = userId } },
-			new() { Author = new AppUserModel { Id = userId } },
-			new() { Author = new AppUserModel { Id = "other" } }
-		}.AsQueryable();
+		var userArticles = _testArticles.Where(a => a.Author.Id == _testUser.Id).ToList();
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns(userArticles);
 
-		var mockSet = Substitute.For<DbSet<Article>, IAsyncEnumerable<Article>, IQueryable<Article>>();
-		SetupMockSet(mockSet, articles);
-		_dbContext.Set<Article>().Returns(mockSet);
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
 
 		// Act
-		var result = await _repository.GetByUserAsync(userId);
+		var result = await _sut.GetByUserAsync(_testUser.Id);
 
 		// Assert
 		result.Should().NotBeNull();
 		result.Should().HaveCount(2);
-		result.Should().OnlyContain(a => a.Author.Id == userId);
+		result.Should().OnlyContain(a => a.Author.Id == _testUser.Id);
 	}
 
 	[Fact]
 	public async Task GetByUserAsync_WithNonexistentUserId_ShouldReturnEmptyList()
 	{
 		// Arrange
-		const string userId = "nonexistent";
-		var articles = new List<Article>().AsQueryable();
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(false);
 
-		var mockSet = Substitute.For<DbSet<Article>, IAsyncEnumerable<Article>, IQueryable<Article>>();
-		SetupMockSet(mockSet, articles);
-		_dbContext.Set<Article>().Returns(mockSet);
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
 
 		// Act
-		var result = await _repository.GetByUserAsync(userId);
+		var result = await _sut.GetByUserAsync("nonexistent");
 
 		// Assert
 		result.Should().NotBeNull();
@@ -68,191 +177,46 @@ public class ArticleRepositoryTests
 	}
 
 	[Fact]
-	public void Add_ShouldAddArticle()
-	{
-		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
-		var mockSet = Substitute.For<DbSet<Article>>();
-		_dbContext.Set<Article>().Returns(mockSet);
-
-		// Act
-		_repository.Add(article);
-
-		// Assert
-		mockSet.Received(1).Add(Arg.Is<Article>(a =>
-			a.Title == article.Title &&
-			a.Author.Id == article.Author.Id));
-	}
-
-	[Fact]
-	public void Update_ShouldUpdateArticle()
-	{
-		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
-		var mockSet = Substitute.For<DbSet<Article>>();
-		_dbContext.Set<Article>().Returns(mockSet);
-
-		// Act
-		_repository.Update(article);
-
-		// Assert
-		mockSet.Received(1).Update(Arg.Is<Article>(a =>
-			a.Title == article.Title &&
-			a.Author.Id == article.Author.Id));
-	}
-
-	[Fact]
-	public void Remove_ShouldRemoveArticle()
-	{
-		// Arrange
-		var article = new Article
-		{
-			Title = "Test Article",
-			Author = new AppUserModel { Id = "user1" }
-		};
-		var mockSet = Substitute.For<DbSet<Article>>();
-		_dbContext.Set<Article>().Returns(mockSet);
-
-		// Act
-		_repository.Remove(article);
-
-		// Assert
-		mockSet.Received(1).Remove(Arg.Is<Article>(a =>
-			a.Title == article.Title &&
-			a.Author.Id == article.Author.Id));
-	}
-
-	[Fact]
 	public async Task FindAsync_ShouldReturnMatchingArticles()
 	{
 		// Arrange
-		var articles = new List<Article>
-		{
-			new() { Title = "Test1", Author = new AppUserModel { Id = "user1" } },
-			new() { Title = "Test2", Author = new AppUserModel { Id = "user1" } },
-			new() { Title = "Test3", Author = new AppUserModel { Id = "user2" } }
-		}.AsQueryable();
+		var matchingArticles = _testArticles.Where(a => a.Title.Contains("Test")).ToList();
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns(matchingArticles);
 
-		var mockSet = Substitute.For<DbSet<Article>, IAsyncEnumerable<Article>, IQueryable<Article>>();
-		SetupMockSet(mockSet, articles);
-		_dbContext.Set<Article>().Returns(mockSet);
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
 
 		// Act
-		var result = await _repository.FindAsync(a => a.Title.StartsWith("Test"));
+		var result = await _sut.FindAsync(a => a.Title.Contains("Test"));
 
 		// Assert
-		result.Should().NotBeNull();
-		result.Should().HaveCount(3);
-		result.Should().OnlyContain(a => a.Title.StartsWith("Test"));
+		result.Should().BeEquivalentTo(matchingArticles);
 	}
 
-	private void SetupMockSet<T>(DbSet<T> mockSet, IQueryable<T> data) where T : class
+	[Fact]
+	public async Task GetAllAsync_ShouldReturnAllArticles()
 	{
-		mockSet.As<IAsyncEnumerable<T>>()
-			.GetAsyncEnumerator(_cancellationToken)
-			.Returns(new TestAsyncEnumerator<T>(data.GetEnumerator()));
+		// Arrange
+		var cursor = Substitute.For<IAsyncCursor<Article>>();
+		cursor.MoveNextAsync().Returns(true, false);
+		cursor.Current.Returns(_testArticles);
 
-		var queryProvider = new TestAsyncQueryProvider<T>(data.Provider);
-		mockSet.As<IQueryable<T>>().Provider.Returns(queryProvider);
-		mockSet.As<IQueryable<T>>().Expression.Returns(data.Expression);
-		mockSet.As<IQueryable<T>>().ElementType.Returns(data.ElementType);
-		mockSet.As<IQueryable<T>>().GetEnumerator().Returns(data.GetEnumerator());
+		_collection.FindAsync(
+				Arg.Any<FilterDefinition<Article>>(),
+				Arg.Any<FindOptions<Article>>(),
+				Arg.Any<CancellationToken>()
+		).Returns(cursor);
+
+		// Act
+		var result = await _sut.GetAllAsync();
+
+		// Assert
+		result.Should().BeEquivalentTo(_testArticles);
 	}
 
-	private class TestAsyncQueryProvider<TEntity> : IAsyncQueryProvider
-	{
-		private readonly IQueryProvider _inner;
-
-		public TestAsyncQueryProvider(IQueryProvider inner)
-		{
-			_inner = inner;
-		}
-
-		public IQueryable CreateQuery(Expression expression)
-		{
-			return new TestAsyncEnumerable<TEntity>(expression);
-		}
-
-		public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
-		{
-			return new TestAsyncEnumerable<TElement>(expression);
-		}
-
-		public object? Execute(Expression expression)
-		{
-			return _inner.Execute(expression);
-		}
-
-		public TResult Execute<TResult>(Expression expression)
-		{
-			return _inner.Execute<TResult>(expression);
-		}
-
-		public IAsyncEnumerable<TResult> ExecuteAsync<TResult>(Expression expression)
-		{
-			return new TestAsyncEnumerable<TResult>(expression);
-		}
-
-		public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
-		{
-			return Execute<TResult>(expression);
-		}
-	}
-
-	private class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
-	{
-		public TestAsyncEnumerable(IEnumerable<T> enumerable)
-			: base(enumerable)
-		{ }
-
-		public TestAsyncEnumerable(Expression expression)
-			: base(expression)
-		{ }
-
-		public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
-		{
-			return new TestAsyncEnumerator<T>(this.AsEnumerable().GetEnumerator());
-		}
-
-		IQueryProvider IQueryable.Provider
-		{
-			get { return new TestAsyncQueryProvider<T>(this.AsQueryable().Provider); }
-		}
-	}
-
-	private class TestAsyncEnumerator<T> : IAsyncEnumerator<T>
-	{
-		private readonly IEnumerator<T> _inner;
-
-		public TestAsyncEnumerator(IEnumerator<T> inner)
-		{
-			_inner = inner;
-		}
-
-		public void Dispose()
-		{
-			_inner.Dispose();
-		}
-
-		public T Current => _inner.Current;
-
-		public ValueTask<bool> MoveNextAsync()
-		{
-			return new ValueTask<bool>(_inner.MoveNext());
-		}
-
-		public ValueTask DisposeAsync()
-		{
-			_inner.Dispose();
-			return new ValueTask();
-		}
-	}
 }

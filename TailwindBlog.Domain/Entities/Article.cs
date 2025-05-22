@@ -9,44 +9,100 @@
 
 namespace TailwindBlog.Domain.Entities;
 
-[Collection("articles")]
 public class Article : Entity
 {
 
-	[Required(ErrorMessage = "Title is required"),
-	MaxLength(100)]
-	public string Title { get; set; } = string.Empty;
+	public Article(
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserModel author,
+			bool isPublished = false,
+			DateTime? publishedOn = null,
+			bool skipValidation = false)
+	{
+		Title = title;
+		Introduction = introduction;
+		CoverImageUrl = coverImageUrl;
+		UrlSlug = urlSlug;
+		Author = author;
+		IsPublished = isPublished;
+		PublishedOn = publishedOn;
+		if (!skipValidation)
+		{
+			ValidateState();
+		}
+	}
 
-	[Required(ErrorMessage = "Introduction is required"),
-	MaxLength(200)]
-	public string Introduction { get; set; } = string.Empty;
+	// Parameterless constructor for EF Core and serialization
+	private Article() { }
 
-	[Required(ErrorMessage = "Cover image is required"),
-	MaxLength(200),
-	Display(Name = "Cover Image URL")]
-	public string CoverImageUrl { get; set; } = string.Empty;
+	public void Update(
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug,
+			AppUserModel author,
+			bool isPublished,
+			DateTime? publishedOn)
+	{
+		Title = title;
+		Introduction = introduction;
+		CoverImageUrl = coverImageUrl;
+		UrlSlug = urlSlug;
+		Author = author;
+		IsPublished = isPublished;
+		PublishedOn = publishedOn;
+		ModifiedOn = DateTime.Now;
+		ValidateState();
+	}
 
-	[Display(Name = "Url Slug"), MaxLength(200)]
-	public string UrlSlug { get; set; } = string.Empty;
+	public void UpdateTitle(string title)
+	{
+		Title = title;
+		ModifiedOn = DateTime.Now;
+		ValidateState();
+	}
+
+	[Required(ErrorMessage = "Title is required")]
+	[MaxLength(100)] public string Title { get; protected internal set; } = string.Empty;
+
+	[Required(ErrorMessage = "Introduction is required")]
+	[MaxLength(200)]
+	public string Introduction { get; protected internal set; } = string.Empty;
+
+	[Required(ErrorMessage = "Cover image is required")]
+	[MaxLength(200)]
+	[Display(Name = "Cover Image URL")]
+	public string CoverImageUrl { get; protected internal set; } = string.Empty;
+
+	[Display(Name = "Url Slug")]
+	[MaxLength(200)]
+	public string UrlSlug { get; protected internal set; } = string.Empty;
 
 	[Required(ErrorMessage = "Author is required")]
-	public required AppUserModel Author { get; set; } = AppUserModel.Empty;
+	public AppUserModel Author { get; protected internal set; } = AppUserModel.Empty;
 
-	[Display(Name = "Is Published")] public bool IsPublished { get; set; }
+	[Display(Name = "Is Published")]
+	public bool IsPublished { get; protected internal set; }
 
-	[Display(Name = "Published On")] public DateTime? PublishedOn { get; set; }
+	[Display(Name = "Published On")]
+	public DateTime? PublishedOn { get; protected internal set; }
 
 	public static Article Empty =>
-			new()
-			{
-					Id = ObjectId.Empty,
-					Title = string.Empty,
-					Introduction = string.Empty,
-					CoverImageUrl = string.Empty,
-					UrlSlug = string.Empty,
-					Author = AppUserModel.Empty,
-					IsPublished = false,
-					PublishedOn = null
-			};
+		new(string.Empty, string.Empty, string.Empty, string.Empty, AppUserModel.Empty, false, null, true)
+		{
+			Id = ObjectId.Empty
+		};
 
+	private void ValidateState()
+	{
+		var validator = new ArticleValidator();
+		var validationResult = validator.Validate(this);
+		if (!validationResult.IsValid)
+		{
+			throw new ValidationException(validationResult.Errors);
+		}
+	}
 }

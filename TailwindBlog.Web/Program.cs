@@ -1,6 +1,3 @@
-using TailwindBlog.Web;
-using TailwindBlog.Web.Components;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add service defaults & Aspire client integrations.

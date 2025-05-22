@@ -11,9 +11,10 @@ namespace TailwindBlog.Persistence.Repositories;
 
 public sealed class CategoryRepository : Repository<Category>, ICategoryRepository
 {
+	private const string _collectionName = "categories";
 
-	public CategoryRepository(AppDbContext context)
-	: base(context)
+	public CategoryRepository(IMongoDatabase database)
+		: base(database, _collectionName)
 	{ }
 
 }

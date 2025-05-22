@@ -9,20 +9,28 @@
 
 namespace TailwindBlog.Domain.Abstractions;
 
+/// <summary>
+/// Base class for all entities in the domain model.
+/// </summary>
 public abstract class Entity
-{
+{ /// <summary>	/// Gets the unique identifier for this entity.
+	/// </summary>	[Key]
+	[BsonId]
+	public ObjectId Id { get; init; } = ObjectId.GenerateNewId();
 
-	[Key, BsonId, BsonRepresentation(BsonType.ObjectId)]
-	public ObjectId Id { get; set; } = ObjectId.Empty;
+	/// <summary>
+	/// Gets the date and time when this entity was created.
+	/// </summary>
+	[Required(ErrorMessage = "A Created On Date is required")]
+	[BsonRepresentation(BsonType.DateTime)]
+	[Display(Name = "Created On")]
+	public DateTime CreatedOn { get; init; } = DateTime.Now;
 
-	[Required(ErrorMessage = "A Created On Date is required"),
-	BsonRepresentation(BsonType.DateTime),
-	Display(Name = "Created On")]
-	public DateTime CreatedOn { get; set; } = DateTime.Now;
-
-	[BsonElement("modifiedOn"),
-	BsonRepresentation(BsonType.DateTime),
-	Display(Name = "Modified On")]
+	/// <summary>
+	/// Gets or sets the date and time when this entity was last modified.
+	/// </summary>
+	[BsonElement("modifiedOn")]
+	[BsonRepresentation(BsonType.DateTime)]
+	[Display(Name = "Modified On")]
 	public DateTime? ModifiedOn { get; set; }
-
 }

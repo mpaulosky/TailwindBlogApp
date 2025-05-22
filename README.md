@@ -2,7 +2,7 @@
 
 ## New Aspire and BlazorServer Hosted Application
 
-### A tool to Create and Manage Blog Posts using a MongoDb to store documents. It includes both unit and integration tests with the integration tests using a docker container for the test MongoDb database to ensure clean isolated data for the tests.
+### A tool to Create and Manage Blog Posts using a MongoDb to store documents. It includes both unit and integration tests with the integration tests using a docker container for the test MongoDb database to ensure clean isolated data for the tests
 
 ****
 ![GitHub](https://img.shields.io/github/license/mpaulosky/TailwindBlog?logo=github)
@@ -43,7 +43,6 @@ Check out the [contributing page](./docs/CONTRIBUTING.md) to see the best places
 * MongoDb
 * Auth0
 
-
 ## Code of conduct
 
-See the [CODE-OF-CONDUCT](./docs/CODE_OF_CONDUCT.md) document.
+See the [CODE-OF-CONDUCT](./docs/CODE_OF_CONDUCT.md) document

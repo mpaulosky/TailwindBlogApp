@@ -8,19 +8,26 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
-        <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj"/>
+        <ProjectReference Include="..\TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="FluentValidation" />
       <PackageReference Include="Mapster" />
+      <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="TailwindBlog.Web.Tests.Bunit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
     </ItemGroup>
 
     <Target Name="BuildTailwind" BeforeTargets="Build">
-        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css"/>
+        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
     </Target>
 
     <Target Name="WatchTailwind" BeforeTargets="Build">
-        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css"/>
+        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css" />
     </Target>
 
 </Project>

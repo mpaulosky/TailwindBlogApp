@@ -11,18 +11,15 @@ namespace TailwindBlog.Persistence.Repositories;
 
 public sealed class ArticleRepository : Repository<Article>, IArticleRepository
 {
+	private const string _collectionName = "articles";
 
-	public ArticleRepository(AppDbContext context)
-	: base(context)
+	public ArticleRepository(IMongoDatabase database)
+		: base(database, _collectionName)
 	{ }
 
 	public async Task<List<Article>?> GetByUserAsync(string userId)
 	{
-
-		return await Context.Set<Article>()
-				.Where(a => a.Author.Id == userId)
-				.ToListAsync();
-
+		return await Collection.Find(a => a.Author.Id == userId).ToListAsync();
 	}
 
 }

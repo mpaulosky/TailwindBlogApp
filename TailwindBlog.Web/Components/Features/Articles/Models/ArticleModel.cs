@@ -7,10 +7,6 @@
 // Project Name :  TailwindBlog.Web
 // =======================================================
 
-using MongoDB.Bson;
-
-using TailwindBlog.Domain.Models;
-
 namespace TailwindBlog.Web.Components.Features.Articles.Models;
 
 public class ArticleModel

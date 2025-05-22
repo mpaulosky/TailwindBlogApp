@@ -10,16 +10,15 @@ var mongoServer = builder.AddMongoDB(ServerName)
 
 var mongoDb = mongoServer.AddDatabase(DatabaseName);
 
-var apiService = builder.AddProject<Projects.TailwindBlog_ApiService>(ApiService)
-		.WithHttpsHealthCheck("/health")
-		.WithReference(mongoDb)
-		.WaitFor(mongoDb);
+// var apiService = builder.AddProject<Projects.TailwindBlog_ApiService>(ApiService)
+// 		.WithHttpsHealthCheck("/health")
+// 		.WithReference(mongoDb)
+// 		.WaitFor(mongoDb);
 
 builder.AddProject<Projects.TailwindBlog_Web>(WebApp)
 		.WithExternalHttpEndpoints()
 		.WithHttpsHealthCheck("/health")
-		.WithReference(apiService)
-		.WaitFor(apiService)
+
 		.WithReference(cache)
 		.WaitFor(cache);
 

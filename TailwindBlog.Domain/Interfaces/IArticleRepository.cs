@@ -7,10 +7,6 @@
 // Project Name :  TailwindBlog.Domain
 // =======================================================
 
-using System.Linq.Expressions;
-
-using TailwindBlog.Domain.Entities;
-
 namespace TailwindBlog.Domain.Interfaces;
 
 public interface IArticleRepository

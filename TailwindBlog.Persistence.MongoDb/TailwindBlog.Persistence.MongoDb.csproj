@@ -8,12 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" />
-      <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="MongoDB.Driver" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="TailwindBlog.Persistence.MongoDb.Tests.Unit" />
+        <InternalsVisibleTo Include="TailwindBlog.Architecture.Tests" />
     </ItemGroup>
 
 </Project>

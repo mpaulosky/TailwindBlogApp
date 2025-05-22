@@ -24,7 +24,7 @@ These instructions define the required coding, architecture, and project rules f
 - **Prefer Null Check:**
   - Use `is null`: `true`
   - Use `is not null`: `true`
-- **Prefer Primary Constructors:** `true`
+- **Prefer Primary Constructors:** `false`
 - **Prefer Records:** `true`
 - **Prefer Minimal APIs:** `true`
 - **Prefer File Scoped Namespaces:** `true`
@@ -59,7 +59,6 @@ These instructions define the required coding, architecture, and project rules f
 - **Enforce CQRS:** `true`
 - **Enforce Unit Tests:** `true`
 - **Enforce Integration Tests:** `true`
-- **Enforce Clean Architecture:** `true`
 - **Enforce Vertical Slice Architecture:** `true`
 - **Enforce Aspire:** `true` (_.NET Aspire: use Aspire orchestration and best practices where applicable_)
 
@@ -92,10 +91,13 @@ These instructions define the required coding, architecture, and project rules f
 #### Database (Required)
 
 - **Use Entity Framework Core:** `true`
+- **Use MongoDB Entity:** `true`
 - **Prefer Async Operations:** `true`
-- **Use Migrations:** `true`
+- **Use Migrations:** `false` (for MongoDB)
+- **Use TestContainers:** `true` (for testing)
 - **Use Change Tracking:** `true`
 - **Use DbContext Pooling:** `true`
+- **Use In-Memory Database:** `false` (for testing)
 
 #### Versioning (Required)
 
@@ -139,7 +141,7 @@ These instructions define the required coding, architecture, and project rules f
 - **Use FluentAssertions:** `true`
 - **Use NSubstitute:** `true`
 - **Use bUnit:** `true`
-- **Use Playwright:** `true`
+- **Use Global Usings:** `true`
 
 ---
 

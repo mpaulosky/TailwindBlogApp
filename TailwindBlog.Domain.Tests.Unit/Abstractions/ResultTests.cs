@@ -17,7 +17,7 @@ public class ResultTests
 	public void Result_WhenCreatedWithSuccess_ShouldHaveCorrectProperties()
 	{
 		// Arrange & Act
-		var result = new Result(true);
+		var result = Result.Ok();
 
 		// Assert
 		result.Success.Should().BeTrue();
@@ -32,7 +32,7 @@ public class ResultTests
 		const string errorMessage = "Test error";
 
 		// Act
-		var result = new Result(false, errorMessage);
+		var result = Result.Fail(errorMessage);
 
 		// Assert
 		result.Success.Should().BeFalse();
@@ -73,10 +73,9 @@ public class ResultTests
 
 		// Act
 		var result = Result.Ok(value);
-
 		// Assert
 		result.Success.Should().BeTrue();
-		result.Error.Should().BeEmpty();
+		result.Error.Should().BeNull();
 		result.Value.Should().Be(value);
 	}
 

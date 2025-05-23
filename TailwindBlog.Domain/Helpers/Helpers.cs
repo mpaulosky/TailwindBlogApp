@@ -26,7 +26,7 @@ public static class Helpers
 								introduction: f.WaffleTitle(),
 								coverImageUrl: f.Image.PicsumUrl() ?? string.Empty,
 								urlSlug: title.GetSlug(),
-								author: UserGenerator.Generate()! ?? AppUserModel.Empty,
+								author: UserGenerator!.Generate()!,
 								isPublished: f.Random.Bool(),
 								publishedOn: f.Random.Bool() ? GetStaticDate() : null
 						);

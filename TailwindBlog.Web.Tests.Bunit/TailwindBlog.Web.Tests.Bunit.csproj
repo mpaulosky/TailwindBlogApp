@@ -2,38 +2,38 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
-        <RootNamespace>TailwindBlog.Web</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <OutputType>Exe</OutputType>
+        <RootNamespace>TailwindBlog.Web</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="Bunit"/>
-        <Using Include="Bunit.TestDoubles"/>
-        <Using Include="Microsoft.Extensions.DependencyInjection"/>
-        <Using Include="Xunit"/>
+        <Using Include="Bunit" />
+        <Using Include="Bunit.TestDoubles" />
+        <Using Include="Microsoft.Extensions.DependencyInjection" />
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bogus"/>
-        <PackageReference Include="bunit"/>
-        <PackageReference Include="coverlet.collector"/>
-        <PackageReference Include="FluentAssertions"/>
-        <PackageReference Include="JetBrains.Annotations"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="NSubstitute"/>
+        <PackageReference Include="Bogus" />
+        <PackageReference Include="bunit" />
+        <PackageReference Include="coverlet.collector" />
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="JetBrains.Annotations" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NSubstitute" />
         <PackageReference Include="NSubstitute.Analyzers.CSharp" />
-        <PackageReference Include="WaffleGenerator.Bogus"/>
-        <PackageReference Include="xunit"/>
-        <PackageReference Include="xunit.extensibility.execution"/>
-        <PackageReference Include="xunit.runner.visualstudio"/>
+        <PackageReference Include="WaffleGenerator.Bogus" />
+        <PackageReference Include="xunit.v3" />
+        <PackageReference Include="xunit.v3.common" />
+        <PackageReference Include="xunit.v3.extensibility.core" />
+        <PackageReference Include="xunit.runner.visualstudio" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
+        <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
     </ItemGroup>
 
 </Project>

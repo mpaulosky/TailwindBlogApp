@@ -13,43 +13,84 @@ namespace TailwindBlog.Persistence;
 [TestSubject(typeof(DependencyInjection))]
 public class DependencyInjectionTests
 {
-	[Fact]
-	public void AddPersistence_WithValidConfiguration_ShouldRegisterServices()
+
+	private const string _expectedConnectionString = "mongodb://localhost:27017";
+
+	private const string _databaseName = "blog-app-database";
+
+	/// <summary>
+	/// Helper to create a configuration with a MongoDB connection string.
+	/// </summary>
+	private static IConfiguration CreateConfiguration(string? connectionString)
 	{
-		// Arrange
-		var services = new ServiceCollection();
-		var configuration = new ConfigurationBuilder()
-			.AddInMemoryCollection(new Dictionary<string, string?>
-			{
-				{ "ConnectionStrings:blog-app-database", "mongodb://localhost:27017" }
-			})
-			.Build();
+		var inMemorySettings = new Dictionary<string, string?>
+		{
+				{ $"ConnectionStrings:{_databaseName}", connectionString }
+		};
 
-		// Act
-		services.AddPersistence(configuration);
-		var serviceProvider = services.BuildServiceProvider();
-
-		// Assert
-		serviceProvider.GetService<IMongoDatabase>().Should().NotBeNull();
-		serviceProvider.GetService<IApplicationDbContext>().Should().NotBeNull();
-		serviceProvider.GetService<IArticleRepository>().Should().NotBeNull();
-		serviceProvider.GetService<ICategoryRepository>().Should().NotBeNull();
+		return new ConfigurationBuilder()
+				.AddInMemoryCollection(inMemorySettings)
+				.Build();
 	}
 
 	[Fact]
-	public void AddPersistence_WithMissingConnectionString_ShouldThrowException()
+	public void AddPersistence_WithValidConnectionString_ShouldRegisterAllDependencies()
 	{
+
 		// Arrange
 		var services = new ServiceCollection();
-		var configuration = new ConfigurationBuilder()
-			.AddInMemoryCollection(new Dictionary<string, string?>())
-			.Build();
+		var config = CreateConfiguration(_expectedConnectionString);
 
 		// Act
-		var act = () => services.AddPersistence(configuration);
+		services.AddPersistence(config);
+
+		// Assert registrations
+		// IDatabaseSettings as singleton
+		services.Should().ContainSingle(x =>
+				x.ServiceType.Name == "IDatabaseSettings" &&
+				x.ImplementationInstance != null &&
+				x.Lifetime == ServiceLifetime.Singleton
+		);
+
+		// IMongoDbContextFactory as a singleton
+		services.Should().ContainSingle(x =>
+				x.ServiceType.Name == "IMongoDbContextFactory" &&
+				x.ImplementationType.Name == "MongoDbContextFactory" &&
+				x.Lifetime == ServiceLifetime.Singleton
+		);
+
+		// IArticleRepository as scoped
+		services.Should().ContainSingle(x =>
+				x.ServiceType.Name == "IArticleRepository" &&
+				x.ImplementationType.Name == "ArticleRepository" &&
+				x.Lifetime == ServiceLifetime.Scoped
+		);
+
+		// ICategoryRepository as scoped
+		services.Should().ContainSingle(x =>
+				x.ServiceType.Name == "ICategoryRepository" &&
+				x.ImplementationType.Name == "CategoryRepository" &&
+				x.Lifetime == ServiceLifetime.Scoped
+		);
+
+	}
+
+	[Fact]
+	public void AddPersistence_WhenConnectionStringIsMissing_ShouldThrowInvalidOperationException()
+	{
+
+		// Arrange
+		var services = new ServiceCollection();
+		var config = CreateConfiguration(null);
+
+		// Act
+		Action act = () => services.AddPersistence( config);
 
 		// Assert
-		act.Should().Throw<InvalidOperationException>()
-			.WithMessage("Connection string 'blog-app-database' not found.");
+		act.Should()
+				.Throw<InvalidOperationException>()
+				.WithMessage($"Connection string '{_databaseName}'*");
+
 	}
+
 }

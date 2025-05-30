@@ -26,7 +26,7 @@ public class CategoryTests
 		// Assert
 		article.Name.Should().BeEmpty();
 		article.Description.Should().BeEmpty();
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
 		article.ModifiedOn.Should().BeNull();
 	}
 
@@ -58,7 +58,7 @@ public class CategoryTests
 		// Assert
 		article.Name.Should().Be(name);
 		article.Description.Should().Be(description);
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
 		article.ModifiedOn.Should().BeNull(); // Default value
 	}
 

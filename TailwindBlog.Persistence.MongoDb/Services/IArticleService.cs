@@ -1,20 +1,25 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryRepository.cs
+// File Name :     IArticleService.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
-namespace TailwindBlog.Persistence.Repositories;
+namespace TailwindBlog.Persistence.Services;
 
-/// <summary>
-///   CategoryRepository class
-/// </summary>
-public class CategoryRepository : Repository<Category>, ICategoryRepository
+public interface IArticleService
 {
 
-	public CategoryRepository(IMongoDbContextFactory context) : base(context) { }
+	Task Archive(ArticleDto article);
+
+	Task Create(ArticleDto article);
+
+	Task<Article> Get(ObjectId articleId);
+
+	Task<List<Article>> GetAll();
+
+	Task Update(ArticleDto article);
 
 }

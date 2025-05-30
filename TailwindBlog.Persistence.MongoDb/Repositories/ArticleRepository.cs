@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryRepository.cs
+// File Name :     ArticleRepository.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -9,17 +9,46 @@
 
 namespace TailwindBlog.Persistence.Repositories;
 
-public sealed class ArticleRepository : Repository<Article>, IArticleRepository
+/// <summary>
+///   ArticleRepository class
+/// </summary>
+public class ArticleRepository : Repository<Article>, IArticleRepository
 {
-	private const string _collectionName = "articles";
 
-	public ArticleRepository(IMongoDatabase database)
-		: base(database, _collectionName)
-	{ }
+	public ArticleRepository(IMongoDbContextFactory context) : base(context) { }
 
-	public async Task<List<Article>?> GetByUserAsync(string userId)
+	public async Task<Result<IEnumerable<Article>>> GetByUserAsync(AppUserDto entity)
 	{
-		return await Collection.Find(a => a.Author.Id == userId).ToListAsync();
+
+		try
+		{
+
+			var entityId = entity.Id;
+
+			if (entityId == string.Empty)
+			{
+				return Result.Fail<IEnumerable<Article>>("Article ID cannot be empty");
+			}
+
+			// Use the Author's ID to filter articles
+			var filter = Builders<Article>.Filter.Eq(a => a.Author.Id, entityId);
+
+			var result = await Collection.FindAsync(filter);
+
+			var articles = await result.ToListAsync();
+
+			return articles.Count == 0
+					? Result.Fail<IEnumerable<Article>>($"No articles found for user with ID {entityId}")
+					: Result.Ok<IEnumerable<Article>>(articles);
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result.Fail<IEnumerable<Article>>(ex.Message);
+
+		}
+
 	}
 
 }

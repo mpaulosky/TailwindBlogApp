@@ -9,27 +9,9 @@
 
 namespace TailwindBlog.Domain.Interfaces;
 
-public interface IArticleRepository
+public interface IArticleRepository : IRepository<Article>
 {
 
-	void Add(Article entity);
-
-	Task AddRangeAsync(IEnumerable<Article> entities);
-
-	Task<bool> AnyAsync(Expression<Func<Article, bool>> predicate);
-
-	Task<IEnumerable<Article>> FindAsync(Expression<Func<Article, bool>> predicate);
-
-	Task<Article?> FindFirstAsync(Expression<Func<Article, bool>> predicate);
-
-	Task<IEnumerable<Article>> GetAllAsync();
-
-	Task<Article?> GetByIdAsync(ObjectId id);
-
-	Task<List<Article>?> GetByUserAsync(string userId);
-
-	void Remove(Article entity);
-
-	void Update(Article entity);
+	Task<Result<IEnumerable<Article>>> GetByUserAsync(AppUserDto entity);
 
 }

@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     ArticleValidator.cs
+// File Name :     ArticleDtoValidator.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -9,11 +9,15 @@
 
 namespace TailwindBlog.Domain.Validators;
 
-public class ArticleValidator : AbstractValidator<Article>
+public class ArticleDtoValidator : AbstractValidator<ArticleDto>
 {
 
-	public ArticleValidator()
+	public ArticleDtoValidator()
 	{
+		RuleFor(x => x.Id)
+				.NotNull()
+				.WithMessage("Id is required");
+		
 		RuleFor(x => x.Title)
 				.NotEmpty()
 				.WithMessage("Title is required")
@@ -39,10 +43,6 @@ public class ArticleValidator : AbstractValidator<Article>
 		RuleFor(x => x.Author)
 				.NotNull()
 				.WithMessage("Author is required");
-
-		RuleFor(x => x.Category)
-				.NotNull()
-				.WithMessage("Category is required");
 
 		RuleFor(x => x.PublishedOn)
 				.NotNull()

@@ -7,12 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bogus" />
-      <PackageReference Include="FluentValidation" />
-      <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
-      <PackageReference Include="MongoDB.Driver" />
-      <PackageReference Include="MongoDB.EntityFrameworkCore" />
-      <PackageReference Include="WaffleGenerator.Bogus" />
+        <PackageReference Include="Bogus" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="MongoDB.Driver" />
+        <PackageReference Include="WaffleGenerator.Bogus" />
     </ItemGroup>
 
     <ItemGroup>

@@ -50,7 +50,7 @@ dotnet_naming_style.begins_with_i.required_suffix = dotnet_naming_style.begins_w
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{yml,  yaml}]
+[*.{yml,   yaml}]
 indent_style = space
 indent_size = 2
 
@@ -88,7 +88,7 @@ dotnet_naming_rule.private_or_internal_field_should_be__fieldname.symbols = priv
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            csharp_style_expression_bodied_lambdas = true:silent
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            csharp_style_expression_bodied_local_functions = false:silent
 
-                                                                                                                                                                                                                                                                                                                                                                                      [*.{cs,  vb}]
+                                                                                                                                                                                                                                                                                                                                                                                      [*.{cs,   vb}]
 #### Naming rules ####
 
 # Interfaces must begin with I

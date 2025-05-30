@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.Domain
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
@@ -36,5 +34,3 @@ global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Validators;
 
 global using ValidationException = FluentValidation.ValidationException;
-
-#endregion

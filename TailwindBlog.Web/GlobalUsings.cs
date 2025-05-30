@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.Web
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
@@ -23,5 +21,3 @@ global using TailwindBlog.Domain.Abstractions;
 global using TailwindBlog.Domain.Entities;
 global using TailwindBlog.Domain.Models;
 global using TailwindBlog.Web.Components;
-
-#endregion

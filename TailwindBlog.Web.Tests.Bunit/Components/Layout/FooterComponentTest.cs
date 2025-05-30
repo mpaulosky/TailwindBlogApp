@@ -7,10 +7,6 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
-#endregion
-
 namespace TailwindBlog.Web.Components.Layout;
 
 /// <summary>

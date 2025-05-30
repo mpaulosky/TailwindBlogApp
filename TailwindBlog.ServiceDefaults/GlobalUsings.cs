@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.ServiceDefaults
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections.Generic;
 global using System.Diagnostics;
@@ -28,5 +26,3 @@ global using Microsoft.Extensions.Logging;
 global using OpenTelemetry.Metrics;
 global using OpenTelemetry.Resources;
 global using OpenTelemetry.Trace;
-
-#endregion

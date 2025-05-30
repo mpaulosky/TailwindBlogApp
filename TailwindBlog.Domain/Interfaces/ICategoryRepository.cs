@@ -4,30 +4,9 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.ApiService
+// Project Name :  TailwindBlog.Domain
 // =======================================================
 
 namespace TailwindBlog.Domain.Interfaces;
 
-public interface ICategoryRepository
-{
-
-	void Add(Category entity);
-
-	Task AddRangeAsync(IEnumerable<Category> entities);
-
-	Task<bool> AnyAsync(Expression<Func<Category, bool>> predicate);
-
-	Task<IEnumerable<Category>> FindAsync(Expression<Func<Category, bool>> predicate);
-
-	Task<Category?> FindFirstAsync(Expression<Func<Category, bool>> predicate);
-
-	Task<IEnumerable<Category>> GetAllAsync();
-
-	Task<Category?> GetByIdAsync(ObjectId id);
-
-	void Remove(Category entity);
-
-	void Update(Category entity);
-
-}
+public interface ICategoryRepository : IRepository<Category> { }

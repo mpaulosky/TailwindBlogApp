@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Mapster" />
+        <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
         <PackageReference Include="MongoDB.Driver" />
         <PackageReference Include="Microsoft.Extensions.Configuration" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" />

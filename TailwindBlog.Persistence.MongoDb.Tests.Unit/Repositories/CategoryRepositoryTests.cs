@@ -7,175 +7,465 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb.Tests.Unit
 // =======================================================
 
-using TailwindBlog.Persistence.Repositories.TestData;
+using MongoDB.Bson;
 
 namespace TailwindBlog.Persistence.Repositories;
 
+/// <summary>
+///   Unit tests for the <see cref="CategoryRepository"/> class.
+/// </summary>
 [ExcludeFromCodeCoverage]
 public sealed class CategoryRepositoryTests
 {
 
-	private readonly CategoryRepository _sut;
+	private readonly Mock<IAsyncCursor<Category>> _cursor;
 
-	private readonly IMongoDatabase _database;
+	private readonly Mock<IMongoCollection<Category>> _mockCollection;
 
-	private readonly IMongoCollection<Category> _collection;
+	private readonly Mock<IMongoDbContextFactory> _mockContext;
 
-	private readonly Category _testCategory;
-
-	private readonly List<Category> _testCategories;
+	private List<Category> _list = new();
 
 	public CategoryRepositoryTests()
 	{
-		_database = Substitute.For<IMongoDatabase>();
-		_collection = Substitute.For<IMongoCollection<Category>>();
-		_database.GetCollection<Category>("categories").Returns(_collection);
+		_cursor = TestFixtures.GetMockCursor(_list);
 
-		_sut = new CategoryRepository(_database);
+		_mockCollection = TestFixtures.GetMockCollection(_cursor);
 
-		_testCategory = CategoryTestDataBuilder.CreateDefault();
-		_testCategories = CategoryTestDataBuilder.CreateDefaultMany(3);
+		_mockContext = TestFixtures.GetMockContext();
 	}
 
-	[Fact]
-	public void Add_ShouldInsertOneCategory()
+	private CategoryRepository CreateRepository()
 	{
-		// Act
-		_sut.Add(_testCategory);
-
-		// Assert
-		_collection.Received(1).InsertOne(
-				Arg.Is<Category>(c => c.Equals(_testCategory)),
-				Arg.Any<InsertOneOptions>());
+		return new CategoryRepository(_mockContext.Object);
 	}
 
-	[Fact]
-	public async Task GetById_ShouldReturnCategory()
+	[Fact(DisplayName = "Archive Category - Success Path")]
+	public async Task ArchiveAsync_WithValidCategory_ShouldArchiveTheCategory()
 	{
+
 		// Arrange
-		var cursor = Substitute.For<IAsyncCursor<Category>>();
-		cursor.MoveNextAsync().Returns(true, false);
-		cursor.Current.Returns([ _testCategory ]);
+		var categoryToArchive = FakeCategory.GetNewCategory(true);
 
-		_collection.FindAsync(
-						Arg.Any<FilterDefinition<Category>>(),
-						Arg.Any<FindOptions<Category>>(),
-						CancellationToken.None)
-				.Returns(cursor);
+		categoryToArchive.Archived = true;
+
+		SetupMongoCollection(categoryToArchive);
+
+		var sut = CreateRepository();
 
 		// Act
-		var result = await _sut.GetByIdAsync(_testCategory.Id);
+		await sut.ArchiveAsync(categoryToArchive);
 
 		// Assert
-		result.Should().BeEquivalentTo(_testCategory);
+		_mockCollection.Verify(c => c.ReplaceOneAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<Category>(),
+				It.IsAny<ReplaceOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
 	}
 
-	[Fact]
-	public async Task GetById_WhenCategoryNotFound_ShouldReturnNull()
+	[Fact(DisplayName = "Archive Category - Not Found")]
+	public async Task ArchiveAsync_WithNonExistentCategory_ShouldReturnFailResult()
 	{
+
 		// Arrange
-		var cursor = Substitute.For<IAsyncCursor<Category>>();
-		cursor.MoveNextAsync().Returns(false);
+		var categoryToArchive = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(categoryToArchive);
 
-		_collection.FindAsync(
-						Arg.Any<FilterDefinition<Category>>(),
-						Arg.Any<FindOptions<Category>>(),
-						CancellationToken.None)
-				.Returns(cursor);
+		var replaceResult = new ReplaceOneResult.Acknowledged(0, 0, BsonValue.Create(categoryToArchive.Id));
+
+		_mockCollection.Setup(c => c.ReplaceOneAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<Category>(),
+						It.IsAny<ReplaceOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ReturnsAsync(replaceResult);
+
+		var sut = CreateRepository();
 
 		// Act
-		var result = await _sut.GetByIdAsync(ObjectId.GenerateNewId());
+		var result = await sut.ArchiveAsync(categoryToArchive);
 
 		// Assert
-		result.Should().BeNull();
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Contain($"ID {categoryToArchive.Id}");
+		
 	}
 
-	[Fact]
-	public void Update_ShouldUpdateCategory()
+	[Fact(DisplayName = "Archive Category - Exception")]
+	public async Task ArchiveAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
-		// Act
-		_sut.Update(_testCategory);
 
-		// Assert
-		_collection.Received(1).ReplaceOne(
-				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Is<Category>(c => c.Equals(_testCategory)),
-				Arg.Any<ReplaceOptions>());
-	}
-
-	[Fact]
-	public void Remove_ShouldDeleteCategory()
-	{
-		// Act
-		_sut.Remove(_testCategory);
-
-		// Assert
-		_collection.Received(1).DeleteOne(
-				Arg.Any<FilterDefinition<Category>>(),
-				Arg.Any<CancellationToken>());
-	}
-
-	[Fact]
-	public async Task GetAll_ShouldReturnAllCategories()
-	{
 		// Arrange
-		var cursor = Substitute.For<IAsyncCursor<Category>>();
-		cursor.MoveNextAsync().Returns(true, false);
-		cursor.Current.Returns(_testCategories);
+		var categoryToArchive = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(categoryToArchive);
 
-		_collection.FindAsync(
-						Arg.Any<FilterDefinition<Category>>(),
-						Arg.Any<FindOptions<Category>>(),
-						CancellationToken.None)
-				.Returns(cursor);
+		const string errorMessage = "Database connection error";
+
+		_mockCollection.Setup(c => c.ReplaceOneAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<Category>(),
+						It.IsAny<ReplaceOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception(errorMessage));
+
+		var sut = CreateRepository();
 
 		// Act
-		var result = await _sut.GetAllAsync();
+		var result = await sut.ArchiveAsync(categoryToArchive);
 
 		// Assert
-		result.Should().BeEquivalentTo(_testCategories);
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be(errorMessage);
+		
+		_mockCollection.Verify(c => c.ReplaceOneAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<Category>(),
+				It.IsAny<ReplaceOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
 	}
 
-	[Fact]
-	public async Task GetAll_WhenNoCategories_ShouldReturnEmptyList()
+	[Fact(DisplayName = "Create Category - Success Path")]
+	public async Task CreateAsync_WithValidCategory_ShouldInsertCategory()
 	{
-		// Arrange
-		var cursor = Substitute.For<IAsyncCursor<Category>>();
-		cursor.MoveNextAsync().Returns(false);
 
-		_collection.FindAsync(
-						Arg.Any<FilterDefinition<Category>>(),
-						Arg.Any<FindOptions<Category>>(),
-						CancellationToken.None)
-				.Returns(cursor);
+		// Arrange
+		var newCategory = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(null);
+
+		var sut = CreateRepository();
 
 		// Act
-		var result = await _sut.GetAllAsync();
+		var result = await sut.CreateAsync(newCategory);
 
 		// Assert
-		result.Should().BeEmpty();
+		result.Should().NotBeNull();
+		result.Success.Should().BeTrue();
+
+		_mockCollection.Verify(c => c.InsertOneAsync(
+				It.IsAny<Category>(),
+				It.IsAny<InsertOneOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
 	}
 
-	[Fact]
-	public async Task FindAsync_ShouldReturnMatchingCategories()
+	[Fact(DisplayName = "Create Category - Exception")]
+	public async Task CreateAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
-		// Arrange
-		var matchingCategories = _testCategories.Where(c => c.Name.Contains("Test")).ToList();
-		var cursor = Substitute.For<IAsyncCursor<Category>>();
-		cursor.MoveNextAsync().Returns(true, false);
-		cursor.Current.Returns(matchingCategories);
 
-		_collection.FindAsync(
-						Arg.Any<FilterDefinition<Category>>(),
-						Arg.Any<FindOptions<Category>>(),
-						CancellationToken.None)
-				.Returns(cursor);
+		// Arrange
+		var newCategory = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(null);
+
+		const string errorMessage = "Database connection error";
+
+		_mockCollection.Setup(c => c.InsertOneAsync(
+						It.IsAny<Category>(),
+						It.IsAny<InsertOneOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception(errorMessage));
+
+		var sut = CreateRepository();
 
 		// Act
-		var result = await _sut.FindAsync(c => c.Name.Contains("Test"));
+		var result = await sut.CreateAsync(newCategory);
 
 		// Assert
-		result.Should().BeEquivalentTo(matchingCategories);
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be(errorMessage);
+		
+	}
+
+	[Fact(DisplayName = "Get Category - Success Path")]
+	public async Task GetAsync_WithValidId_ShouldReturnCategory()
+	{
+
+		// Arrange
+		var expected = FakeCategory.GetNewCategory(true);
+		_list = [expected];
+		_cursor.Setup(c => c.Current).Returns(_list);
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAsync(expected.Id);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeTrue();
+		result.Value.Should().NotBeNull();
+		result.Value.Id.Should().Be(expected.Id);
+
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+
+	}
+
+	[Fact(DisplayName = "Get Category - Not Found")]
+	public async Task GetAsync_WithNonExistentId_ShouldReturnFailResult()
+	{
+
+		// Arrange
+		var categoryId = ObjectId.GenerateNewId();
+		_list = new List<Category>(); // Empty list to simulate category not found
+		_cursor.Setup(c => c.Current).Returns(_list);
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAsync(categoryId);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Contain($"ID {categoryId}");
+
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Get Category - Exception")]
+	public async Task GetAsync_WhenExceptionOccurs_ShouldReturnFailResult()
+	{
+
+		// Arrange
+		var categoryId = ObjectId.GenerateNewId();
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		const string errorMessage = "Database connection error";
+
+		_mockCollection.Setup(c => c.FindAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<FindOptions<Category>>(),
+						It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception(errorMessage));
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAsync(categoryId);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be(errorMessage);
+				
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Get All Entities - Success Path")]
+	public async Task GetAllAsync_ShouldReturnAllEntities()
+	{
+
+		// Arrange
+		const int expectedCount = 5;
+
+		var entities = FakeCategory.GetCategories(expectedCount, true).ToList();
+
+		_list = new List<Category>(entities);
+		_cursor.Setup(c => c.Current).Returns(_list);
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAllAsync();
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeTrue();
+		result.Value.Should().HaveCount(expectedCount);
+
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Get All Entities - Empty Collection")]
+	public async Task GetAllAsync_WithEmptyCollection_ShouldReturnEmptyList()
+	{
+
+		// Arrange
+		_list = new List<Category>(); // Empty list
+		_cursor.Setup(c => c.Current).Returns(_list);
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAllAsync();
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeTrue();
+		result.Value.Should().BeEmpty();
+
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Get All Entities - Exception")]
+	public async Task GetAllAsync_WhenExceptionOccurs_ShouldReturnFailResult()
+	{
+
+		// Arrange
+		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
+
+		const string errorMessage = "Database connection error";
+
+		_mockCollection.Setup(c => c.FindAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<FindOptions<Category>>(),
+						It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception(errorMessage));
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.GetAllAsync();
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be(errorMessage);
+		
+		_mockCollection.Verify(c => c.FindAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<FindOptions<Category>>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Update Category - Success Path")]
+	public async Task UpdateAsync_WithValidIdAndCategory_ShouldUpdateCategory()
+	{
+
+		// Arrange
+		var category = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(category);
+
+		var replaceResult = new ReplaceOneResult.Acknowledged(1, 1, BsonValue.Create(category.Id));
+
+		_mockCollection.Setup(c => c.ReplaceOneAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<Category>(),
+						It.IsAny<ReplaceOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ReturnsAsync(replaceResult);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.UpdateAsync(category.Id, category);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeTrue();
+
+		_mockCollection.Verify(c => c.ReplaceOneAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<Category>(),
+				It.IsAny<ReplaceOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Update Category - Not Found")]
+	public async Task UpdateAsync_WithNonExistentId_ShouldReturnFailResult()
+	{
+
+		// Arrange
+		var category = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(category);
+
+		var replaceResult = new ReplaceOneResult.Acknowledged(0, 0, BsonValue.Create(category.Id));
+
+		_mockCollection.Setup(c => c.ReplaceOneAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<Category>(),
+						It.IsAny<ReplaceOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ReturnsAsync(replaceResult);
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.UpdateAsync(category.Id, category);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Contain($"ID {category.Id}");
+		
+		_mockCollection.Verify(c => c.ReplaceOneAsync(
+				It.IsAny<FilterDefinition<Category>>(),
+				It.IsAny<Category>(),
+				It.IsAny<ReplaceOptions>(),
+				It.IsAny<CancellationToken>()), Times.Once);
+		
+	}
+
+	[Fact(DisplayName = "Update Category - Exception")]
+	public async Task UpdateAsync_WhenExceptionOccurs_ShouldReturnFailResult()
+	{
+
+		// Arrange
+		var category = FakeCategory.GetNewCategory(true);
+		SetupMongoCollection(category);
+
+		const string errorMessage = "Database connection error";
+
+		_mockCollection.Setup(c => c.ReplaceOneAsync(
+						It.IsAny<FilterDefinition<Category>>(),
+						It.IsAny<Category>(),
+						It.IsAny<ReplaceOptions>(),
+						It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new Exception(errorMessage));
+
+		var sut = CreateRepository();
+
+		// Act
+		var result = await sut.UpdateAsync(category.Id, category);
+
+		// Assert
+		result.Should().NotBeNull();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be(errorMessage);
+
+	}
+
+	private void SetupMongoCollection(Category? category)
+	{
+		if (category is not null)
+		{
+			_list = [category];
+			_cursor.Setup(c => c.Current).Returns(_list);
+		}
+
+		_mockContext
+				.Setup(c => c.GetCollection<Category>(It.IsAny<string>()))
+				.Returns(_mockCollection.Object);
 	}
 
 }

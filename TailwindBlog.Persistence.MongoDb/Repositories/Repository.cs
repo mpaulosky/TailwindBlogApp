@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
-using MongoDB.Bson;
-
 namespace TailwindBlog.Persistence.Repositories;
 
 public abstract class Repository<TEntity> : IRepository<TEntity>
@@ -16,59 +14,155 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 {
 	protected readonly IMongoCollection<TEntity> Collection;
 
-	protected Repository(IMongoDatabase database, string collectionName)
+	protected Repository(IMongoDbContextFactory context)
 	{
-		Collection = database.GetCollection<TEntity>(collectionName);
+
+		ArgumentNullException.ThrowIfNull(context);
+
+		var collectionName = CollectionNames.GetCollectionName(nameof(TEntity));
+
+		Collection = context.GetCollection<TEntity>(collectionName);
+		
 	}
 
-	public void Add(TEntity entity)
+	/// <summary>
+	///   Archives an entity by setting its Archived property to true and updating it
+	/// </summary>
+	/// <param name="entity">The TEntity to archive</param>
+	/// <returns>Result indicating success or failure of the operation</returns>
+	public async Task<Result> ArchiveAsync(TEntity entity)
 	{
-		Collection.InsertOne(entity);
+
+		try
+		{
+
+			// Archive the entity
+			entity.Archived = true;
+
+			var filter = Builders<TEntity>.Filter.Eq("_id", entity.Id);
+
+			var result = await Collection.ReplaceOneAsync(filter, entity);
+
+			return result.MatchedCount == 0 ? Result.Fail($"TEntity with ID {entity.Id} not found") : Result.Ok();
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result.Fail(ex.Message);
+
+		}
+
 	}
 
-	public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+	/// <summary>
+	///   Creates a new entity in the database
+	/// </summary>
+	/// <param name="entity">TEntity to create</param>
+	/// <returns>Result indicating success or failure of the operation</returns>
+	public async Task<Result> CreateAsync(TEntity entity)
 	{
-		await Collection.InsertManyAsync(entities);
+
+		try
+		{
+
+			await Collection.InsertOneAsync(entity);
+
+			return Result.Ok();
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result.Fail(ex.Message);
+
+		}
+
 	}
 
-	public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+	/// <summary>
+	///   Retrieves an entity from the database by its ID
+	/// </summary>
+	/// <param name="entityId">ObjectId of the entity to retrieve</param>
+	/// <returns>Result containing the retrieved TEntity or error message</returns>
+	public async Task<Result<TEntity>> GetAsync(ObjectId entityId)
 	{
-		return await Collection.Find(predicate).AnyAsync();
+
+		try
+		{
+
+			var filter = Builders<TEntity>.Filter.Eq("_id", entityId);
+
+			var result = (await Collection.FindAsync(filter)).ToList().FirstOrDefault();
+
+			return result == null
+					? Result<TEntity>.Fail($"TEntity with ID {entityId} not found")
+					: Result<TEntity>.Ok(result.Adapt<TEntity>());
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result<TEntity>.Fail(ex.Message);
+
+		}
+
 	}
 
-	public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> criteria)
+	/// <summary>
+	///   Retrieves all entities from the database
+	/// </summary>
+	/// <returns>Result containing a collection of TEntity objects or error message</returns>
+	public async Task<Result<IEnumerable<TEntity>>> GetAllAsync()
 	{
-		return await Collection.Find(criteria).ToListAsync();
+
+		try
+		{
+
+			var filter = Builders<TEntity>.Filter.Empty;
+
+			var result = (await Collection.FindAsync(filter)).ToList();
+
+			return Result<IEnumerable<TEntity>>.Ok(result.Adapt<IEnumerable<TEntity>>());
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result<IEnumerable<TEntity>>.Fail(ex.Message);
+
+		}
+
 	}
 
-	public async Task<TEntity?> FindFirstAsync(Expression<Func<TEntity, bool>> predicate)
+	/// <summary>
+	///   Updates an existing entity in the database
+	/// </summary>
+	/// <param name="entityId">ObjectId of the entity to update</param>
+	/// <param name="entity">TEntity containing the updated entity data</param>
+	/// <returns>Result indicating success or failure of the operation</returns>
+	public async Task<Result> UpdateAsync(ObjectId entityId, TEntity entity)
 	{
-		return await Collection.Find(predicate).FirstOrDefaultAsync();
+
+		try
+		{
+
+			var entityToUpdate = entity.Adapt<TEntity>();
+
+			var filter = Builders<TEntity>.Filter.Eq("_id", entityId);
+
+			var result = await Collection.ReplaceOneAsync(filter, entityToUpdate);
+
+			return result.MatchedCount == 0 ? Result.Fail($"TEntity with ID {entityId} not found") : Result.Ok();
+
+		}
+		catch (Exception ex)
+		{
+
+			return Result.Fail(ex.Message);
+
+		}
+
 	}
 
-	public async Task<TEntity?> GetByIdAsync(ObjectId id)
-	{
-		return await Collection.Find(e => e.Id == id).FirstOrDefaultAsync();
-	}
-
-	public void Remove(TEntity entity)
-	{
-		Collection.DeleteOne(e => e.Id == entity.Id);
-	}
-
-	public void RemoveRange(IEnumerable<TEntity> entities)
-	{
-		var ids = entities.Select(e => e.Id).ToList();
-		Collection.DeleteMany(e => ids.Contains(e.Id));
-	}
-
-	public async Task<IEnumerable<TEntity>> GetAllAsync()
-	{
-		return await Collection.Find(_ => true).ToListAsync();
-	}
-
-	public void Update(TEntity entity)
-	{
-		Collection.ReplaceOne(e => e.Id == entity.Id, entity);
-	}
 }

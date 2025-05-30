@@ -24,6 +24,7 @@
     <Project Path="MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" />
     <Project Path="TailwindBlog.Architecture.Tests/TailwindBlog.Architecture.Tests.csproj" />
     <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" />
+    <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Integration\TailwindBlog.Persistence.MongoDb.Tests.Integration.csproj" Type="Classic C#" />
     <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" />
     <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" />
   </Folder>

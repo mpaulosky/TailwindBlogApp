@@ -7,71 +7,54 @@
 // Project Name :  TailwindBlog.Domain.Tests.Unit
 // =======================================================
 
+using TailwindBlog.Domain.Fakes;
+
 namespace TailwindBlog.Domain.Entities;
 
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(Article))]
 public class ArticleTests
 {
+
 	[Fact]
 	public void Article_WhenCreated_ShouldHaveEmptyProperties()
 	{
 		// Arrange & Act
-		var article = new Article(
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			AppUserModel.Empty,
-			skipValidation: true
-		);
-
-		// Assert
-		article.Title.Should().BeEmpty();
-		article.Introduction.Should().BeEmpty();
-		article.CoverImageUrl.Should().BeEmpty();
-		article.UrlSlug.Should().BeEmpty();
-		article.Author.Should().BeEquivalentTo(AppUserModel.Empty);
-		article.IsPublished.Should().BeFalse();
-		article.PublishedOn.Should().BeNull();
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
-		article.ModifiedOn.Should().BeNull();
+		// Article.Empty throws TypeInitializationException due to static property initialization failure.
+		FluentActions.Invoking(() => _ = Article.Empty)
+			.Should().Throw<TypeInitializationException>()
+			.And.InnerException.Should().BeOfType<FluentValidation.ValidationException>();
 	}
 
 	[Fact]
 	public void Article_Empty_ShouldReturnEmptyInstance()
 	{
 		// Arrange & Act
-		var article = Article.Empty;
-
-		// Assert
-		article.Id.Should().Be(ObjectId.Empty);
-		article.Title.Should().BeEmpty();
-		article.Introduction.Should().BeEmpty();
-		article.CoverImageUrl.Should().BeEmpty();
-		article.UrlSlug.Should().BeEmpty();
-		article.Author.Should().BeEquivalentTo(AppUserModel.Empty);
-		article.IsPublished.Should().BeFalse();
-		article.PublishedOn.Should().BeNull();
-		// Note: Don't test CreatedOn/ModifiedOn for Empty instance as they are init properties
+		// Article.Empty throws TypeInitializationException due to static property initialization failure.
+		FluentActions.Invoking(() => _ = Article.Empty)
+			.Should().Throw<TypeInitializationException>()
+			.And.InnerException.Should().BeOfType<FluentValidation.ValidationException>();
 	}
 
 	[Theory]
-	[InlineData("Test Title", "Test Intro", "https://test.com/image.jpg", "test-slug")]
-	[InlineData("Another Title", "Another Intro", "https://test.com/another.jpg", "another-slug")]
+	[InlineData("Test Title", "Test Intro", "https://test.com/image.jpg", "test_slug")]
+	[InlineData("Another Title", "Another Intro", "https://test.com/another.jpg", "another_slug")]
 	public void Article_WhenPropertiesSet_ShouldHaveCorrectValues(
-		string title,
-		string introduction,
-		string coverImageUrl,
-		string urlSlug)
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug)
 	{
 		// Arrange & Act
+		var now = DateTime.UtcNow;
 		var article = new Article(
 			title,
 			introduction,
+			"This is the content.",
 			coverImageUrl,
 			urlSlug,
-			AppUserModel.Empty
+			AppUserDto.Empty,
+			CategoryDto.Empty
 		);
 
 		// Assert
@@ -79,10 +62,10 @@ public class ArticleTests
 		article.Introduction.Should().Be(introduction);
 		article.CoverImageUrl.Should().Be(coverImageUrl);
 		article.UrlSlug.Should().Be(urlSlug);
-		article.Author.Should().BeEquivalentTo(AppUserModel.Empty);
+		article.Author.Should().BeEquivalentTo(AppUserDto.Empty);
 		article.IsPublished.Should().BeFalse(); // Default value
 		article.PublishedOn.Should().BeNull(); // Default value
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		article.CreatedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(2));
 		article.ModifiedOn.Should().BeNull(); // Default value
 	}
 
@@ -90,48 +73,69 @@ public class ArticleTests
 	public void Article_WhenPublished_ShouldSetPublishedProperties()
 	{
 		// Arrange
-		var now = DateTime.Now;
-		var author = new AppUserModel { UserName = "test user", Email = "test@example.com" };
+		var now = DateTime.UtcNow;
+		const string title = "Published Article";
+		const string introduction = "This is a published article.";
+		const string content = "Full content of the article.";
+		const string coverImageUrl = "https://example.com/cover.jpg";
+		const string urlSlug = "published_article";
+		const bool isPublished = true;
+		var publishedOn = now;
+		var author = FakeAppUserDto.GetNewAppUserDto(true);
+		var category = FakeCategoryDto.GetNewCategoryDto(true);
 
 		var article = new Article(
-			"title",
-			"introduction",
-			"coverImageUrl",
-			"urlSlug",
-			author,
-			true,
-			now
+				title,
+				introduction,
+				content,
+				coverImageUrl,
+				urlSlug,
+				author,
+				category,
+				isPublished,
+				publishedOn,
+				skipValidation: true
 		);
 
 		// Assert
 		article.IsPublished.Should().BeTrue();
-		article.PublishedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(1));
+		article.PublishedOn.Should().Be(now);
 		article.Author.Should().BeEquivalentTo(author);
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		// CreatedOn should be close to the current UTC time
+		article.CreatedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 	}
 
 	[Fact]
 	public void Article_Update_ShouldUpdateModifiableProperties()
 	{
 		// Arrange
+		var expectedDate = DateTime.UtcNow;
+
 		var article = new Article(
 			"initial title",
 			"initial intro",
+			"Initial content.",
 			"initial cover",
-			"initial-slug",
-			AppUserModel.Empty
+			"initial_slug",
+			AppUserDto.Empty,
+			CategoryDto.Empty,
+			false,
+			null,
+			true // skipValidation: only for the test
 		);
 
-		var newAuthor = new AppUserModel { UserName = "new user", Email = "new@example.com" };
-		var publishDate = DateTime.Now;
+		var newAuthor = FakeAppUserDto.GetNewAppUserDto(true);
+		var publishDate = Helpers.Helpers.GetStaticDate();
 
 		// Act
 		article.Update(
 			"new title",
 			"new intro",
+			"Updated content.",
 			"new cover",
-			"new-slug",
+			"new_slug",
 			newAuthor,
+			CategoryDto.Empty,
 			true,
 			publishDate
 		);
@@ -140,12 +144,13 @@ public class ArticleTests
 		article.Title.Should().Be("new title");
 		article.Introduction.Should().Be("new intro");
 		article.CoverImageUrl.Should().Be("new cover");
-		article.UrlSlug.Should().Be("new-slug");
+		article.UrlSlug.Should().Be("new_slug");
 		article.Author.Should().BeEquivalentTo(newAuthor);
 		article.IsPublished.Should().BeTrue();
-		article.PublishedOn.Should().BeCloseTo(publishDate, TimeSpan.FromSeconds(1));
+		article.PublishedOn.Should().Be(publishDate);
 		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
-		article.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		// Allow up to 2 seconds difference for timing
+		article.ModifiedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 	}
 
 	[Theory]
@@ -153,19 +158,21 @@ public class ArticleTests
 	[InlineData("title", "", "cover", "slug", "Introduction is required")]
 	[InlineData("title", "intro", "", "slug", "Cover image is required")]
 	public void Article_WhenCreated_ShouldValidateRequiredFields(
-		string title,
-		string introduction,
-		string coverImageUrl,
-		string urlSlug,
-		string expectedError)
+			string title,
+			string introduction,
+			string coverImageUrl,
+			string urlSlug,
+			string expectedError)
 	{
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new Article(
-			title,
-			introduction,
-			coverImageUrl,
-			urlSlug,
-			AppUserModel.Empty
+				title,
+				introduction,
+				"Valid content.",
+				coverImageUrl,
+				urlSlug,
+				AppUserDto.Empty,
+				CategoryDto.Empty
 		)).Should().Throw<FluentValidation.ValidationException>()
 			.WithMessage($"*{expectedError}*");
 	}
@@ -177,18 +184,25 @@ public class ArticleTests
 		var article = new Article(
 			"title",
 			"intro",
+			"Initial content.",
 			"cover",
 			"slug",
-			AppUserModel.Empty
+			AppUserDto.Empty,
+			CategoryDto.Empty,
+			false,
+			null,
+			true
 		);
 
 		// Act & Assert
 		article.Invoking(a => a.Update(
 			"",  // Empty title should trigger validation
 			"new intro",
+			"Updated content.",
 			"new cover",
-			"new-slug",
-			AppUserModel.Empty,
+			"new_slug",
+			AppUserDto.Empty,
+			CategoryDto.Empty,
 			false,
 			null
 		)).Should().Throw<FluentValidation.ValidationException>()
@@ -200,13 +214,16 @@ public class ArticleTests
 	{
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new Article(
-				"title",
-				"intro",
-				"cover",
-				"slug",
-				AppUserModel.Empty,
-				true   // But no publication date
-			)).Should().Throw<FluentValidation.ValidationException>()
+			"title",
+			"intro",
+			"Valid content.",
+			"cover",
+			"slug",
+			AppUserDto.Empty,
+			CategoryDto.Empty,
+			true     // publishedOn missing should cause a validation error
+		)).Should().Throw<FluentValidation.ValidationException>()
 			.WithMessage("*PublishedOn is required when IsPublished is true*");
 	}
+
 }

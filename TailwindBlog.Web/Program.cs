@@ -9,6 +9,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddOutputCache();
 
+builder.Services.AddMemoryCache();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

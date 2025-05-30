@@ -8,24 +8,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Using Include="Xunit"/>
+        <Using Include="Xunit" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector"/>
-        <PackageReference Include="FluentAssertions"/>
-        <PackageReference Include="JetBrains.Annotations"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk"/>
-        <PackageReference Include="NSubstitute"/>
-        <PackageReference Include="xunit"/>
-        <PackageReference Include="xunit.runner.visualstudio"/>
-        <PackageReference Include="NetArchTest.Rules"/>
+        <PackageReference Include="coverlet.collector" />
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="JetBrains.Annotations" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="xunit.runner.visualstudio" />
+        <PackageReference Include="NetArchTest.Rules" />
+        <PackageReference Include="xunit.v3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj"/>
-        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj"/>
+        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Web\TailwindBlog.Web.csproj" />
+        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>

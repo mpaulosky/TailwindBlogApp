@@ -7,13 +7,6 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
-using TailwindBlog.Domain.Models;
-using TailwindBlog.Web.Components.Features.Articles.Models;
-
-#endregion
-
 namespace TailwindBlog.Web.Components.Shared;
 
 /// <summary>
@@ -28,14 +21,11 @@ public class PostInfoComponentTest : BunitContext
 	public void Should_Render_Author_And_Category()
 	{
 		// Arrange
-
-		var article = new ArticleModel
-		{
-				Author = new AppUserModel { UserName = "TestUser" },
-				CreatedOn = new DateTime(2025, 5, 5),
-				IsPublished = true,
-				PublishedOn = new DateTime(2025, 5, 4)
-		};
+		var article = FakeArticle.GetNewArticle(true).Adapt<ArticleModel>();
+		article.Author.UserName = "TestUser";
+		article.CreatedOn = new DateTime(2025, 5, 5);
+		article.PublishedOn = new DateTime(2025, 5, 4);
+		article.Category.Name = "UnitTest";
 
 		const string expectedHtml =
 				"""
@@ -47,13 +37,9 @@ public class PostInfoComponentTest : BunitContext
 				</div>
 				""";
 
-
-		const string category = "UnitTest";
-
 		// Act
 		var cut = Render<PostInfoComponent>(parameters => parameters
-				.Add(p => p.Article, article)
-				.Add(p => p.CategoryType, category));
+				.Add(p => p.Article, article));
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);

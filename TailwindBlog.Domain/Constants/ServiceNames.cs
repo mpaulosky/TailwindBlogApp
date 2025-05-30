@@ -2,8 +2,8 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     ServiceNames.cs
 // Company :       mpaulosky
-// Author :        Matthew Paulosky
-// Solution Name : BlogApp
+// Author :        Matthew
+// Solution Name : TailwindBlog
 // Project Name :  TailwindBlog.Domain
 // =======================================================
 

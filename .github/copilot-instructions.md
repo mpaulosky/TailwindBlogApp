@@ -91,13 +91,13 @@ These instructions define the required coding, architecture, and project rules f
 #### Database (Required)
 
 - **Use Entity Framework Core:** `true`
-- **Use MongoDB Entity:** `true`
+- **Use MongoDB:** `true`
 - **Prefer Async Operations:** `true`
 - **Use Migrations:** `false` (for MongoDB)
-- **Use TestContainers:** `true` (for testing)
+- **Use TestContainers:** `true` (for Integration testing)
 - **Use Change Tracking:** `true`
 - **Use DbContext Pooling:** `true`
-- **Use In-Memory Database:** `false` (for testing)
+- **Use In-Memory Database:** `false`
 
 #### Versioning (Required)
 
@@ -136,12 +136,10 @@ These instructions define the required coding, architecture, and project rules f
 - **Require Unit Tests:** `true`
 - **Require Integration Tests:** `true`
 - **Require Architecture Tests:** `true`
-- **Require Security Tests:** `false` (Security tests are optional; see [SECURITY.md](docs/SECURITY.md))
 - **Use xUnit:** `true`
 - **Use FluentAssertions:** `true`
 - **Use NSubstitute:** `true`
 - **Use bUnit:** `true`
-- **Use Global Usings:** `true`
 
 ---
 
@@ -149,7 +147,7 @@ These instructions define the required coding, architecture, and project rules f
 
 - **Max Line Length:** `120`
 - **Indent Style:** `tab`
-- **Indent Size:** `4`
+- **Indent Size:** `2`
 - **End of Line:** `lf`
 - **Trim Trailing Whitespace:** `true`
 - **Insert Final Newline:** `true`

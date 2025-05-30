@@ -1,12 +1,13 @@
+@using System.Globalization
 <div class="flex gap-4 border-t border-gray-200 pt-4">
 
 	<div>Author: @Article.Author.UserName</div>
 
-	<div>Created: @Article.CreatedOn.ToString("d")</div>
+	<div>Created: @Article.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
 
 	@if(@Article.IsPublished)
 	{
-		<div>Published: @Article.PublishedOn?.ToString("d")</div>
+		<div>Published: @Article.PublishedOn?.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
 	}
 	else
 	{

@@ -7,8 +7,6 @@
 // Project Name :  TailwindBlog.Web.Tests.Bunit
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
@@ -44,5 +42,3 @@ global using TailwindBlog.Web.Components.Features.Articles.Models;
 global using TailwindBlog.Web.Services;
 
 global using Xunit;
-
-#endregion

@@ -4,8 +4,6 @@
 // Project Name:  TailwindBlog.Persistence.MongoDb
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
@@ -28,5 +26,3 @@ global using TailwindBlog.Domain.Helpers;
 global using TailwindBlog.Domain.Interfaces;
 global using TailwindBlog.Domain.Models;
 global using TailwindBlog.Persistence.Repositories;
-
-#endregion

@@ -4,8 +4,6 @@
 // Project Name:  TailwindBlog.Architecture.Tests
 // =======================================================
 
-#region
-
 global using System;
 global using System.Collections;
 global using System.Collections.Generic;
@@ -27,5 +25,3 @@ global using TailwindBlog.Persistence;
 global using TailwindBlog.Web;
 
 global using Xunit;
-
-#endregion

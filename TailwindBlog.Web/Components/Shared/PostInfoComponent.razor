@@ -13,13 +13,12 @@
 		<div>Draft</div>
 	}
 
-	<div>Category: @CategoryType</div>
+	<div>Category: @Article.Category.Name</div>
 
 	</div>
 
 @code {
 
 	[Parameter] public ArticleModel Article { get; set; } = new();
-	[Parameter] public string CategoryType { get; set; } = "Docker";
 
 }

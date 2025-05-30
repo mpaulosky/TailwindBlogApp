@@ -29,7 +29,7 @@
 								@article.Introduction
 							</p>
 
-							<PostInfoComponent Article="@article" CategoryType="Blog" />
+							<PostInfoComponent Article="@article" />
 
 						</div>
 
@@ -56,7 +56,7 @@
 
 		for (int i = 0; i < 3; i++)
 		{
-			var article = Helpers.ArticleGenerator.Generate(1).First();
+			var article = FakeArticle.GetNewArticle();
 			var articleModel = article.Adapt<ArticleModel>();
 			_articles?.Add(articleModel);
 		}

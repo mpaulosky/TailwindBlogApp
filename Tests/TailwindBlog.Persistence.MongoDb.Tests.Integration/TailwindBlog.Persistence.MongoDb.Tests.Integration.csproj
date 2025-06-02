@@ -32,9 +32,4 @@
         <PackageReference Include="xunit.runner.visualstudio" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
-      <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
-    </ItemGroup>
-
 </Project>

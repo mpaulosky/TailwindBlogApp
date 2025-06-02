@@ -31,8 +31,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
-        <ProjectReference Include="..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
+        <ProjectReference Include="..\..\TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
+        <ProjectReference Include="..\..\TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
     </ItemGroup>
 
     <ItemGroup>

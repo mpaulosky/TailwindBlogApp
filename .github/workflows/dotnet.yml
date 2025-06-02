@@ -58,8 +58,11 @@ jobs:
       - name: Create Test Results Directory
         run: mkdir -p TestResults
 
-      - name: Run Tests
-        run: dotnet test --no-restore --no-build --logger "trx;LogFileName=$(ProjectName)_$(BuildNumber).trx"
+      - name: Run all tests in all test projects
+        run: |
+          for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
+            dotnet test "$proj" --logger "trx;LogFileName=TestResults/$(basename $proj .csproj).trx"
+          done
 
       - name: Upload Test Results
         uses: actions/upload-artifact@v4
@@ -95,7 +98,7 @@ jobs:
           versionSpec: "6.0"
 
       - name: Use GitVersion
-        id: gitversion # step id used as reference for output values
+        id: gitversion # step id used as a reference for output values
         uses: gittools/actions/gitversion/execute@v3.2.1
 
       - run: |

@@ -22,10 +22,12 @@ public class FooterComponentTest : BunitContext
 	{
 
 		// Arrange
-		const string expectedHtml =
-				"""
+		var currentYear = DateTime.Now.Year;
+
+		var expectedHtml =
+				$"""
 				<div class="text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700">
-				  <a href="/">© 2023 MPaulosky Co. All rights reserved.</a>
+				  <a href="/">©{currentYear} MPaulosky Co. All rights reserved.</a>
 				</div>
 				""";
 

@@ -54,14 +54,15 @@ jobs:
 
       - name: Build
         run: dotnet build --no-restore
-
+        
       - name: Create Test Results Directory
         run: mkdir -p TestResults
-
+      
       - name: Run all tests in all test projects
         run: |
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
-            dotnet test "$proj" --logger "trx;LogFileName=TestResults/$(basename $proj .csproj).trx"
+            name=$(basename "$proj" .csproj)
+            dotnet test "$proj" --logger "trx;LogFileName=TestResults/${name}.trx"
           done
 
       - name: Upload Test Results

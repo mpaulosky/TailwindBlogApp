@@ -21,11 +21,11 @@
     <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" />
-    <Project Path="TailwindBlog.Architecture.Tests/TailwindBlog.Architecture.Tests.csproj" />
-    <Project Path="TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" />
-    <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Integration\TailwindBlog.Persistence.MongoDb.Tests.Integration.csproj" Type="Classic C#" />
-    <Project Path="TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" />
-    <Project Path="TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" />
+    <Project Path="Tests\MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="Classic C#" />
+    <Project Path="Tests\TailwindBlog.Architecture.Tests\TailwindBlog.Architecture.Tests.csproj" Type="Classic C#" />
+    <Project Path="Tests\TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="Classic C#" />
+    <Project Path="Tests\TailwindBlog.Persistence.MongoDb.Tests.Integration\TailwindBlog.Persistence.MongoDb.Tests.Integration.csproj" Type="Classic C#" />
+    <Project Path="Tests\TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" Type="Classic C#" />
+    <Project Path="Tests\TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" Type="Classic C#" />
   </Folder>
 </Solution>

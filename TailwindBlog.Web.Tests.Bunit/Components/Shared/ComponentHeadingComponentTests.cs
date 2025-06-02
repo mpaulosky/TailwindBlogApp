@@ -16,7 +16,7 @@ public class ComponentHeadingComponentTests : BunitContext
 
 	[Theory]
 	[InlineData("1", "Test Heading 1", "text-gray-10", "text-2xl")]
-	[InlineData("2", "Test Heading 2", "text-gray-20", "text-")]
+	[InlineData("2", "Test Heading 2", "text-gray-20", "text-xl")]
 	[InlineData("3", "Test Heading 3", "text-gray-30", "text-lg")]
 	[InlineData("4", "Test Heading 4", "text-gray-40", "text-md")]
 	[InlineData("5", "Test Heading 5", "text-gray-50", "text-sm")]

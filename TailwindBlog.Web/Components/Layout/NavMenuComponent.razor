@@ -1,6 +1,6 @@
 ﻿<header
-	class="container flex items-center justify-between w-full max-w-7xl px-6 py-2 mx-auto rounded-b-mdxl:max-w-5xl border-b border-blue-700 shadow-md shadow-blue-500">
-	<a href="#" class="block h-8 text-2xl font-semibold hover:text-blue-700">Tailwind Blogs</a>
+	class="container flex items-center justify-between max-w-7xl px-6 py-2 mx-auto rounded-b-mdxl:max-w-5xl border-b border-blue-700 shadow-md shadow-blue-500">
+	<a href="#" class="block h-8 text-2xl font-semibold hover:text-blue-700">@_siteName</a>
 	<div class="flex items-center">
 		<div class="hidden space-x-2 font-medium sm:block">
 			@* <AuthorizeView> *@
@@ -21,3 +21,7 @@
 		</div>
 	</div>
 </header>
+
+@code {
+	private const string _siteName = "Tailwind Blogs";
+}

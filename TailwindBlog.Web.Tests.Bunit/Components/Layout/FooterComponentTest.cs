@@ -20,11 +20,21 @@ public class FooterComponentTest : BunitContext
 	[Fact]
 	public void Should_Render_Footer_Text()
 	{
-		// Arrange & Act
+
+		// Arrange
+		const string expectedHtml =
+				"""
+				<div class="text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700">
+				  <a href="/">© 2023 MPaulosky Co. All rights reserved.</a>
+				</div>
+				""";
+
+		// Act
 		var cut = Render<FooterComponent>();
 
 		// Assert
-		cut.Markup.Should().Contain("All rights reserved");
+		cut.MarkupMatches(expectedHtml);
+
 	}
 
 }

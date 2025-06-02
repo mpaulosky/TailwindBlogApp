@@ -1,7 +1,13 @@
 ﻿@page "/"
 
-<PageHeadingComponent Level="1" HeaderText="Home"/>
+<PageHeadingComponent Level="1" HeaderText="@_pageTitle"/>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@code{
+
+	private const string _pageTitle = "Home - TailwindBlog";
+
+}

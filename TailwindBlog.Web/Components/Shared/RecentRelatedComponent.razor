@@ -1,5 +1,5 @@
 <div>
-	<ComponentHeadingComponent HeaderText="Recent Posts" Level="1" TextColorClass="text-gray-50" />
+	<ComponentHeadingComponent HeaderText="@_headerText" Level="1" TextColorClass="text-gray-50" />
 	<div class="flex flex-col gap-4">
 		<div>
 			<NavLink href="/run-sql-server-on-m1-or-m2-macbook" target="_blank" 
@@ -18,6 +18,6 @@
 
 @code {
 
-
+private const string _headerText = "Recent Posts";
 
 }

@@ -6,6 +6,8 @@
         <Nullable>enable</Nullable>
         <OutputType>Exe</OutputType>
         <RootNamespace>TailwindBlog.Web</RootNamespace>
+        <CollectCoverage>true</CollectCoverage>
+        <CoverletOutputFormat>opencover</CoverletOutputFormat>
     </PropertyGroup>
 
     <ItemGroup>

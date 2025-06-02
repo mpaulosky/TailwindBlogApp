@@ -3,7 +3,7 @@
 <PageHeadingComponent Level="1" HeaderText="About" />
 
 <div class="prose max-w-2xl mx-auto text-gray-100 bg-gray-800 rounded-md shadow-md p-6 mt-6">
-  <h2 class="text-xl font-bold mb-2">About TailwindBlog</h2>
+  <h2 class="text-xl font-bold mb-2">@_pageTitle</h2>
   <p>
     <strong>TailwindBlog</strong> is a modern, open-source blogging platform built with <b>.NET Aspire</b> and <b>Blazor
       Server</b>. It enables users to create, manage, and share blog posts with ease, leveraging a MongoDB backend for
@@ -18,11 +18,6 @@
     <li>Implements Clean Architecture, CQRS, and SOLID principles</li>
     <li>OpenAPI/Swagger documentation for APIs</li>
   </ul>
-  <p class="mt-4">
-    <b>How to contribute:</b> See the <a href="/docs/CONTRIBUTING.md" class="text-blue-400 underline">contributing
-      guide</a> and <a href="/docs/CODE_OF_CONDUCT.md" class="text-blue-400 underline">code of conduct</a> for details
-    on how to get involved.
-  </p>
   <p class="mt-2">
     <b>Source code:</b> <a href="https://github.com/mpaulosky/TailwindBlog" target="_blank"
       class="text-blue-400 underline">github.com/mpaulosky/TailwindBlog</a>
@@ -30,13 +25,6 @@
 </div>
 
 @code {
-
-
-
+	
+	private const string _pageTitle = "About - TailwindBlog";
 }
-    
-   
- 
-   
- 
-   

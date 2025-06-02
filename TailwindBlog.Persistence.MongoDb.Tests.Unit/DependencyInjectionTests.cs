@@ -55,21 +55,21 @@ public class DependencyInjectionTests
 		// IMongoDbContextFactory as a singleton
 		services.Should().ContainSingle(x =>
 				x.ServiceType.Name == "IMongoDbContextFactory" &&
-				x.ImplementationType.Name == "MongoDbContextFactory" &&
+				x.ImplementationType!.Name == "MongoDbContextFactory" &&
 				x.Lifetime == ServiceLifetime.Singleton
 		);
 
 		// IArticleRepository as scoped
 		services.Should().ContainSingle(x =>
 				x.ServiceType.Name == "IArticleRepository" &&
-				x.ImplementationType.Name == "ArticleRepository" &&
+				x.ImplementationType!.Name == "ArticleRepository" &&
 				x.Lifetime == ServiceLifetime.Scoped
 		);
 
 		// ICategoryRepository as scoped
 		services.Should().ContainSingle(x =>
 				x.ServiceType.Name == "ICategoryRepository" &&
-				x.ImplementationType.Name == "CategoryRepository" &&
+				x.ImplementationType!.Name == "CategoryRepository" &&
 				x.Lifetime == ServiceLifetime.Scoped
 		);
 

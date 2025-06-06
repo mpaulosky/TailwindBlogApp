@@ -467,5 +467,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-!/TestResults/
 /new 1.txt
+/TestResults/

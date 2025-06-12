@@ -23,6 +23,7 @@ public class DependencyInjectionTests
 	/// </summary>
 	private static IConfiguration CreateConfiguration(string? connectionString)
 	{
+
 		var inMemorySettings = new Dictionary<string, string?>
 		{
 				{ $"ConnectionStrings:{_databaseName}", connectionString }
@@ -31,6 +32,7 @@ public class DependencyInjectionTests
 		return new ConfigurationBuilder()
 				.AddInMemoryCollection(inMemorySettings)
 				.Build();
+
 	}
 
 	[Fact]

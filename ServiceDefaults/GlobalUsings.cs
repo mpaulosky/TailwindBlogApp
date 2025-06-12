@@ -4,18 +4,14 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator.Tests.Unit
+// Project Name :  ServiceDefaults
 // =======================================================
 
-global using System;
-global using System.Diagnostics.CodeAnalysis;
-global using System.Threading;
-global using System.Threading.Tasks;
-
-global using FluentAssertions;
-
-global using JetBrains.Annotations;
-
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.Diagnostics.HealthChecks;
+global using Microsoft.Extensions.Logging;
 
-global using Xunit;
+global using OpenTelemetry.Metrics;
+global using OpenTelemetry.Trace;

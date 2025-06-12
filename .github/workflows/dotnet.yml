@@ -39,14 +39,14 @@ jobs:
           node-version: "18"
           cache: "npm"
           cache-dependency-path: |
-            **/TailwindBlog.Web/package-lock.json
+            **/Web/package-lock.json
 
       - name: Install Node.js dependencies
-        working-directory: TailwindBlog.Web
+        working-directory: Web
         run: npm install
 
       - name: Build Tailwind CSS
-        working-directory: TailwindBlog.Web
+        working-directory: Web
         run: npm run build:css
 
       - name: Restore dependencies

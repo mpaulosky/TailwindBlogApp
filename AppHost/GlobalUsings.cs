@@ -4,18 +4,16 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator.Tests.Unit
+// Project Name :  AppHost
 // =======================================================
 
 global using System;
-global using System.Diagnostics.CodeAnalysis;
+global using System.Collections.Generic;
+global using System.Linq;
 global using System.Threading;
 global using System.Threading.Tasks;
 
-global using FluentAssertions;
-
-global using JetBrains.Annotations;
-
+global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
-
-global using Xunit;
+global using Microsoft.Extensions.Hosting;
+global using Microsoft.Extensions.Logging;

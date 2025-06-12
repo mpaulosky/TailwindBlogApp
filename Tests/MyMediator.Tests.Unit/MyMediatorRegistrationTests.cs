@@ -10,6 +10,7 @@
 namespace MyMediator;
 
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(MyMediator))]
 public class MyMediatorRegistrationTests
 {
 
@@ -53,7 +54,7 @@ public class MyMediatorRegistrationTests
 public class TestRequest : IRequest<string>
 {
 
-	public string Value { get; set; } = string.Empty;
+	public string Value { get; init; } = string.Empty;
 
 }
 

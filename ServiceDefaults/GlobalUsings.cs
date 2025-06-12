@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.ServiceDefaults
+// Project Name :  ServiceDefaults
 // =======================================================
 
 global using Microsoft.AspNetCore.Builder;

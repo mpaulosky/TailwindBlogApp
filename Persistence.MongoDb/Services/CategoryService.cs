@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Persistence.MongoDb
+// Project Name :  Persistence.MongoDb
 // =============================================
 
 // namespace TailwindBlog.Persistence.Services;

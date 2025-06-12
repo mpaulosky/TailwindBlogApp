@@ -1,7 +1,7 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name:     GlobalUsings.cs
-// Project Name:  TailwindBlog.Persistence.MongoDb
+// Project Name:  Persistence.MongoDb
 // =======================================================
 
 global using System;
@@ -19,10 +19,9 @@ global using Microsoft.Extensions.DependencyInjection;
 global using MongoDB.Bson;
 global using MongoDB.Driver;
 
-global using TailwindBlog.Domain.Abstractions;
-global using static TailwindBlog.Domain.Constants.ServiceNames;
-global using TailwindBlog.Domain.Entities;
-global using TailwindBlog.Domain.Helpers;
-global using TailwindBlog.Domain.Interfaces;
-global using TailwindBlog.Domain.Models;
-global using TailwindBlog.Persistence.Repositories;
+global using Domain.Abstractions;
+global using static Domain.Constants.ServiceNames;
+global using Domain.Entities;
+global using Domain.Helpers;
+global using Domain.Interfaces;
+global using Domain.Models;

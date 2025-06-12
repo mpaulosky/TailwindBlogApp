@@ -1,4 +1,4 @@
-namespace TailwindBlog.Persistence;
+namespace Persistence;
 
 /// <summary>
 /// Defines the contract for database context access

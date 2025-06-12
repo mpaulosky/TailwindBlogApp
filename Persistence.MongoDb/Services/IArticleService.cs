@@ -4,10 +4,10 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Persistence.MongoDb
+// Project Name :  Persistence.MongoDb
 // =======================================================
 
-namespace TailwindBlog.Persistence.Services;
+namespace Persistence.Services;
 
 public interface IArticleService
 {

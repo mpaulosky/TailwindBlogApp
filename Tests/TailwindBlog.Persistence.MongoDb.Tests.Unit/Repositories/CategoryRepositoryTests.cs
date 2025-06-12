@@ -15,6 +15,7 @@ namespace TailwindBlog.Persistence.Repositories;
 ///   Unit tests for the <see cref="CategoryRepository"/> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(CategoryRepository))]
 public sealed class CategoryRepositoryTests
 {
 

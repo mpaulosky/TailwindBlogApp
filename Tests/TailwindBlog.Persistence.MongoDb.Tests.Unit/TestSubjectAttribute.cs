@@ -16,17 +16,19 @@ namespace TailwindBlog.Persistence;
 [ExcludeFromCodeCoverage]
 public class TestSubjectAttribute : Attribute
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TestSubjectAttribute"/> class.
-    /// </summary>
-    /// <param name="testSubjectType">The type of the class being tested.</param>
-    public TestSubjectAttribute(Type testSubjectType)
-    {
-        TestSubjectType = testSubjectType;
-    }
 
-    /// <summary>
-    /// Gets the type of the class being tested.
-    /// </summary>
-    public Type TestSubjectType { get; }
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TestSubjectAttribute"/> class.
+	/// </summary>
+	/// <param name="testSubjectType">The type of the class being tested.</param>
+	public TestSubjectAttribute(Type testSubjectType)
+	{
+		TestSubjectType = testSubjectType;
+	}
+
+	/// <summary>
+	/// Gets the type of the class being tested.
+	/// </summary>
+	public Type TestSubjectType { get; }
+
 }

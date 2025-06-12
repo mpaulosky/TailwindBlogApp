@@ -7,15 +7,6 @@
 // Project Name :  MyMediator
 // =======================================================
 
-// =======================================================
-// Copyright (c) 2025. All rights reserved.
-// File Name :     Sender.cs
-// Company :       mpaulosky
-// Author :        Matthew
-// Solution Name : TailwindBlog
-// Project Name :  MyMediator
-// =======================================================
-
 namespace MyMediator;
 
 public class Sender

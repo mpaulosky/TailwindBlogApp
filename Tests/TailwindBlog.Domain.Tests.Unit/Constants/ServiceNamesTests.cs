@@ -17,6 +17,7 @@ public class ServiceNamesTests
 	[Fact]
 	public void ServerName_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "posts-server";
 
@@ -25,11 +26,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void DatabaseName_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "blog-app-database";
 
@@ -38,11 +41,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void OutputCache_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "output-cache";
 
@@ -51,11 +56,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void ApiService_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "blog-api";
 
@@ -64,11 +71,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void WebApp_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "web-frontend";
 
@@ -77,11 +86,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void CategoryCacheName_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "CategoryData";
 
@@ -90,11 +101,13 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 	[Fact]
 	public void BlogPostCacheName_ShouldReturnExpectedValue()
 	{
+
 		// Arrange
 		var expected = "BlogPostData";
 
@@ -103,6 +116,7 @@ public class ServiceNamesTests
 
 		// Assert
 		Assert.Equal(expected, actual);
+
 	}
 
 }

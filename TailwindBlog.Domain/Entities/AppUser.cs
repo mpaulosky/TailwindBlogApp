@@ -16,6 +16,11 @@ public class AppUser
 {
 
 	/// <summary>
+	/// Parameterless constructor for serialization and test data generation.
+	/// </summary>
+	public AppUser() : this(string.Empty, string.Empty, string.Empty, [], true) { }
+
+	/// <summary>
 	///   Initializes a new instance of the <see cref="AppUser" /> class.
 	/// </summary>
 	/// <param name="id">The users Id</param>
@@ -90,9 +95,9 @@ public class AppUser
 	///   Validates the state of the entity using FluentValidation.
 	/// </summary>
 	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
-	void ValidateState()
+	private void ValidateState()
 	{
-		var validator = new Validators.AppUserValidator();
+		var validator = new AppUserValidator();
 		validator.ValidateAndThrow(this);
 	}
 }

@@ -10,12 +10,14 @@
 namespace TailwindBlog.Domain.Fakes;
 
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(FakeCategory))]
 public class FakeCategoryTests
 {
 
 	[Fact]
 	public void GetNewCategory_ShouldReturnCategory()
 	{
+
 		// Act
 		var result = FakeCategory.GetNewCategory();
 
@@ -24,11 +26,13 @@ public class FakeCategoryTests
 		result.Should().BeOfType<Category>();
 		result.Name.Should().NotBeNullOrEmpty();
 		result.Description.Should().NotBeNullOrEmpty();
+
 	}
 
 	[Fact]
 	public void GetNewCategory_WithSeed_ShouldReturnDeterministicResult()
 	{
+
 		// Act
 		var result1 = FakeCategory.GetNewCategory(useSeed: true);
 		var result2 = FakeCategory.GetNewCategory(useSeed: true);
@@ -38,6 +42,7 @@ public class FakeCategoryTests
 		result2.Should().NotBeNull();
 		result1.Name.Should().Be(result2.Name);
 		result1.Description.Should().Be(result2.Description);
+
 	}
 
 	[Theory]
@@ -46,6 +51,7 @@ public class FakeCategoryTests
 	[InlineData(10)]
 	public void GetCategories_ShouldReturnRequestedNumberOfCategories(int count)
 	{
+
 		// Act
 		var results = FakeCategory.GetCategories(count);
 
@@ -55,11 +61,13 @@ public class FakeCategoryTests
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Name));
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Description));
+
 	}
 
 	[Fact]
 	public void GetCategories_WithSeed_ShouldReturnDeterministicResults()
 	{
+
 		// Arrange
 		const int count = 3;
 
@@ -78,11 +86,13 @@ public class FakeCategoryTests
 			results1[i].Name.Should().Be(results2[i].Name);
 			results1[i].Description.Should().Be(results2[i].Description);
 		}
+
 	}
 
 	[Fact]
 	public void GenerateFake_ShouldConfigureFakerCorrectly()
 	{
+
 		// Act
 		var faker = FakeCategory.GenerateFake();
 		var category = faker.Generate();
@@ -92,11 +102,13 @@ public class FakeCategoryTests
 		category.Name.Should().NotBeNullOrEmpty();
 		category.Name.Should().BeOneOf(Enum.GetNames<CategoryNames>());
 		category.Description.Should().Contain(category.Name);
+
 	}
 
 	[Fact]
 	public void GenerateFake_WithSeed_ShouldApplySeed()
 	{
+
 		// Act
 		var faker1 = FakeCategory.GenerateFake(useSeed: true);
 		var faker2 = FakeCategory.GenerateFake(useSeed: true);
@@ -107,6 +119,7 @@ public class FakeCategoryTests
 		// Assert
 		category1.Name.Should().Be(category2.Name);
 		category1.Description.Should().Be(category2.Description);
+
 	}
 
 }

@@ -19,6 +19,7 @@ public class AppUserDto
 	/// Parameterless constructor for serialization and test data generation.
 	/// </summary>
 	public AppUserDto() : this(string.Empty, string.Empty, string.Empty, [], true) { }
+	
 	/// <summary>
 	///  Initializes a new instance of the <see cref="AppUserDto" /> class.
 	/// </summary>

@@ -9,12 +9,17 @@ global using System.Diagnostics.CodeAnalysis;
 
 global using FluentAssertions;
 
+global using FluentValidation;
+
 global using JetBrains.Annotations;
 
 global using MongoDB.Bson;
 
 global using TailwindBlog.Domain.Entities;
 global using TailwindBlog.Domain.Enums;
+global using TailwindBlog.Domain.Fakes;
+global using TailwindBlog.Domain.Helpers;
 global using TailwindBlog.Domain.Models;
+global using TailwindBlog.Domain.Validators;
 
 global using Xunit;

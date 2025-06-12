@@ -21,20 +21,11 @@ public static partial class Helpers
 
 	public static string GetSlug(this string item)
 	{
-		if (string.IsNullOrEmpty(item))
-		{
-			return string.Empty;
-		}
 
 		var slug = MyRegex().Replace(item.ToLower(), "_")
 				.Trim('_');
 
 		return HttpUtility.UrlEncode(slug);
-	}
-
-	public static Uri ToUrl(this string slug, DateTimeOffset date)
-	{
-		return new Uri($"/{date.UtcDateTime:yyyyMMdd}/{slug}", UriKind.Relative);
 	}
 
 	[System.Text.RegularExpressions.GeneratedRegex(@"[^a-z0-9]+")]

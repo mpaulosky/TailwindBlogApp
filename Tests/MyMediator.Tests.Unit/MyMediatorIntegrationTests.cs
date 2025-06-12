@@ -10,6 +10,7 @@
 namespace MyMediator;
 
 [ExcludeFromCodeCoverage]
+[TestSubject(typeof(MyMediator))]
 public class MyMediatorIntegrationTests
 {
 

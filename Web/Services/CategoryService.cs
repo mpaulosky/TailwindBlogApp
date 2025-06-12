@@ -1,10 +1,10 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
 // File Name:     CategoryService.cs
-// Project Name:  TailwindBlog.Web
+// Project Name:  Web
 // =======================================================
 
-namespace TailwindBlog.Web.Services;
+namespace Web.Services;
 
 public class CategoryService : ICategoryService
 {

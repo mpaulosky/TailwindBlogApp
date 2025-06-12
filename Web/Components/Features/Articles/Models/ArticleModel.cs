@@ -4,12 +4,12 @@
 // Company :       mpaulosky
 // Author :        Matthew Paulosky
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Web
+// Project Name :  Web
 // =======================================================
 
 using System.ComponentModel.DataAnnotations;
 
-namespace TailwindBlog.Web.Components.Features.Articles.Models;
+namespace Web.Components.Features.Articles.Models;
 
 public class ArticleModel
 {

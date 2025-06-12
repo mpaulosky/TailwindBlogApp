@@ -1,3 +1,3 @@
-namespace TailwindBlog.Web;
+namespace Web;
 
 public interface IWebMarker { }

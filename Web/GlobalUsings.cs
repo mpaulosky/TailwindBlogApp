@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.Web
+// Project Name :  Web
 // =======================================================
 
 global using System;
@@ -17,7 +17,7 @@ global using Microsoft.Extensions.DependencyInjection;
 
 global using MongoDB.Bson;
 
-global using TailwindBlog.Domain.Abstractions;
-global using TailwindBlog.Domain.Entities;
-global using TailwindBlog.Domain.Models;
-global using TailwindBlog.Web.Components;
+global using Domain.Abstractions;
+global using Domain.Entities;
+global using Domain.Models;
+global using Web.Components;

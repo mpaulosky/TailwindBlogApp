@@ -64,7 +64,7 @@ public class MyMediatorIntegrationTests
 
 		var request = new CancellableRequest();
 		using var cts = new CancellationTokenSource();
-		cts.Cancel();
+		await cts.CancelAsync();
 
 		// Act
 		var act = () => sender.Send(request, cts.Token);

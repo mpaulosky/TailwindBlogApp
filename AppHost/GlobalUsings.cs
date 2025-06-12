@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  TailwindBlog.AppHost
+// Project Name :  AppHost
 // =======================================================
 
 global using System;

@@ -1,4 +1,4 @@
-using static TailwindBlog.Domain.Constants.ServiceNames;
+using static Domain.Constants.ServiceNames;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ var mongoServer = builder.AddMongoDB(ServerName)
 
 var mongoDb = mongoServer.AddDatabase(DatabaseName);
 
-builder.AddProject<Projects.TailwindBlog_Web>(WebApp)
+builder.AddProject<Projects.Web>(WebApp)
 		.WithExternalHttpEndpoints()
 		.WithHealthCheck("/health")
 		.WithReference(cache)

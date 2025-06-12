@@ -74,73 +74,73 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the article.
 	/// </summary>
-	public ObjectId Id { get; private set; }
+	public ObjectId Id { get; set; }
 
 	/// <summary>
 	///   Gets or sets the title of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string Title { get; private set; }
+	public string Title { get; set; }
 
 	/// <summary>
 	///   Gets or sets the introduction or summary of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string Introduction { get; private set; }
+	public string Introduction { get; set; }
 
 	/// <summary>
 	///   Gets or sets the main content of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string Content { get; private set; }
+	public string Content { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL of the article's cover image.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string CoverImageUrl { get; private set; }
+	public string CoverImageUrl { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL-friendly slug for the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string UrlSlug { get; private set; }
+	public string UrlSlug { get; set; }
 
 	/// <summary>
 	///   Gets or sets the author information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public AppUserDto Author { get; private set; }
+	public AppUserDto Author { get; set; }
 
 	/// <summary>
 	///   Gets or sets the category information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public CategoryDto Category { get; private set; }
+	public CategoryDto Category { get; set; }
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.
 	/// </summary>)]
 	[Display(Name = "Created On")]
-	public DateTime CreatedOn { get; private set; }
+	public DateTime CreatedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
 	/// </summary>
 	[Display(Name = "Modified On")]
-	public DateTime? ModifiedOn { get; private set; }
+	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is published.
 	/// </summary>
-	public bool IsPublished { get; private set; }
+	public bool IsPublished { get; set; }
 
 
 	/// <summary>
 	///   Gets or sets the date when the article was published.
 	/// </summary>
 	[Display(Name = "Published On")]
-	public DateTime? PublishedOn { get; private set; }
+	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is marked as deleted.

@@ -13,19 +13,18 @@
     <File Path=".cursorrules" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="AppHost\AppHost.csproj" />
+    <Project Path="Domain\Domain.csproj" />
     <Project Path="MyMediator\MyMediator.csproj" />
-    <Project Path="TailwindBlog.AppHost\TailwindBlog.AppHost.csproj" />
-    <Project Path="TailwindBlog.Domain\TailwindBlog.Domain.csproj" />
-    <Project Path="TailwindBlog.Persistence.MongoDb\TailwindBlog.Persistence.MongoDb.csproj" />
-    <Project Path="TailwindBlog.ServiceDefaults\TailwindBlog.ServiceDefaults.csproj" />
-    <Project Path="TailwindBlog.Web\TailwindBlog.Web.csproj" />
+    <Project Path="Persistence.MongoDb\Persistence.MongoDb.csproj" />
+    <Project Path="ServiceDefaults\ServiceDefaults.csproj" />
+    <Project Path="Web\Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="Tests\Architecture.Tests\Architecture.Tests.csproj" Type="C#" />
+    <Project Path="Tests\Domain.Tests.Unit\Domain.Tests.Unit.csproj" Type="C#" />
     <Project Path="Tests\MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="C#" />
-    <Project Path="Tests\TailwindBlog.Architecture.Tests\TailwindBlog.Architecture.Tests.csproj" Type="C#" />
-    <Project Path="Tests\TailwindBlog.Domain.Tests.Unit\TailwindBlog.Domain.Tests.Unit.csproj" Type="C#" />
-    <Project Path="Tests\TailwindBlog.Persistence.MongoDb.Tests.Integration\TailwindBlog.Persistence.MongoDb.Tests.Integration.csproj" Type="C#" />
-    <Project Path="Tests\TailwindBlog.Persistence.MongoDb.Tests.Unit\TailwindBlog.Persistence.MongoDb.Tests.Unit.csproj" Type="C#" />
-    <Project Path="Tests\TailwindBlog.Web.Tests.Bunit\TailwindBlog.Web.Tests.Bunit.csproj" Type="C#" />
+    <Project Path="Tests\Persistence.MongoDb.Tests.Unit\Persistence.MongoDb.Tests.Unit.csproj" Type="C#" />
+    <Project Path="Tests\Web.Tests.Bunit\Web.Tests.Bunit.csproj" Type="C#" />
   </Folder>
 </Solution>

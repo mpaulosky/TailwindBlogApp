@@ -48,14 +48,14 @@ public sealed class MongoDbContextFactoryTests
 
 	}
 
-	private class TestEntity
+	public class TestEntity
 	{
 
 		public string Id { get; set; } = string.Empty;
 
 	}
 
-	private MongoDbContextFactory CreateSut()
+	internal MongoDbContextFactory CreateSut()
 	{
 
 		// Create a new instance of MongoDbContextFactory with our mocked client

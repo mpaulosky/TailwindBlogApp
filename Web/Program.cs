@@ -11,6 +11,8 @@ builder.Services.AddOutputCache();
 
 builder.Services.AddMemoryCache();
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

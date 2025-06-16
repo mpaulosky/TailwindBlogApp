@@ -23,6 +23,10 @@
         <InternalsVisibleTo Include="Architecture.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Features\Category\" />
+    </ItemGroup>
+
     <Target Name="BuildTailwind" BeforeTargets="Build">
         <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
     </Target>

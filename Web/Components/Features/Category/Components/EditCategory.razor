@@ -1,0 +1,164 @@
+@page "/categories/edit/{Id}"
+@using Domain.Entities
+@using Web.Services
+@inject ICategoryService CategoryService
+@inject NavigationManager NavigationManager
+
+<div class="container mx-auto px-4 py-8">
+	<div class="mb-8">
+		<h1 class="text-3xl font-bold text-gray-800">Edit Category</h1>
+		<p class="text-gray-600 mt-2">Update the category information.</p>
+	</div>
+
+	@if (_isLoading)
+	{
+		<div class="flex justify-center items-center py-12">
+			<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+		</div>
+	}
+	else if (_model == null)
+	{
+		<div class="bg-red-50 border-l-4 border-red-500 p-4">
+			<div class="flex">
+				<div>
+					<p class="text-red-700">Category not found or has been deleted.</p>
+				</div>
+			</div>
+		</div>
+		<div class="mt-4">
+			<a href="/categories" class="text-blue-600 hover:underline">Return to categories</a>
+		</div>
+	}
+	else
+	{
+		<div class="bg-white shadow-md rounded-lg p-6 max-w-2xl">
+			<EditForm Model="@_model" OnValidSubmit="HandleValidSubmit">
+				<DataAnnotationsValidator/>
+				<ValidationSummary class="text-red-500 mb-4"/>
+
+				@if (!string.IsNullOrEmpty(_errorMessage))
+				{
+					<div class="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+						<div class="flex">
+							<div>
+								<p class="text-red-700">@_errorMessage</p>
+							</div>
+						</div>
+					</div>
+				}
+
+				<div class="mb-4">
+					<label for="name" class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+					<InputText id="name" @bind-Value="_model.Name"
+					           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
+					<ValidationMessage For="@(() => _model.Name)" class="text-red-500 text-sm mt-1"/>
+				</div>
+
+				<div class="mb-6">
+					<label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+					<InputTextArea id="description" @bind-Value="_model.Description" rows="4"
+					               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"/>
+					<ValidationMessage For="@(() => _model.Description)" class="text-red-500 text-sm mt-1"/>
+				</div>
+
+				<div class="flex justify-between">
+					<a href="/categories"
+					   class="px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors">
+						Cancel
+					</a>
+					<button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+					        disabled="@_isSubmitting">
+						@if (_isSubmitting)
+						{
+							<span>Saving...</span>
+						}
+						else
+						{
+							<span>Save Changes</span>
+						}
+					</button>
+				</div>
+			</EditForm>
+		</div>
+	}
+</div>
+
+@code {
+
+	[Parameter] public string Id { get; set; } = null!;
+
+	private CategoryDto? _model;
+
+	private bool _isLoading = true;
+
+	private bool _isSubmitting;
+
+	private string? _errorMessage;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadCategory();
+	}
+
+	private async Task LoadCategory()
+	{
+		_isLoading = true;
+
+		try
+		{
+			var category = await CategoryService.GetCategoryByIdAsync(Id);
+
+			if (category != null)
+			{
+				_model = new CategoryDto
+				{
+					Id = category.Id,
+					Name = category.Name,
+					Description = category.Description
+				};
+			}
+		}
+		catch (Exception)
+		{
+			// Could add error handling/notification here
+		}
+		finally
+		{
+			_isLoading = false;
+			StateHasChanged();
+		}
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		if (_model == null) return;
+
+		_isSubmitting = true;
+		_errorMessage = null;
+
+		try
+		{
+			var category = new Category(_model.Name, _model.Description);
+			var result = await CategoryService.UpdateCategoryAsync(Id, category);
+
+			if (result.Success)
+			{
+				NavigationManager.NavigateTo("/categories");
+			}
+			else
+			{
+				_errorMessage = result.Error;
+			}
+		}
+		catch (Exception ex)
+		{
+			_errorMessage = ex.Message;
+		}
+		finally
+		{
+			_isSubmitting = false;
+			StateHasChanged();
+		}
+	}
+
+}

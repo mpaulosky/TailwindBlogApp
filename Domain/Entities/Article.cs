@@ -7,10 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Abstractions;
-using Domain.Models;
-using Domain.Validators;
-
 namespace Domain.Entities;
 
 /// <summary>

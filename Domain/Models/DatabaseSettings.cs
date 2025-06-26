@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =============================================
 
-using Domain.Interfaces;
-
 namespace Domain.Models;
 
 /// <summary>

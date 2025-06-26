@@ -23,8 +23,6 @@ public sealed class MongoDbContextFactoryTests
 
 	private readonly Mock<IMongoDatabase> _mockDatabase;
 
-	private readonly Mock<IMongoCollection<TestEntity>> _mockCollection;
-
 	public MongoDbContextFactoryTests()
 	{
 
@@ -36,7 +34,7 @@ public sealed class MongoDbContextFactoryTests
 		// Setup mock MongoDB client
 		_mockClient = new Mock<IMongoClient>();
 		_mockDatabase = new Mock<IMongoDatabase>();
-		_mockCollection = new Mock<IMongoCollection<TestEntity>>();
+		var mockCollection = new Mock<IMongoCollection<TestEntity>>();
 
 		// Setup client to return a database
 		_mockClient.Setup(c => c.GetDatabase(It.IsAny<string>(), null))
@@ -44,7 +42,7 @@ public sealed class MongoDbContextFactoryTests
 
 		// Setup database to return collection
 		_mockDatabase.Setup(d => d.GetCollection<TestEntity>(It.IsAny<string>(), null))
-				.Returns(_mockCollection.Object);
+				.Returns(mockCollection.Object);
 
 	}
 

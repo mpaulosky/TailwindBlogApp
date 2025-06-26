@@ -31,11 +31,6 @@ global using Domain.Models;
 
 global using Mapster;
 
-global using Microsoft.Extensions.Caching.Memory;
-
 global using MongoDB.Bson;
-
-global using NSubstitute;
-global using NSubstitute.ExceptionExtensions;
 
 global using Xunit;

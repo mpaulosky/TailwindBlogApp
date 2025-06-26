@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Entities;
-
 namespace Domain.Interfaces;
 
 /// <summary>

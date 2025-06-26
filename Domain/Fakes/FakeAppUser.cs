@@ -7,9 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Entities;
-using Domain.Enums;
-
 namespace Domain.Fakes;
 
 /// <summary>

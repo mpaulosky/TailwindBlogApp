@@ -75,7 +75,7 @@ public class ArticleModel
 	///   Gets or sets the date when the article was published.
 	/// </summary>
 	[Display(Name = "Published On")]
-	public DateTime? PublishedOn { get; set; } = null;
+	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets a value indicating whether the article is marked as deleted.

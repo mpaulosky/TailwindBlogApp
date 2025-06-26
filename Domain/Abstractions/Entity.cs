@@ -36,13 +36,13 @@ public abstract class Entity
 	[BsonElement("modifiedOn")]
 	[BsonRepresentation(BsonType.DateTime)]
 	[Display(Name = "Modified On")]
-	public DateTime? ModifiedOn { get; protected set; } = null;
-	
+	public DateTime? ModifiedOn { get; protected set; }
+
 	/// <summary>
 	///   Gets or sets the archived status of the entity.
 	/// </summary>
 	[BsonElement("archived")]
 	[Display(Name = "Archived")]
-	public bool Archived { get; set; } = false;
+	public bool Archived { get; set; }
 
 }

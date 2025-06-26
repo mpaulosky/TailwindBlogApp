@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Models;
-
 namespace Domain.Validators;
 
 public class ArticleDtoValidator : AbstractValidator<ArticleDto>

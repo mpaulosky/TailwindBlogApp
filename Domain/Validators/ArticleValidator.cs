@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Entities;
-
 namespace Domain.Validators;
 
 public class ArticleValidator : AbstractValidator<Article>

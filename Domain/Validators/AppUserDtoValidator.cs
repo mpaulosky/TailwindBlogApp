@@ -34,7 +34,8 @@ public class AppUserDtoValidator : AbstractValidator<AppUserDto>
 				.EmailAddress().WithMessage("Invalid email address format");
 
 		RuleFor(x => x.Roles)
-				.NotNull().WithMessage("Roles collection cannot be null");
+				.NotNull().WithMessage("Roles collection cannot be null")
+				.NotEmpty().WithMessage("Roles collection cannot be empty");
 	}
 
 }

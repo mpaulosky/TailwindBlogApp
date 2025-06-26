@@ -207,53 +207,100 @@ public class CategoryListTests : BunitContext
 								px-4 py-4 sm:px-4 md:px-6 lg:px-8 
 								rounded-md shadow-md 
 								shadow-blue-500">
-							<h1 class="text-3xl font-bold tracking-tight text-gray-50 py-4">Categories</h1>
-						</header>
-						<a href="/categories/create" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create New</a>
-					</div>
-					<div class="bg-white shadow-md rounded-lg overflow-hidden">
-						<table class="min-w-full divide-y divide-gray-200">
-							<thead class="bg-gray-50">
-									<tr>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created On</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-									</tr>
-							</thead>
-							<tbody class="bg-white divide-y divide-gray-200">
-								<tr>
-									<td class="px-6 py-4 whitespace-nowrap">
-										<a diff:ignore></a>
-									</td>
-									<td class="px-6 py-4"></td>
-									<td class="px-6 py-4 whitespace-nowrap">1/1/0001</td>
-									<td class="px-6 py-4 whitespace-nowrap">
-										<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
-									</td>
-									<td class="px-6 py-4 whitespace-nowrap">
-										<div class="flex space-x-3">
-											<a diff:ignore>View</a>
-											<a diff:ignore>Edit</a>
-											<button class="text-red-600 hover:text-red-900">Archive</button>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+				      <h1 class="text-3xl font-bold tracking-tight text-gray-50 py-4">Categories</h1>
+				    </header>
+				    <a href="/categories/create" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create 			New</a>
+				  </div>
+				  <div class="bg-white shadow-md rounded-lg overflow-hidden">
+				    <table class="min-w-full divide-y divide-gray-200">
+				      <thead class="bg-gray-50">
+				        <tr>
+				          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name
+				          </th>
+				          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+				            Description
+				          </th>
+				          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created 							On
+				          </th>
+				          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+				            Status
+				          </th>
+				          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+				            Actions
+				          </th>
+				        </tr>
+				      </thead>
+				      <tbody class="bg-white divide-y divide-gray-200">
+				        <tr>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <a href:ignore class="text-blue-600 hover:underline">Rustic Steel Pizza</a>
+				          </td>
+				          <td class="px-6 py-4">rustic_steel_pizza</td>
+				          <td class="px-6 py-4 whitespace-nowrap">1/1/0001</td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+				          </td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <div class="flex space-x-3">
+				              <a href:ignore class="text-blue-600 hover:text-blue-900">View</a>
+				              <a href:ignore class="text-indigo-600 hover:text-indigo-900">Edit</a>
+				              <button class="text-red-600 hover:text-red-900" >
+				                Archive
+				              </button>
+				            </div>
+				          </td>
+				        </tr>
+				        <tr>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <a href:ignore class="text-blue-600 hover:underline">Ergonomic Rubber Bike</a>
+				          </td>
+				          <td class="px-6 py-4">ergonomic_rubber_bike</td>
+				          <td class="px-6 py-4 whitespace-nowrap">1/1/0001</td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+				          </td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <div class="flex space-x-3">
+				              <a href:ignore class="text-blue-600 hover:text-blue-900">View</a>
+				              <a href:ignore class="text-indigo-600 hover:text-indigo-900">Edit</a>
+				              <button class="text-red-600 hover:text-red-900" >
+				                Archive
+				              </button>
+				            </div>
+				          </td>
+				        </tr>
+				        <tr>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <a href:ignore class="text-blue-600 hover:underline">Rustic Frozen Bacon</a>
+				          </td>
+				          <td class="px-6 py-4">rustic_frozen_bacon</td>
+				          <td class="px-6 py-4 whitespace-nowrap">1/1/0001</td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+				          </td>
+				          <td class="px-6 py-4 whitespace-nowrap">
+				            <div class="flex space-x-3">
+				              <a href:ignore class="text-blue-600 hover:text-blue-900">View</a>
+				              <a href:ignore class="text-indigo-600 hover:text-indigo-900">Edit</a>
+				              <button class="text-red-600 hover:text-red-900" >
+				                Archive
+				              </button>
+				            </div>
+				          </td>
+				        </tr>
+				      </tbody>
+				    </table>
+				  </div>
 				</div>
 				""";
 
-		var category = new CategoryDto { Id = ObjectId.GenerateNewId(), Name = "Test" };
-		var categories = new List<CategoryDto> { category };
+		var categoriesDto = FakeCategoryDto.GetCategoriesDto(3, true);
 
 		_categoryServiceSub.GetAllAsync().Returns(
-				Result.Ok(categories)
+				Result.Ok(categoriesDto)
 		);
 
-		_categoryServiceSub.ArchiveAsync(category).Returns(Result.Fail("Failed to archive category"));
+		_categoryServiceSub.ArchiveAsync(categoriesDto[0]).Returns(Result.Fail("Failed to archive category"));
 
 		var jsRuntime = Substitute.For<IJSRuntime>();
 		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
@@ -262,7 +309,7 @@ public class CategoryListTests : BunitContext
 		var cut = Render<CategoryList>();
 
 		// Act
-		await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(category));
+		await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
 
 		// Assert
 		await _categoryServiceSub.Received(1).GetAllAsync(); // Verify list was refreshed

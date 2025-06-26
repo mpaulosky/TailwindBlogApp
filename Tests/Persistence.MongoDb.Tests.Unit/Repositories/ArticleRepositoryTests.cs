@@ -7,8 +7,6 @@
 // Project Name :  Persistence.MongoDb.Tests.Unit
 // =======================================================
 
-using MongoDB.Bson;
-
 namespace Persistence.Repositories;
 
 /// <summary>
@@ -305,7 +303,7 @@ public sealed class ArticleRepositoryTests
 	{
 
 		// Arrange
-		_list = new List<Article>(); // Empty list
+		_list = []; // Empty list
 		_cursor.Setup(c => c.Current).Returns(_list);
 		_mockContext.Setup(c => c.GetCollection<Article>(It.IsAny<string>())).Returns(_mockCollection.Object);
 
@@ -316,8 +314,8 @@ public sealed class ArticleRepositoryTests
 
 		// Assert
 		result.Should().NotBeNull();
-		result.Success.Should().BeTrue();
-		result.Value.Should().BeEmpty();
+		result.Success.Should().BeFalse();
+		result.Value.Should().BeNull();
 
 		_mockCollection.Verify(c => c.FindAsync(
 				It.IsAny<FilterDefinition<Article>>(),

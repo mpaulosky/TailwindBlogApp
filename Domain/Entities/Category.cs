@@ -1,14 +1,11 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     Category.cs
+// File Name :     Categories.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Domain
 // =======================================================
-
-using Domain.Abstractions;
-using Domain.Validators;
 
 namespace Domain.Entities;
 
@@ -73,6 +70,7 @@ public class Category : Entity
 	/// <exception cref="ValidationException">Thrown when the name or description is empty or whitespace.</exception>
 	public void Update(string name, string description)
 	{
+		
 		if (string.IsNullOrWhiteSpace(name))
 		{
 			throw new ValidationException("Name is required");
@@ -87,6 +85,7 @@ public class Category : Entity
 		Description = description;
 		ModifiedOn = DateTime.Now;
 		ValidateState();
+		
 	}
 
 	/// <summary>

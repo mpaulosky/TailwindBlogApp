@@ -44,10 +44,10 @@ public class FakeCategory
 	}
 
 	/// <summary>
-	///   Generates a Faker Category instance configured to generate fake Category objects.
+	///   Generates a Faker Categories instance configured to generate fake Categories objects.
 	/// </summary>
 	/// <param name="useSeed">Indicates whether to apply a fixed seed for deterministic results.</param>
-	/// <returns>A configured Faker Category instance.</returns>
+	/// <returns>A configured Faker Categories instance.</returns>
 	internal static Faker<Category> GenerateFake(bool useSeed = false)
 	{
 		const int seed = 621;

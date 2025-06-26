@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Components\Features\Category\" />
+      <Folder Include="Components\Features\Categories\" />
     </ItemGroup>
 
     <Target Name="BuildTailwind" BeforeTargets="Build">

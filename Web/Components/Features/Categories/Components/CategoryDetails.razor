@@ -1,12 +1,11 @@
 @page "/categories/details/{Id}"
-@using Domain.Models
-@using Web.Services
+
 @inject ICategoryService CategoryService
 @inject NavigationManager NavigationManager
 
 <div class="container mx-auto px-4 py-8">
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold text-gray-800">Category Details</h1>
+		<PageHeadingComponent Level="1" HeaderText="Categories Details" />
 	</div>
 	@if (_isLoading)
 	{
@@ -19,7 +18,7 @@
 		<div class="bg-red-50 border-l-4 border-red-500 p-4">
 			<div class="flex">
 				<div>
-					<p class="text-red-700">Category not found or has been deleted.</p>
+					<p class="text-red-700">Categories not found or has been deleted.</p>
 				</div>
 			</div>
 		</div>
@@ -46,7 +45,7 @@
 					<div>
 						<dt class="text-sm font-medium text-gray-500">Last Modified</dt>
 						<dd class="mt-1 text-gray-900">
-							@(_category.ModifiedOn.HasValue ? _category.ModifiedOn.Value.ToLocalTime().ToString("g") : "Never")
+							@(_category.ModifiedOn.HasValue? _category.ModifiedOn.Value.ToLocalTime().ToString("g") : "Never")
 						</dd>
 					</div>
 					<div>
@@ -70,7 +69,7 @@
 				</a>
 				<div class="space-x-2">
 					<a href="/categories/edit/@_category.Id"
-					   class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
+						class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
 						Edit
 					</a>
 				</div>
@@ -81,7 +80,7 @@
 
 @code {
 
-	[Parameter] public string Id { get; set; } = null!;
+	[Parameter] public ObjectId Id { get; set; } = ObjectId.Empty;
 
 	private CategoryDto? _category;
 
@@ -94,34 +93,36 @@
 
 	private async Task LoadCategory()
 	{
+
 		_isLoading = true;
 
 		try
 		{
-			var category = await CategoryService.GetCategoryByIdAsync(Id);
 
-			if (category != null)
+			var result = await CategoryService.GetAsync(Id);
+
+			if (result.Success)
 			{
-				_category = new CategoryDto()
-				{
-					Id = category.Id,
-					Name = category.Name,
-					Description = category.Description,
-					CreatedOn = category.CreatedOn,
-					ModifiedOn = category.ModifiedOn,
-					Archived = category.Archived
-				};
+
+				_category = result.Value.Adapt<CategoryDto>();
+
 			}
+
 		}
 		catch (Exception)
 		{
+
 			// Could add error handling/notification here
+
 		}
 		finally
 		{
+
 			_isLoading = false;
 			StateHasChanged();
+
 		}
+
 	}
 
 }

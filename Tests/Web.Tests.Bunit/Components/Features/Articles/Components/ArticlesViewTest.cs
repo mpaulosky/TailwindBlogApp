@@ -38,7 +38,7 @@ public class ArticlesViewComponentTest : BunitContext
 				            <div diff:ignore>Author: Mara41</div>
 				            <div diff:ignore>Created: 1/1/2025</div>
 				            <div diff:ignore>Draft</div>
-				            <div diff:ignore>Category: Blog</div>
+				            <div diff:ignore>Categories: Blog</div>
 				          </div>
 				        </div>
 				      </article>
@@ -56,7 +56,7 @@ public class ArticlesViewComponentTest : BunitContext
 				            <div diff:ignore>Author: Josephine4</div>
 				            <div diff:ignore>Created: 1/1/2025</div>
 				            <div diff:ignore>Published: 1/1/2025</div>
-				            <div diff:ignore>Category: Blog</div>
+				            <div diff:ignore>Categories: Blog</div>
 				          </div>
 				        </div>
 				      </article>
@@ -74,7 +74,7 @@ public class ArticlesViewComponentTest : BunitContext
 				            <div diff:ignore>Author: Erin14</div>
 				            <div diff:ignore>Created: 1/1/2025</div>
 				            <div diff:ignore>Published: 1/1/2025</div>
-				            <div diff:ignore>Category: Blog</div>
+				            <div diff:ignore>Categories: Blog</div>
 				          </div>
 				        </div>
 				      </article>

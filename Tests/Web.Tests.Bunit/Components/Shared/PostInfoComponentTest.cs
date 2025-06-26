@@ -33,7 +33,7 @@ public class PostInfoComponentTest : BunitContext
 				  <div>Author: TestUser</div>
 				  <div>Created: 5/5/2025</div>
 				  <div>Published: 5/4/2025</div>
-				  <div>Category: UnitTest</div>
+				  <div>Categories: UnitTest</div>
 				</div>
 				""";
 

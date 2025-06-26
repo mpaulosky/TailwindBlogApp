@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Abstractions;
-
 namespace Domain.Interfaces;
 
 /// <summary>

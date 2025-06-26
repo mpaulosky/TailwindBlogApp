@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Validators;
-
 namespace Domain.Models;
 
 /// <summary>

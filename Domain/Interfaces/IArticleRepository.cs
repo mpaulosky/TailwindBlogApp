@@ -7,10 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Abstractions;
-using Domain.Entities;
-using Domain.Models;
-
 namespace Domain.Interfaces;
 
 public interface IArticleRepository : IRepository<Article>

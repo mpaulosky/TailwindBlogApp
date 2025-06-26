@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 
+using Microsoft.Extensions.Hosting;
+
 using OpenTelemetry;
 
-namespace Microsoft.Extensions.Hosting;
+namespace ServiceDefaults;
 
 // Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 // This project should be referenced by each service project in your solution.
@@ -41,7 +43,7 @@ public static class Extensions
 		return builder;
 	}
 
-	public static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder)
+	private static TBuilder ConfigureOpenTelemetry<TBuilder>(this TBuilder builder)
 			where TBuilder : IHostApplicationBuilder
 	{
 		builder.Logging.AddOpenTelemetry(logging =>
@@ -98,7 +100,7 @@ public static class Extensions
 		return builder;
 	}
 
-	public static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder)
+	private static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder)
 			where TBuilder : IHostApplicationBuilder
 	{
 		builder.Services.AddHealthChecks()

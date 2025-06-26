@@ -13,7 +13,6 @@ global using System.Diagnostics.CodeAnalysis;
 global using Bunit;
 
 global using Domain.Abstractions;
-global using Domain.Entities;
 
 global using FluentAssertions;
 
@@ -25,7 +24,6 @@ global using Domain.Fakes;
 global using Domain.Interfaces;
 global using Domain.Models;
 
-global using Microsoft.AspNetCore.Components;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.JSInterop;
 

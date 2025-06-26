@@ -7,19 +7,19 @@
 // Project Name :  Persistence.MongoDb
 // =============================================
 
-namespace Persistence.Services;
+namespace Domain.Interfaces;
 
 public interface ICategoryService
 {
 
-	Task Archive(CategoryDto category);
+	Task<Result> ArchiveAsync(CategoryDto? category);
 
-	Task Create(CategoryDto category);
+	Task<Result> CreateAsync(CategoryDto? category);
 
-	Task<Category> Get(ObjectId categoryId);
+	Task<Result<CategoryDto>> GetAsync(ObjectId categoryId);
 
-	Task<List<Category>> GetAll();
+	Task<Result<List<CategoryDto>>> GetAllAsync();
 
-	Task Update(CategoryDto category);
+	Task<Result> UpdateAsync(CategoryDto? category);
 
 }

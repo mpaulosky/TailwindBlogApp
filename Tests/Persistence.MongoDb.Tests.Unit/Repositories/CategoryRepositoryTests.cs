@@ -7,8 +7,6 @@
 // Project Name :  Persistence.MongoDb.Tests.Unit
 // =======================================================
 
-using MongoDB.Bson;
-
 namespace Persistence.Repositories;
 
 /// <summary>
@@ -41,7 +39,7 @@ public sealed class CategoryRepositoryTests
 		return new CategoryRepository(_mockContext.Object);
 	}
 
-	[Fact(DisplayName = "Archive Category - Success Path")]
+	[Fact(DisplayName = "Archive Categories - Success Path")]
 	public async Task ArchiveAsync_WithValidCategory_ShouldArchiveTheCategory()
 	{
 
@@ -66,7 +64,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Archive Category - Not Found")]
+	[Fact(DisplayName = "Archive Categories - Not Found")]
 	public async Task ArchiveAsync_WithNonExistentCategory_ShouldReturnFailResult()
 	{
 
@@ -95,7 +93,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Archive Category - Exception")]
+	[Fact(DisplayName = "Archive Categories - Exception")]
 	public async Task ArchiveAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
 
@@ -130,7 +128,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Create Category - Success Path")]
+	[Fact(DisplayName = "Create Categories - Success Path")]
 	public async Task CreateAsync_WithValidCategory_ShouldInsertCategory()
 	{
 
@@ -154,7 +152,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Create Category - Exception")]
+	[Fact(DisplayName = "Create Categories - Exception")]
 	public async Task CreateAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
 
@@ -182,7 +180,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Get Category - Success Path")]
+	[Fact(DisplayName = "Get Categories - Success Path")]
 	public async Task GetAsync_WithValidId_ShouldReturnCategory()
 	{
 
@@ -210,7 +208,7 @@ public sealed class CategoryRepositoryTests
 
 	}
 
-	[Fact(DisplayName = "Get Category - Not Found")]
+	[Fact(DisplayName = "Get Categories - Not Found")]
 	public async Task GetAsync_WithNonExistentId_ShouldReturnFailResult()
 	{
 
@@ -237,7 +235,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Get Category - Exception")]
+	[Fact(DisplayName = "Get Categories - Exception")]
 	public async Task GetAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
 
@@ -305,7 +303,7 @@ public sealed class CategoryRepositoryTests
 	{
 
 		// Arrange
-		_list = new List<Category>(); // Empty list
+		_list = []; // Empty list
 		_cursor.Setup(c => c.Current).Returns(_list);
 		_mockContext.Setup(c => c.GetCollection<Category>(It.IsAny<string>())).Returns(_mockCollection.Object);
 
@@ -316,8 +314,8 @@ public sealed class CategoryRepositoryTests
 
 		// Assert
 		result.Should().NotBeNull();
-		result.Success.Should().BeTrue();
-		result.Value.Should().BeEmpty();
+		result.Success.Should().BeFalse();
+		result.Value.Should().BeNull();
 
 		_mockCollection.Verify(c => c.FindAsync(
 				It.IsAny<FilterDefinition<Category>>(),
@@ -358,7 +356,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Update Category - Success Path")]
+	[Fact(DisplayName = "Update Categories - Success Path")]
 	public async Task UpdateAsync_WithValidIdAndCategory_ShouldUpdateCategory()
 	{
 
@@ -392,7 +390,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Update Category - Not Found")]
+	[Fact(DisplayName = "Update Categories - Not Found")]
 	public async Task UpdateAsync_WithNonExistentId_ShouldReturnFailResult()
 	{
 
@@ -427,7 +425,7 @@ public sealed class CategoryRepositoryTests
 		
 	}
 
-	[Fact(DisplayName = "Update Category - Exception")]
+	[Fact(DisplayName = "Update Categories - Exception")]
 	public async Task UpdateAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
 

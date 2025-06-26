@@ -24,7 +24,7 @@ public enum Roles
 }
 
 /// <summary>
-///   Category enum
+///   Categories enum
 /// </summary>
 public enum CategoryNames
 {

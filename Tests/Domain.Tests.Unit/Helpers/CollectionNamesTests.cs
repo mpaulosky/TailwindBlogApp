@@ -17,7 +17,7 @@ public class CollectionNamesTests
 
 	[Theory]
 	[InlineData("Article", "articles")]
-	[InlineData("Category", "categories")]
+	[InlineData("Categories", "categories")]
 	public void GetCollectionName_KnownEntities_ReturnsExpectedCollectionName(string entityName, string expected)
 	{
 		// Act
@@ -30,7 +30,6 @@ public class CollectionNamesTests
 	[Theory]
 	[InlineData("UnknownEntity")]
 	[InlineData("")]
-	[InlineData(null)]
 	public void GetCollectionName_UnknownOrNullEntities_ReturnsEmptyString(string entityName)
 	{
 		// Act

@@ -97,7 +97,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 
 			return result == null
 					? Result<TEntity>.Fail($"TEntity with ID {entityId} not found")
-					: Result<TEntity>.Ok(result.Adapt<TEntity>());
+					: Result<TEntity>.Ok(result);
 
 		}
 		catch (Exception ex)
@@ -123,7 +123,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 
 			var result = (await Collection.FindAsync(filter)).ToList();
 
-			return Result<IEnumerable<TEntity>>.Ok(result.Adapt<IEnumerable<TEntity>>());
+			return result == null || !result.Any()
+				? Result<IEnumerable<TEntity>>.Fail("No entities found")
+				: Result<IEnumerable<TEntity>>.Ok(result.Adapt<IEnumerable<TEntity>>());
 
 		}
 		catch (Exception ex)

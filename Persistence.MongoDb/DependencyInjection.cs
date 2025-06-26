@@ -8,6 +8,7 @@
 // =======================================================
 
 using Persistence.Repositories;
+using Persistence.Services;
 
 namespace Persistence;
 
@@ -31,6 +32,8 @@ public static class DependencyInjection
 
 		services.AddScoped<IArticleRepository, ArticleRepository>();
 		services.AddScoped<ICategoryRepository, CategoryRepository>();
+		services.AddScoped<IArticleService, ArticleService>();
+		services.AddScoped<ICategoryService, CategoryService>();
 
 		return services;
 

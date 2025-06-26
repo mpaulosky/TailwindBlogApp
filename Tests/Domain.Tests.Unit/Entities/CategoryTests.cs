@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     Category.cs
+// File Name :     Categories.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog

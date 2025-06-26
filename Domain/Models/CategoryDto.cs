@@ -57,13 +57,17 @@ public class CategoryDto
 	public ObjectId Id { get; set; }
 
 	/// <summary>
-	///   Gets or sets the name of the category.
+	///   Gets the name of the category.
 	/// </summary>
+	[Required(ErrorMessage = "Name is required")]
+	[MaxLength(80)]
 	public string Name { get; set; }
 
 	/// <summary>
-	///   Gets or sets the description of the category.
+	///   Gets the description of what this category represents.
 	/// </summary>
+	[Required(ErrorMessage = "Description is required")]
+	[MaxLength(100)]
 	public string Description { get; set; }
 
 	/// <summary>

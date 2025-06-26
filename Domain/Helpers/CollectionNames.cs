@@ -28,7 +28,7 @@ public static class CollectionNames
 
 			case "Article": return "articles";
 
-			case "Category": return "categories";
+			case "Categories": return "categories";
 
 			default: return "";
 

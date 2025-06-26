@@ -11,6 +11,8 @@ global using System.Linq;
 global using System.Threading;
 global using System.Threading.Tasks;
 
+global using Domain.Abstractions;
+
 global using FluentAssertions;
 
 global using Microsoft.Extensions.Configuration;
@@ -26,5 +28,14 @@ global using Domain.Fakes;
 global using Domain.Helpers;
 global using Domain.Interfaces;
 global using Domain.Models;
+
+global using Mapster;
+
+global using Microsoft.Extensions.Caching.Memory;
+
+global using MongoDB.Bson;
+
+global using NSubstitute;
+global using NSubstitute.ExceptionExtensions;
 
 global using Xunit;

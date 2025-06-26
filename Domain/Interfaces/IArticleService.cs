@@ -7,19 +7,21 @@
 // Project Name :  Persistence.MongoDb
 // =======================================================
 
-namespace Persistence.Services;
+namespace Domain.Interfaces;
 
 public interface IArticleService
 {
 
-	Task Archive(ArticleDto article);
+	Task<Result> ArchiveAsync(ArticleDto? article);
 
-	Task Create(ArticleDto article);
+	Task<Result> CreateAsync(ArticleDto? article);
 
-	Task<Article> Get(ObjectId articleId);
+	Task<Result<ArticleDto>> GetAsync(ObjectId articleId);
 
-	Task<List<Article>> GetAll();
+	Task<Result<List<ArticleDto>?>> GetByUserAsync(AppUserDto? entity);
 
-	Task Update(ArticleDto article);
+	Task<Result<List<ArticleDto>?>> GetAllAsync();
+
+	Task<Result> UpdateAsync(ArticleDto? article);
 
 }

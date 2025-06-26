@@ -7,8 +7,6 @@
 // Project Name :  Domain
 // =======================================================
 
-using Domain.Validators;
-
 namespace Domain.Models;
 
 /// <summary>
@@ -64,7 +62,7 @@ public class AppUserDto
 	///  Gets or sets the list of roles assigned to the user.
 	/// </summary>
 	[Display(Name = "User Roles")]
-	public List<string> Roles { get; set; } = [];
+	public List<string> Roles { get; set; }
 
 	/// <summary>
 	///  Gets an empty instance of AppUserDto with default values.
@@ -78,6 +76,17 @@ public class AppUserDto
 	/// <param name="email">The new email address.</param>
 	public void Update(string userName, string email)
 	{
+				
+		if (string.IsNullOrWhiteSpace(userName))
+		{
+			throw new ValidationException("UserName is required");
+		}
+
+		if (string.IsNullOrWhiteSpace(email))
+		{
+			throw new ValidationException("Email is required");
+		}
+
 		UserName = userName;
 		Email = email;
 		ValidateState();
@@ -89,7 +98,17 @@ public class AppUserDto
 	/// <param name="roles">The new list of roles.</param>
 	public void UpdateRoles(List<string> roles)
 	{
-		Roles = roles ?? [];
+		if (roles == null)
+		{
+			throw new ValidationException("Roles cannot be null.");
+		}
+
+		if (roles.Count == 0)
+		{
+			throw new ValidationException("Roles cannot be an empty collection.");
+		}
+
+		Roles = roles;
 		ValidateState();
 	}
 
@@ -104,8 +123,9 @@ public class AppUserDto
 
 		if (!validationResult.IsValid)
 		{
-			throw new ValidationException(validationResult.Errors.ToString());
+			throw new ValidationException(validationResult.Errors);
 		}
+		
 	}
 
 }

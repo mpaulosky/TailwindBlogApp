@@ -294,7 +294,7 @@ public class CategoryListTests : BunitContext
 		_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
 
 		var jsRuntime = Substitute.For<IJSRuntime>();
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
+		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
 		Services.AddSingleton(jsRuntime);
 
 		var cut = Render<CategoryList>();

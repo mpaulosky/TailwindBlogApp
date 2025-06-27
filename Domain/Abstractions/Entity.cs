@@ -28,7 +28,7 @@ public abstract class Entity
 	[Required(ErrorMessage = "A Created On Date is required")]
 	[BsonRepresentation(BsonType.DateTime)]
 	[Display(Name = "Created On")]
-	public DateTime CreatedOn { get; protected set; } = DateTime.UtcNow;
+	public DateTime CreatedOn { get; protected init; } = DateTime.UtcNow;
 
 	/// <summary>
 	///   Gets or sets the date and time when this entity was last modified.
@@ -36,7 +36,7 @@ public abstract class Entity
 	[BsonElement("modifiedOn")]
 	[BsonRepresentation(BsonType.DateTime)]
 	[Display(Name = "Modified On")]
-	public DateTime? ModifiedOn { get; protected set; }
+	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
 	///   Gets or sets the archived status of the entity.

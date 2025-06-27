@@ -57,7 +57,8 @@ public class ArticleDtoValidatorTests
 
 		// Arrange
 		var validator = new ArticleDtoValidator();
-		var dto = FakeArticleDto.GetNewArticleDto();
+
+		var dto = FakeArticleDto.GetNewArticleDto(true);
 
 		// Act
 		var result = validator.Validate(dto);

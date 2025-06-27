@@ -59,7 +59,7 @@
 							<td class="px-6 py-4">@(category.Description.Length > 50 ? $"{category.Description.Substring(0, 47)}..." :
 														category.Description)</td>
 					<td class="px-6 py-4 whitespace-nowrap">@category.CreatedOn.ToShortDateString()</td>
-					<td class="px-6 py-4 whitespace-nowrap">@category.ModifiedOn?.ToString("M/d/yyyy")</td>
+					<td class="px-6 py-4 whitespace-nowrap">@category.ModifiedOn?.ToShortDateString()</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						@if (category.Archived)
 								{

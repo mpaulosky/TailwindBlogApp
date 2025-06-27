@@ -38,6 +38,9 @@
 						<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created
 							On
 						</th>
+						<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modified
+							On
+						</th>
 						<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 							Status
 						</th>
@@ -56,6 +59,7 @@
 							<td class="px-6 py-4">@(category.Description.Length > 50 ? $"{category.Description.Substring(0, 47)}..." :
 														category.Description)</td>
 					<td class="px-6 py-4 whitespace-nowrap">@category.CreatedOn.ToShortDateString()</td>
+					<td class="px-6 py-4 whitespace-nowrap">@category.ModifiedOn?.ToString("M/d/yyyy")</td>
 					<td class="px-6 py-4 whitespace-nowrap">
 						@if (category.Archived)
 								{

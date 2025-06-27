@@ -62,7 +62,7 @@ jobs:
         run: |
           for proj in $(find . -name "*.csproj" -path "*/Tests/*"); do
             name=$(basename "$proj" .csproj)
-            dotnet test "$proj" --logger "trx;LogFileName=${{ github.workspace }}/TestResults/${name}.trx" --settings runsettings.xml
+            dotnet test "$proj" --no-build --no-restore --logger "trx;LogFileName=${{ github.workspace }}/TestResults/${name}.trx" --settings runsettings.xml
           done
 
       - name: Upload Test Results

@@ -38,6 +38,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 
 			// Archive the entity
 			entity.Archived = true;
+			entity.ModifiedOn = DateTime.UtcNow;
 
 			var filter = Builders<TEntity>.Filter.Eq("_id", entity.Id);
 

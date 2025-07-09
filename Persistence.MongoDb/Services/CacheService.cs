@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Persistence.Services;
+
+public class CacheService : ICacheService
+{
+	private readonly IMemoryCache _memoryCache;
+
+	public CacheService(IMemoryCache memoryCache)
+	{
+		_memoryCache = memoryCache;
+	}
+
+	public Task<TValue?> GetAsync<TValue>(string key)
+		=> Task.FromResult(_memoryCache.TryGetValue(key, out var value) ? (TValue?)value : default);
+
+	public Task SetAsync<TValue>(string key, TValue value, TimeSpan expiration)
+	{
+		_memoryCache.Set(key, value, expiration);
+		return Task.CompletedTask;
+	}
+
+	public Task RemoveAsync(string key)
+	{
+		_memoryCache.Remove(key);
+		return Task.CompletedTask;
+	}
+}

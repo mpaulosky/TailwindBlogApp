@@ -19,18 +19,18 @@ public static class CollectionNames
 	///   GetCollectionName method
 	/// </summary>
 	/// <param name="entityName">string</param>
-	/// <returns>string collection name</returns>
-	public static string GetCollectionName(string entityName)
+	/// <returns>Result string collection name</returns>
+	public static Result<string> GetCollectionName(string? entityName)
 	{
 
 		switch (entityName)
 		{
 
-			case "Article": return "articles";
+			case "Article": return Result.Ok("articles");
 
-			case "Categories": return "categories";
+			case "Category": return Result.Ok("categories");
 
-			default: return "";
+			default: return Result<string>.Fail("Invalid entity name provided.");
 
 		}
 

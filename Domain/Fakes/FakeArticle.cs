@@ -63,7 +63,7 @@ public static class FakeArticle
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
 				.RuleFor(x => x.UrlSlug, (_, x) => x.Title.GetSlug())
-				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl() ?? string.Empty)
+				.RuleFor(f => f.CoverImageUrl, f => f.Image.PicsumUrl())
 				.RuleFor(f => f.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())

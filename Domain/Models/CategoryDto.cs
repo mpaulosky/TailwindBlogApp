@@ -24,7 +24,7 @@ public class CategoryDto
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="name">The name of the category.</param>
-	/// <param name="description">A description of what the category represents.</param>
+	/// <param name="slug">A slug of what the category represents.</param>
 	/// <param name="modifiedOn"></param>
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
 	/// <param name="createdOn"></param>
@@ -32,14 +32,14 @@ public class CategoryDto
 	public CategoryDto(
 			ObjectId id,
 			string name,
-			string description,
+			string slug,
 			DateTime createdOn,
 			DateTime? modifiedOn,
 			bool skipValidation = false)
 	{
 		Id = id;
 		Name = name;
-		Description = description;
+		Slug = slug;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
 
@@ -62,11 +62,11 @@ public class CategoryDto
 	public string Name { get; set; }
 
 	/// <summary>
-	///   Gets the description of what this category represents.
+	///   Gets the slug of what this category represents.
 	/// </summary>
-	[Required(ErrorMessage = "Description is required")]
+	[Required(ErrorMessage = "Slug is required")]
 	[MaxLength(100)]
-	public string Description { get; set; }
+	public string Slug { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when the category was created.

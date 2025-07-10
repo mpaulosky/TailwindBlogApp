@@ -53,7 +53,7 @@ public static class FakeCategoryDto
 		var fake = new Faker<CategoryDto>()
 				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
 				.RuleFor(x => x.Name, f => f.Commerce.ProductName())
-				.RuleFor(x => x.Description, (_, x) => x.Name.GetSlug());
+				.RuleFor(x => x.Slug, (_, x) => x.Name.GetSlug());
 
 		return useSeed ? fake.UseSeed(seed) : fake;
 

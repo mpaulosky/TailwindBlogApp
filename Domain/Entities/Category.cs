@@ -24,13 +24,13 @@ public class Category : Entity
 	///   Initializes a new instance of the <see cref="Category" /> class.
 	/// </summary>
 	/// <param name="name">The name of the category.</param>
-	/// <param name="description">A description of what the category represents.</param>
+	/// <param name="slug">A slug of what the category represents.</param>
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
 	/// <exception cref="ValidationException">Thrown when validation fails</exception>
-	public Category(string name, string description, bool skipValidation = false)
+	public Category(string name, string slug, bool skipValidation = false)
 	{
 		Name = name;
-		Description = description;
+		Slug = slug;
 
 		if (!skipValidation)
 		{
@@ -46,11 +46,11 @@ public class Category : Entity
 	public string Name { get; set; }
 
 	/// <summary>
-	///   Gets the description of what this category represents.
+	///   Gets the slug of what this category represents.
 	/// </summary>
-	[Required(ErrorMessage = "Description is required")]
+	[Required(ErrorMessage = "Slug is required")]
 	[MaxLength(100)]
-	public string Description { get; set; }
+	public string Slug { get; set; }
 
 	/// <summary>
 	///   Gets an empty category instance.
@@ -65,10 +65,10 @@ public class Category : Entity
 	///   Updates the basic properties of the category.
 	/// </summary>
 	/// <param name="name">The new name for the category.</param>
-	/// <param name="description">The new description for the category.</param>
+	/// <param name="slug">The new slug for the category.</param>
 	/// <prram name="skipValidation">If true, skips validation on update.</prram>
-	/// <exception cref="ValidationException">Thrown when the name or description is empty or whitespace.</exception>
-	public void Update(string name, string description)
+	/// <exception cref="ValidationException">Thrown when the name or slug is empty or whitespace.</exception>
+	public void Update(string name, string slug)
 	{
 		
 		if (string.IsNullOrWhiteSpace(name))
@@ -76,13 +76,13 @@ public class Category : Entity
 			throw new ValidationException("Name is required");
 		}
 
-		if (string.IsNullOrWhiteSpace(description))
+		if (string.IsNullOrWhiteSpace(slug))
 		{
-			throw new ValidationException("Description is required");
+			throw new ValidationException("Slug is required");
 		}
 
 		Name = name;
-		Description = description;
+		Slug = slug;
 		ModifiedOn = DateTime.Now;
 		ValidateState();
 		

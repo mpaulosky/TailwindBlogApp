@@ -7,6 +7,8 @@
 // Project Name :  Domain
 // =======================================================
 
+using Bogus.DataSets;
+
 namespace Domain.Fakes;
 
 /// <summary>
@@ -52,7 +54,7 @@ public class FakeCategory
 		var fake = new Faker<Category>()
 				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
 				.RuleFor(x => x.Name, f => f.Random.Enum<CategoryNames>().ToString())
-				.RuleFor(x => x.Description, (_, x) => $"This category is for {x.Name} related items.");
+				.RuleFor(x => x.Slug, (_, x) => x.Name.GetSlug());
 
 		return useSeed ? fake.UseSeed(seed) : fake;
 	}

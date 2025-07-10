@@ -24,6 +24,7 @@
     <Project Path="Tests\Architecture.Tests\Architecture.Tests.csproj" Type="C#" />
     <Project Path="Tests\Domain.Tests.Unit\Domain.Tests.Unit.csproj" Type="C#" />
     <Project Path="Tests\MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="C#" />
+    <Project Path="Tests\Persistence.MongoDb.Tests.Integration\Persistence.MongoDb.Tests.Integration.csproj" Type="Classic C#" />
     <Project Path="Tests\Persistence.MongoDb.Tests.Unit\Persistence.MongoDb.Tests.Unit.csproj" Type="C#" />
     <Project Path="Tests\Web.Tests.Bunit\Web.Tests.Bunit.csproj" Type="C#" />
   </Folder>

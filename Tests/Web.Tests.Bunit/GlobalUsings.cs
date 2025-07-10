@@ -31,6 +31,4 @@ global using MongoDB.Bson;
 
 global using NSubstitute;
 
-global using Web.Components.Features.Articles.Models;
-
 global using Xunit;

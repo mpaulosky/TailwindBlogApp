@@ -1,25 +1,25 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     CategoryDetailsTests.cs
+// File Name :     DetailsTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-namespace Web.Components.Features.Categories.Components;
+namespace Web.Components.Features.Categories;
 
 /// <summary>
-///   Unit tests for <see cref="CategoryDetails" />
+///   Unit tests for <see cref="Details" />
 /// </summary>
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(CategoryDetails))]
-public class CategoryDetailsTests : BunitContext
+[TestSubject(typeof(Details))]
+public class DetailsTests : BunitContext
 {
 
 	private readonly ICategoryService _categoryServiceSub = Substitute.For<ICategoryService>();
 
-	public CategoryDetailsTests()
+	public DetailsTests()
 	{
 
 		Services.AddSingleton(_categoryServiceSub);
@@ -33,7 +33,7 @@ public class CategoryDetailsTests : BunitContext
 		// Arrange
 		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
 		_categoryServiceSub.GetAsync(Arg.Any<ObjectId>()).Returns(_ => tcs.Task);
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, ObjectId.GenerateNewId()));
 
 		// Act & Assert
@@ -50,7 +50,7 @@ public class CategoryDetailsTests : BunitContext
 	{
 
 		// Arrange
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, ObjectId.GenerateNewId()));
 
 		// Act
@@ -71,7 +71,7 @@ public class CategoryDetailsTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete and category loaded
@@ -81,7 +81,7 @@ public class CategoryDetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.Name);
-		cut.Markup.Should().Contain(categoryDto.Description);
+		cut.Markup.Should().Contain(categoryDto.Slug);
 
 	}
 
@@ -94,7 +94,7 @@ public class CategoryDetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 
@@ -114,7 +114,7 @@ public class CategoryDetailsTests : BunitContext
 		categoryDto.ModifiedOn = null;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -134,7 +134,7 @@ public class CategoryDetailsTests : BunitContext
 		categoryDto.ModifiedOn = DateTime.UtcNow;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -154,7 +154,7 @@ public class CategoryDetailsTests : BunitContext
 		categoryDto.Archived = false;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -175,7 +175,7 @@ public class CategoryDetailsTests : BunitContext
 		categoryDto.Archived = true;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -195,7 +195,7 @@ public class CategoryDetailsTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -214,7 +214,7 @@ public class CategoryDetailsTests : BunitContext
 		// Arrange
 		var categoryId = ObjectId.GenerateNewId();        _categoryServiceSub.GetAsync(categoryId).Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryId));
 
 		// Simulate loading complete
@@ -229,7 +229,7 @@ public class CategoryDetailsTests : BunitContext
 	public void HandlesEmptyObjectId()
 	{
 		// Arrange
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, ObjectId.Empty));
 
 		// Simulate loading complete
@@ -249,7 +249,7 @@ public class CategoryDetailsTests : BunitContext
 		categoryDto.ModifiedOn = DateTime.UtcNow;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -263,14 +263,14 @@ public class CategoryDetailsTests : BunitContext
 	}
 
 	[Fact]
-	public void Displays_Truncated_Description_If_Too_Long()
+	public void Displays_Truncated_Slug_If_Too_Long()
 	{
 		// Arrange
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.Description = new string('x', 200); // Very long description
+		categoryDto.Slug = new string('x', 200); // Very long description
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
@@ -279,7 +279,7 @@ public class CategoryDetailsTests : BunitContext
 		cut.Render();
 
 		// Assert - verify the description is shown without truncation in the details view
-		cut.Markup.Should().Contain(categoryDto.Description);
+		cut.Markup.Should().Contain(categoryDto.Slug);
 	}
 
 	[Fact]
@@ -289,7 +289,7 @@ public class CategoryDetailsTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<CategoryDetails>(parameters => parameters
+		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete

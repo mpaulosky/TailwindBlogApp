@@ -1,25 +1,25 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     EditCategoryTests.cs
+// File Name :     EditTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-namespace Web.Components.Features.Categories.Components;
+namespace Web.Components.Features.Categories;
 
 /// <summary>
-///   Bunit tests for <see cref="EditCategory" /> component.
+///   Bunit tests for <see cref="Edit" /> component.
 /// </summary>
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(EditCategory))]
-public class EditCategoryTests : BunitContext
+[TestSubject(typeof(Edit))]
+public class EditTests : BunitContext
 {
 
 	private readonly ICategoryService _categoryServiceSub = Substitute.For<ICategoryService>();
 
-	public EditCategoryTests()
+	public EditTests()
 	{
 
 		Services.AddSingleton(_categoryServiceSub);
@@ -35,7 +35,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(Arg.Any<ObjectId>()).Returns(_ => tcs.Task);
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, ObjectId.GenerateNewId()));
 
 		// Assert
@@ -56,7 +56,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryId));
 
 		// Wait for the component to finish loading
@@ -77,7 +77,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -102,7 +102,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -113,7 +113,7 @@ public class EditCategoryTests : BunitContext
 		var descriptionInput = cut.Find("#description");
 
 		nameInput.GetAttribute("value").Should().Be(categoryDto.Name);
-		descriptionInput.GetAttribute("value").Should().Be(categoryDto.Description);
+		descriptionInput.GetAttribute("value").Should().Be(categoryDto.Slug);
 
 	}
 
@@ -125,7 +125,7 @@ public class EditCategoryTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -144,14 +144,14 @@ public class EditCategoryTests : BunitContext
 	}
 
 	[Fact]
-	public void Shows_Validation_Error_When_Description_Is_Empty()
+	public void Shows_Validation_Error_When_Slug_Is_Empty()
 	{
 
 		// Arrange
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -165,7 +165,7 @@ public class EditCategoryTests : BunitContext
 		form.Submit();
 
 		// Assert
-		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Description is required</div>""");
+		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Slug is required</div>""");
 
 	}
 
@@ -178,7 +178,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -190,12 +190,12 @@ public class EditCategoryTests : BunitContext
 
 		// Act
 		await cut.InvokeAsync(() => nameInput.Change("Updated Name"));
-		await cut.InvokeAsync(() => descriptionInput.Change("Updated Description"));
+		await cut.InvokeAsync(() => descriptionInput.Change("Updated Slug"));
 		await cut.InvokeAsync(() => form.Submit());
 
 		// Assert
 		await _categoryServiceSub.Received(1).UpdateAsync(Arg.Is<CategoryDto>(dto =>
-				dto.Name == "Updated Name" && dto.Description == "Updated Description"));
+				dto.Name == "Updated Name" && dto.Slug == "Updated Slug"));
 
 	}
 
@@ -208,7 +208,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Fail("Update failed"));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -235,7 +235,7 @@ public class EditCategoryTests : BunitContext
 		var tcs = new TaskCompletionSource<Result>();
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(_ => tcs.Task);
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -264,7 +264,7 @@ public class EditCategoryTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -284,7 +284,7 @@ public class EditCategoryTests : BunitContext
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -309,7 +309,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryId));
 
 		// Wait for the component to finish loading
@@ -328,7 +328,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(ObjectId.Empty).Returns(Result<CategoryDto>.Fail("Invalid ID"));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, ObjectId.Empty));
 
 		// Wait for the component to finish loading
@@ -348,7 +348,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -369,7 +369,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		// Act
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -384,7 +384,7 @@ public class EditCategoryTests : BunitContext
 
 		form.Should().NotBeNull();
 		nameLabel.TextContent.Should().Contain("Categories Name");
-		descriptionLabel.TextContent.Should().Contain("Description");
+		descriptionLabel.TextContent.Should().Contain("Slug");
 		nameInput.GetAttribute("class").Should().Contain("w-full px-3 py-2 border");
 		descriptionInput.GetAttribute("class").Should().Contain("w-full px-3 py-2 border");
 
@@ -399,7 +399,7 @@ public class EditCategoryTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
 		// Wait for the component to finish loading
@@ -423,7 +423,7 @@ public class EditCategoryTests : BunitContext
 		var categoryId = ObjectId.GenerateNewId();
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
 
-		var cut = Render<EditCategory>(parameters => parameters
+		var cut = Render<Edit>(parameters => parameters
 				.Add(p => p.Id, categoryId));
 
 		// Wait for the component to finish loading

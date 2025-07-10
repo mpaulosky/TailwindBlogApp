@@ -21,7 +21,7 @@ public class PostInfoComponentTest : BunitContext
 	public void Should_Render_Author_And_Category()
 	{
 		// Arrange
-		var article = FakeArticle.GetNewArticle(true).Adapt<ArticleModel>();
+		var article = FakeArticle.GetNewArticle(true).Adapt<ArticleDto>();
 		article.Author.UserName = "TestUser";
 		article.CreatedOn = new DateTime(2025, 5, 5);
 		article.PublishedOn = new DateTime(2025, 5, 4);

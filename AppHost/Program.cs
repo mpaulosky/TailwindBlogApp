@@ -1,18 +1,38 @@
+using Projects;
+
+var serverName = ServerName;
+var databaseName = DatabaseName;
+var outputCacheName = OutputCache;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddRedis(OutputCache);
+var outputCache = builder.AddRedis(outputCacheName);
 
-var mongoServer = builder.AddMongoDB(ServerName)
-		.WithLifetime(ContainerLifetime.Persistent)
-		.WithMongoExpress();
+// Add a default admin user and password as parameters
+var adminPassword = builder.AddParameter("AdminPassword", true);
+var adminUser = builder.AddParameter("AdminUser");
 
-var mongoDb = mongoServer.AddDatabase(DatabaseName);
+// Add environment variable for the MongoDB connection string
+var mongoConnectionString = builder.AddParameter("MongoDbConnectionString", true);
 
-builder.AddProject<Projects.Web>(WebApp)
-		 .WithExternalHttpEndpoints()
-		 .WithReference(cache)
-		 .WaitFor(cache)
-		 .WithReference(mongoDb)
-		 .WaitFor(mongoDb);
+// Create a MongoDB server for articles
+var articleServer = builder.AddMongoDB(serverName)
+		.WithDataVolume()
+		.WithMongoExpress()
+		.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", adminUser)
+		.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", adminPassword)
+		.WithEnvironment("MongoDb__ConnectionString", mongoConnectionString)
+		.WithLifetime(ContainerLifetime.Persistent);
+
+// Create a database for articles
+var articleDatabase = articleServer.AddDatabase(databaseName);
+
+// Create a web project
+builder.AddProject<Web>("WebApp")
+		.WithExternalHttpEndpoints()
+		.WithReference(outputCache)
+		.WaitFor(outputCache)
+		.WaitFor(articleServer)
+		.WaitFor(articleDatabase);
 
 builder.Build().Run();

@@ -16,12 +16,12 @@ public class DependencyInjectionTests
 
 	private const string _expectedConnectionString = "mongodb://localhost:27017";
 
-	private const string _databaseName = "blog-app-database";
+	private const string _databaseName = "articlesdb";
 
 	/// <summary>
-	/// Helper to create a configuration with a MongoDB connection string.
+	///   Helper to create a configuration with a MongoDB connection string.
 	/// </summary>
-	private static IConfiguration CreateConfiguration(string? connectionString)
+	private static ConfigurationManager CreateConfiguration(string? connectionString)
 	{
 
 		var inMemorySettings = new Dictionary<string, string?>
@@ -31,68 +31,67 @@ public class DependencyInjectionTests
 
 		return new ConfigurationBuilder()
 				.AddInMemoryCollection(inMemorySettings)
-				.Build();
+				.Build() as ConfigurationManager ?? throw new InvalidOperationException("Failed to create configuration.");
 
 	}
 
 	[Fact]
 	public void AddPersistence_WithValidConnectionString_ShouldRegisterAllDependencies()
 	{
-
 		// Arrange
 		var services = new ServiceCollection();
-		var config = CreateConfiguration(_expectedConnectionString);
+		Environment.SetEnvironmentVariable("MongoDb__ConnectionString", _expectedConnectionString);
 
-		// Act
-		services.AddPersistence(config);
+		try
+		{
+			// Act
+			services.AddPersistence();
 
-		// Assert registrations
-		// IDatabaseSettings as singleton
-		services.Should().ContainSingle(x =>
-				x.ServiceType.Name == "IDatabaseSettings" &&
-				x.ImplementationInstance != null &&
-				x.Lifetime == ServiceLifetime.Singleton
-		);
+			// Assert registrations
+			services.Should().ContainSingle(x =>
+					x.ServiceType.Name == "IDatabaseSettings" &&
+					x.ImplementationInstance != null &&
+					x.Lifetime == ServiceLifetime.Singleton
+			);
 
-		// IMongoDbContextFactory as a singleton
-		services.Should().ContainSingle(x =>
-				x.ServiceType.Name == "IMongoDbContextFactory" &&
-				x.ImplementationType!.Name == "MongoDbContextFactory" &&
-				x.Lifetime == ServiceLifetime.Singleton
-		);
+			services.Should().ContainSingle(x =>
+					x.ServiceType.Name == "IMongoDbContextFactory" &&
+					x.ImplementationType!.Name == "MongoDbContextFactory" &&
+					x.Lifetime == ServiceLifetime.Singleton
+			);
 
-		// IArticleRepository as scoped
-		services.Should().ContainSingle(x =>
-				x.ServiceType.Name == "IArticleRepository" &&
-				x.ImplementationType!.Name == "ArticleRepository" &&
-				x.Lifetime == ServiceLifetime.Scoped
-		);
+			services.Should().ContainSingle(x =>
+					x.ServiceType.Name == "IArticleRepository" &&
+					x.ImplementationType!.Name == "ArticleRepository" &&
+					x.Lifetime == ServiceLifetime.Scoped
+			);
 
-		// ICategoryRepository as scoped
-		services.Should().ContainSingle(x =>
-				x.ServiceType.Name == "ICategoryRepository" &&
-				x.ImplementationType!.Name == "CategoryRepository" &&
-				x.Lifetime == ServiceLifetime.Scoped
-		);
-
+			services.Should().ContainSingle(x =>
+					x.ServiceType.Name == "ICategoryRepository" &&
+					x.ImplementationType!.Name == "CategoryRepository" &&
+					x.Lifetime == ServiceLifetime.Scoped
+			);
+		}
+		finally
+		{
+			Environment.SetEnvironmentVariable("MongoDb__ConnectionString", null);
+		}
 	}
 
 	[Fact]
 	public void AddPersistence_WhenConnectionStringIsMissing_ShouldThrowInvalidOperationException()
 	{
-
 		// Arrange
 		var services = new ServiceCollection();
-		var config = CreateConfiguration(null);
+		Environment.SetEnvironmentVariable("MongoDb__ConnectionString", null);
 
 		// Act
-		Action act = () => services.AddPersistence( config);
+		Action act = () => services.AddPersistence();
 
 		// Assert
 		act.Should()
 				.Throw<InvalidOperationException>()
-				.WithMessage($"Connection string '{_databaseName}'*");
-
+				.WithMessage("MongoDB connection string is not configured.");
 	}
 
 }

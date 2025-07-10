@@ -10,18 +10,18 @@
 namespace Persistence;
 
 /// <summary>
-///   Unit tests for the <see cref="MongoDbContextFactory"/> class.
+///   Unit tests for the <see cref="MongoDbContextFactory" /> class.
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(MongoDbContextFactory))]
 public sealed class MongoDbContextFactoryTests
 {
 
-	private readonly Mock<IDatabaseSettings> _mockSettings;
-
 	private readonly Mock<IMongoClient> _mockClient;
 
 	private readonly Mock<IMongoDatabase> _mockDatabase;
+
+	private readonly Mock<IDatabaseSettings> _mockSettings;
 
 	public MongoDbContextFactoryTests()
 	{
@@ -46,14 +46,7 @@ public sealed class MongoDbContextFactoryTests
 
 	}
 
-	public class TestEntity
-	{
-
-		public string Id { get; set; } = string.Empty;
-
-	}
-
-	internal MongoDbContextFactory CreateSut()
+	private MongoDbContextFactory CreateSut()
 	{
 
 		// Create a new instance of MongoDbContextFactory with our mocked client
@@ -100,30 +93,29 @@ public sealed class MongoDbContextFactoryTests
 	{
 
 		// Arrange
-		string? nullName = null;
 		var sut = CreateSut();
 
 		// Act & Assert
-		var action = () => sut.GetCollection<TestEntity>(nullName);
+		var act = () => sut.GetCollection<TestEntity>(null);
 
-		action.Should().Throw<ArgumentException>()
-				.WithMessage("Value cannot be null. (Parameter 'name')");
+		act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Collection name cannot be null or empty. (Parameter 'name')");
 
 	}
 
 	[Fact(DisplayName = "GetCollection - With Empty Name - Should Throw ArgumentException")]
-	public void GetCollection_WithEmptyName_ShouldThrowArgumentException()
+	public void GetCollection_WithEmptyName_ShouldBeStringEmpty()
 	{
 
 		// Arrange
-		var emptyName = string.Empty;
+		var collectionName = string.Empty;
 		var sut = CreateSut();
 
 		// Act & Assert
-		var action = () => sut.GetCollection<TestEntity>(emptyName);
+		var act = () => sut.GetCollection<TestEntity>(collectionName);
 
-		action.Should().Throw<ArgumentException>()
-				.WithMessage("The value cannot be an empty string. (Parameter 'name')");
+		act.Should().Throw<ArgumentNullException>()
+				.WithMessage("Collection name cannot be null or empty. (Parameter 'name')");
 
 	}
 
@@ -157,6 +149,13 @@ public sealed class MongoDbContextFactoryTests
 		// Assert
 		sut.DbName.Should().Be(databaseName);
 		_mockClient.Verify(c => c.GetDatabase(databaseName, null), Times.Once);
+
+	}
+
+	public class TestEntity
+	{
+
+		public string Id { get; set; } = string.Empty;
 
 	}
 

@@ -454,7 +454,7 @@ public sealed class ArticleRepositoryTests
 
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Get By User - Success Path")]
 	public async Task GetByUserAsync_WithValidUser_ShouldReturnUsersArticles()
 	{
 
@@ -483,7 +483,7 @@ public sealed class ArticleRepositoryTests
 
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Get By User - No Articles Found")]
 	public async Task GetByUserAsync_WithNoArticles_ShouldReturnFailResult()
 	{
 
@@ -512,7 +512,7 @@ public sealed class ArticleRepositoryTests
 
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Get By User - Empty User ID")]
 	public async Task GetByUserAsync_WithEmptyUserId_ShouldReturnFailResult()
 	{
 
@@ -541,7 +541,7 @@ public sealed class ArticleRepositoryTests
 
 	}
 
-	[Fact]
+	[Fact(DisplayName = "Get By User - Null User")]
 	public async Task GetByUserAsync_WhenExceptionOccurs_ShouldReturnFailResult()
 	{
 

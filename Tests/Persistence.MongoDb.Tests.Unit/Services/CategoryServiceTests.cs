@@ -10,11 +10,6 @@
 namespace Persistence.Services;
 
 /// <summary>
-/// Delegate to handle TryGetValue callback without a parameter
-/// </summary>
-public delegate void TryGetValueCallback(object key, out object value);
-
-/// <summary>
 /// Unit tests for <see cref="CategoryService"/>.
 /// </summary>
 [ExcludeFromCodeCoverage]
@@ -35,9 +30,11 @@ public class CategoryServiceTests
 	/// </summary>
 	public CategoryServiceTests()
 	{
+
 		_cacheMock = new Mock<ICacheService>(MockBehavior.Loose);
 		_repositoryMock = new Mock<ICategoryRepository>(MockBehavior.Loose);
 		_sut = new CategoryService(_repositoryMock.Object, _cacheMock.Object);
+
 	}
 
 	/// <summary>
@@ -46,11 +43,16 @@ public class CategoryServiceTests
 	[Fact]
 	public void Constructor_NullRepository_ThrowsArgumentNullException()
 	{
+
 		// Arrange
-		Action act = () => new CategoryService(null!, _cacheMock.Object);
+		var act = () =>
+		{
+			var categoryService = new CategoryService(null!, _cacheMock.Object);
+		};
 
 		// Assert
 		act.Should().Throw<ArgumentNullException>();
+
 	}
 
 	/// <summary>
@@ -59,11 +61,16 @@ public class CategoryServiceTests
 	[Fact]
 	public void Constructor_NullCache_ThrowsArgumentNullException()
 	{
+
 		// Arrange
-		Action act = () => new CategoryService(_repositoryMock.Object, null!);
+		var act = () =>
+		{
+			var categoryService = new CategoryService(_repositoryMock.Object, null!);
+		};
 
 		// Assert
 		act.Should().Throw<ArgumentNullException>();
+
 	}
 
 	/// <summary>
@@ -72,12 +79,14 @@ public class CategoryServiceTests
 	[Fact]
 	public async Task ArchiveAsync_NullCategory_ReturnsFailure()
 	{
+
 		// Act
 		var result = await _sut.ArchiveAsync(null);
 
 		// Assert
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Be("Categories cannot be null.");
+		result.Error.Should().Be("Category cannot be null.");
+
 	}
 
 	/// <summary>
@@ -130,7 +139,7 @@ public class CategoryServiceTests
 
 		// Assert
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Be("Categories cannot be null.");
+		result.Error.Should().Be("Category cannot be null.");
 	}
 
 	/// <summary>
@@ -183,7 +192,7 @@ public class CategoryServiceTests
 
 		// Assert
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Be("Categories id cannot be empty.");
+		result.Error.Should().Be("Category id cannot be empty.");
 	}
 
 	/// <summary>
@@ -225,7 +234,7 @@ public class CategoryServiceTests
 
 		// Assert
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Be("Categories not found.");
+		result.Error.Should().Be("Category not found.");
 	}
 
 	/// <summary>
@@ -248,6 +257,9 @@ public class CategoryServiceTests
 		result.Value!.Id.Should().Be(catId);
 	}
 
+	/// <summary>
+	/// Ensures GetAllAsync returns values from cache if present.
+	/// </summary>
 	[Fact]
 	public async Task GetAllAsync_ValuesInCache_ReturnsFromCache()
 	{
@@ -264,6 +276,31 @@ public class CategoryServiceTests
 		_cacheMock.Verify(c => c.GetAsync<List<CategoryDto>>(It.IsAny<string>()));
 	}
 
+	/// <summary>
+	/// Ensures GetAllAsync returns failure when the cache and repository return failure.
+	/// </summary>
+	[Fact]
+	public async Task GetAllAsync_ValuesNotInCache_AndRepositoryReturnsEmpty_ReturnsFailure()
+	{
+
+		// Arrange
+		_cacheMock.Setup(c => c.GetAsync<List<CategoryDto>>(_cacheName)).ReturnsAsync((List<CategoryDto>?)null);
+
+		_repositoryMock.Setup(r => r.GetAllAsync())
+				.ReturnsAsync(Result<IEnumerable<Category>>.Fail("Failed to retrieve categories."));
+
+		// Act
+		var result = await _sut.GetAllAsync();
+
+		// Assert
+		result.Failure.Should().BeTrue();
+		result.Value.Should().BeNull();
+
+	}
+
+	/// <summary>
+	/// Ensures GetAllAsync returns values from the repository and sets cache if not in cache.
+	/// </summary>
 	[Fact]
 	public async Task GetAllAsync_ValuesNotInCache_ReturnsFromRepository_AndSetsCache()
 	{
@@ -284,6 +321,9 @@ public class CategoryServiceTests
 		result.Value.Should().NotBeNull();
 	}
 
+	/// <summary>
+	/// Ensures UpdateAsync returns failure when the category is null.
+	/// </summary>
 	[Fact]
 	public async Task UpdateAsync_NullCategory_ReturnsFailure()
 	{
@@ -292,7 +332,29 @@ public class CategoryServiceTests
 
 		// Assert
 		result.Failure.Should().BeTrue();
-		result.Error.Should().Be("Categories cannot be null");
+		result.Error.Should().Be("Category cannot be null");
+	}
+
+	/// <summary>
+	///   Ensures UpdateAsync returns failure when the repository fails.
+	/// </summary>
+	[Fact]
+	public async Task UpdateAsync_ShouldReturnFail_WhenRepositoryFails()
+	{
+		// Arrange
+		var dto = FakeCategoryDto.GetNewCategoryDto(true);
+
+		_repositoryMock.Setup(r => r.UpdateAsync(It.IsAny<ObjectId>(), It.IsAny<Category>()))
+				.ReturnsAsync(Result.Fail("Failed to update category"));
+
+		_cacheMock.Setup(c => c.RemoveAsync(_cacheName));
+
+		// Act
+		var result = await _sut.UpdateAsync(dto);
+
+		// Assert
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be("Failed to update category");
 	}
 
 	/// <summary>
@@ -302,7 +364,7 @@ public class CategoryServiceTests
 	public async Task UpdateAsync_Success_ReturnsOk()
 	{
 		// Arrange
-		var category = new CategoryDto { Id = ObjectId.GenerateNewId() };
+		var category = FakeCategoryDto.GetNewCategoryDto(true);
 
 		_repositoryMock.Setup(r => r.UpdateAsync(category.Id, It.IsAny<Category>()))
 				.ReturnsAsync(Result.Ok());
@@ -314,6 +376,9 @@ public class CategoryServiceTests
 
 		// Assert
 		result.Success.Should().BeTrue();
+		_cacheMock.Verify(c => c.RemoveAsync(_cacheName), Times.Once);
+		_repositoryMock.Verify(r => r.UpdateAsync(category.Id, It.IsAny<Category>()), Times.Once);
+
 	}
 
 }

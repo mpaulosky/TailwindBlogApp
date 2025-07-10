@@ -27,7 +27,7 @@ public class CategoryTests
 
 		// Assert
 		article.Name.Should().BeEmpty();
-		article.Description.Should().BeEmpty();
+		article.Slug.Should().BeEmpty();
 		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
 		article.ModifiedOn.Should().BeNull();
 
@@ -43,13 +43,13 @@ public class CategoryTests
 		// Assert
 		article.Id.Should().Be(ObjectId.Empty);
 		article.Name.Should().BeEmpty();
-		article.Description.Should().BeEmpty();
+		article.Slug.Should().BeEmpty();
 
 	}
 
 	[Theory]
-	[InlineData("Test Name", "Test Description")]
-	[InlineData("Another Name", "Another Description")]
+	[InlineData("Test Name", "Test Slug")]
+	[InlineData("Another Name", "Another Slug")]
 	public void Category_WhenPropertiesSet_ShouldHaveCorrectValues(
 			string name,
 			string description)
@@ -63,7 +63,7 @@ public class CategoryTests
 
 		// Assert
 		article.Name.Should().Be(name);
-		article.Description.Should().Be(description);
+		article.Slug.Should().Be(description);
 		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
 		article.ModifiedOn.Should().BeNull(); // Default value
 
@@ -76,18 +76,18 @@ public class CategoryTests
 		// Arrange
 		var article = new Category(
 				"initial Name",
-				"initial Description"
+				"initial Slug"
 		);
 
 		// Act
 		article.Update(
 				"new Name",
-				"new Description"
+				"new Slug"
 		);
 
 		// Assert
 		article.Name.Should().Be("new Name");
-		article.Description.Should().Be("new Description");
+		article.Slug.Should().Be("new Slug");
 		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
 		article.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
 
@@ -95,7 +95,7 @@ public class CategoryTests
 
 	[Theory]
 	[InlineData("", "description", "Name is required")]
-	[InlineData("Name", "", "Description is required")]
+	[InlineData("Name", "", "Slug is required")]
 	public void Category_WhenCreated_ShouldValidateRequiredFields(
 			string name,
 			string description,
@@ -113,7 +113,7 @@ public class CategoryTests
 
 	[Theory]
 	[InlineData("", "description", "Name is required")]
-	[InlineData("Name", "", "Description is required")]
+	[InlineData("Name", "", "Slug is required")]
 	public void Category_WhenUpdated_ShouldValidateRequiredFields(
 			string name,
 			string description,

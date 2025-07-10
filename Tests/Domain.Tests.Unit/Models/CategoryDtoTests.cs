@@ -24,7 +24,7 @@ public class CategoryDtoTests
 		// Assert
 		category.Id.Should().Be(ObjectId.Empty);
 		category.Name.Should().BeEmpty();
-		category.Description.Should().BeEmpty();
+		category.Slug.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
 
@@ -40,15 +40,15 @@ public class CategoryDtoTests
 		// Assert
 		category.Id.Should().Be(ObjectId.Empty);
 		category.Name.Should().BeEmpty();
-		category.Description.Should().BeEmpty();
+		category.Slug.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
 
 	}
 
 	[Theory]
-	[InlineData("Test Name", "Test Description")]
-	[InlineData("Another Name", "Another Description")]
+	[InlineData("Test Name", "Test Slug")]
+	[InlineData("Another Name", "Another Slug")]
 	public void CategoryDto_WhenPropertiesSet_ShouldHaveCorrectValues(
 			string name,
 			string description)
@@ -67,7 +67,7 @@ public class CategoryDtoTests
 
 		// Assert
 		category.Name.Should().Be(name);
-		category.Description.Should().Be(description);
+		category.Slug.Should().Be(description);
 		category.CreatedOn.Should().Be(now);
 		category.ModifiedOn.Should().BeNull();
 
@@ -75,7 +75,7 @@ public class CategoryDtoTests
 
 	[Theory]
 	[InlineData("", "description", "Name is required")]
-	[InlineData("Name", "", "Description is required")]
+	[InlineData("Name", "", "Slug is required")]
 	public void CategoryDto_WhenCreated_ShouldValidateRequiredFields(
 			string name,
 			string description,

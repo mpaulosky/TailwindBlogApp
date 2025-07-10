@@ -25,7 +25,7 @@ public class FakeCategoryTests
 		result.Should().NotBeNull();
 		result.Should().BeOfType<Category>();
 		result.Name.Should().NotBeNullOrEmpty();
-		result.Description.Should().NotBeNullOrEmpty();
+		result.Slug.Should().NotBeNullOrEmpty();
 
 	}
 
@@ -34,14 +34,14 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var result1 = FakeCategory.GetNewCategory(useSeed: true);
-		var result2 = FakeCategory.GetNewCategory(useSeed: true);
+		var result1 = FakeCategory.GetNewCategory(true);
+		var result2 = FakeCategory.GetNewCategory(true);
 
 		// Assert
 		result1.Should().NotBeNull();
 		result2.Should().NotBeNull();
 		result1.Name.Should().Be(result2.Name);
-		result1.Description.Should().Be(result2.Description);
+		result1.Slug.Should().Be(result2.Slug);
 
 	}
 
@@ -60,7 +60,7 @@ public class FakeCategoryTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Name));
-		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Description));
+		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Slug));
 
 	}
 
@@ -72,8 +72,8 @@ public class FakeCategoryTests
 		const int count = 3;
 
 		// Act
-		var results1 = FakeCategory.GetCategories(count, useSeed: true);
-		var results2 = FakeCategory.GetCategories(count, useSeed: true);
+		var results1 = FakeCategory.GetCategories(count, true);
+		var results2 = FakeCategory.GetCategories(count, true);
 
 		// Assert
 		results1.Should().NotBeNull();
@@ -81,10 +81,10 @@ public class FakeCategoryTests
 		results1.Should().HaveCount(count);
 		results2.Should().HaveCount(count);
 
-		for (int i = 0; i < count; i++)
+		for (var i = 0; i < count; i++)
 		{
 			results1[i].Name.Should().Be(results2[i].Name);
-			results1[i].Description.Should().Be(results2[i].Description);
+			results1[i].Slug.Should().Be(results2[i].Slug);
 		}
 
 	}
@@ -101,7 +101,7 @@ public class FakeCategoryTests
 		category.Should().NotBeNull();
 		category.Name.Should().NotBeNullOrEmpty();
 		category.Name.Should().BeOneOf(Enum.GetNames<CategoryNames>());
-		category.Description.Should().Contain(category.Name);
+		category.Slug.Should().Contain(category.Name.ToLowerInvariant());
 
 	}
 
@@ -110,15 +110,15 @@ public class FakeCategoryTests
 	{
 
 		// Act
-		var faker1 = FakeCategory.GenerateFake(useSeed: true);
-		var faker2 = FakeCategory.GenerateFake(useSeed: true);
+		var faker1 = FakeCategory.GenerateFake(true);
+		var faker2 = FakeCategory.GenerateFake(true);
 
 		var category1 = faker1.Generate();
 		var category2 = faker2.Generate();
 
 		// Assert
 		category1.Name.Should().Be(category2.Name);
-		category1.Description.Should().Be(category2.Description);
+		category1.Slug.Should().Be(category2.Slug);
 
 	}
 

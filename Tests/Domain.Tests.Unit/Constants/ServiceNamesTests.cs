@@ -34,7 +34,7 @@ public class ServiceNamesTests
 	{
 
 		// Arrange
-		var expected = "blog-app-database";
+		var expected = "articlesdb";
 
 		// Act
 		var actual = ServiceNames.DatabaseName;

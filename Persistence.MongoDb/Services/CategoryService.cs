@@ -49,7 +49,7 @@ public class CategoryService : ICategoryService
 
 		// Validate input
 		if (category == null)
-			return Result.Fail("Categories cannot be null.");
+			return Result.Fail("Category cannot be null.");
 
 		// Remove the cache for categories so it's refreshed after the change
 		await _cache.RemoveAsync(_cacheName);
@@ -84,7 +84,7 @@ public class CategoryService : ICategoryService
 
 		// Validate input
 		if (category == null)
-			return Result.Fail("Categories cannot be null.");
+			return Result.Fail("Category cannot be null.");
 
 		// Remove the cache so it's refreshed on next GetAll
 		await _cache.RemoveAsync(_cacheName);
@@ -118,7 +118,7 @@ public class CategoryService : ICategoryService
 
 		// Validate input
 		if (categoryId == ObjectId.Empty)
-			return Result<CategoryDto>.Fail("Categories id cannot be empty.");
+			return Result<CategoryDto>.Fail("Category id cannot be empty.");
 
 		// Try to get all categories from the cache
 		var categoryList = await _cache.GetAsync<List<CategoryDto>>(_cacheName);
@@ -133,7 +133,7 @@ public class CategoryService : ICategoryService
 		var category = await _repository.GetAsync(categoryId);
 
 		if (category.Failure)
-			return Result<CategoryDto>.Fail("Categories not found.");
+			return Result<CategoryDto>.Fail("Category not found.");
 
 		// Adapt model to DTO if necessary, otherwise return directly
 		var dto = category.Value.Adapt<CategoryDto>();
@@ -180,7 +180,7 @@ public class CategoryService : ICategoryService
 
 		if (category is null)
 		{
-			return Result.Fail("Categories cannot be null");
+			return Result.Fail("Category cannot be null");
 		}
 
 		await _cache.RemoveAsync(_cacheName);

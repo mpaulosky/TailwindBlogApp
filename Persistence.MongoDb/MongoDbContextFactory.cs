@@ -14,8 +14,6 @@ namespace Persistence;
 /// </summary>
 public class MongoDbContextFactory : IMongoDbContextFactory
 {
-	private readonly IMongoClient _client;
-	private readonly IMongoDatabase _database;
 
 	/// <summary>
 	///   MongoDbContextFactory constructor
@@ -26,8 +24,8 @@ public class MongoDbContextFactory : IMongoDbContextFactory
 	{
 		ConnectionString = settings.ConnectionStrings;
 		DbName = settings.DatabaseName;
-		_client = client ?? new MongoClient(ConnectionString);
-		_database = _client.GetDatabase(DbName);
+		Client = client ?? new MongoClient(ConnectionString);
+		Database = Client.GetDatabase(DbName);
 	}
 
 	/// <summary>
@@ -36,7 +34,7 @@ public class MongoDbContextFactory : IMongoDbContextFactory
 	/// <value>
 	///   The database.
 	/// </value>
-	public IMongoDatabase Database => _database;
+	public IMongoDatabase Database { get; }
 
 	/// <summary>
 	///   Gets the client.
@@ -44,7 +42,7 @@ public class MongoDbContextFactory : IMongoDbContextFactory
 	/// <value>
 	///   The client.
 	/// </value>
-	public IMongoClient Client => _client;
+	public IMongoClient Client { get; }
 
 	/// <summary>
 	///   Gets the connection string.
@@ -71,7 +69,25 @@ public class MongoDbContextFactory : IMongoDbContextFactory
 	/// <exception cref="ArgumentNullException"></exception>
 	public IMongoCollection<T> GetCollection<T>(string? name)
 	{
-		ArgumentException.ThrowIfNullOrEmpty(name);
-		return _database.GetCollection<T>(name);
+
+		if (string.IsNullOrEmpty(name))
+		{
+
+			throw new ArgumentNullException(nameof(name), "Collection name cannot be null or empty.");
+
+		}
+
+		var result = Database.GetCollection<T>(name);
+
+		if (result is not  { } collection)
+		{
+
+			throw new InvalidOperationException($"Failed to retrieve collection '{name}' of type '{typeof(T).Name}'.");
+
+		}
+
+		return result;
+
 	}
+
 }

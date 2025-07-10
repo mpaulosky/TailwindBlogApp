@@ -17,7 +17,7 @@ public class ArticleService : IArticleService
 
 	private const string _cacheName = "ArticleData";
 
-	private readonly IMemoryCache _cache;
+	private readonly ICacheService _cache;
 
 	private readonly IArticleRepository _repository;
 
@@ -25,9 +25,9 @@ public class ArticleService : IArticleService
 	///   ArticleService constructor
 	/// </summary>
 	/// <param name="repository">IArticleRepository</param>
-	/// <param name="cache">IMemoryCache</param>
+	/// <param name="cache">ICacheService</param>
 	/// <exception cref="ArgumentNullException"></exception>
-	public ArticleService(IArticleRepository repository, IMemoryCache cache)
+	public ArticleService(IArticleRepository repository, ICacheService cache)
 	{
 		ArgumentNullException.ThrowIfNull(repository);
 		ArgumentNullException.ThrowIfNull(cache);
@@ -52,7 +52,7 @@ public class ArticleService : IArticleService
 			return Result.Fail("Article cannot be null.");
 
 		// Remove the cache for categories so it's refreshed after the change
-		_cache.Remove(_cacheName);
+		await _cache.RemoveAsync(_cacheName);
 
 		try
 		{
@@ -87,7 +87,7 @@ public class ArticleService : IArticleService
 			return Result.Fail("Article cannot be null.");
 
 		// Remove the cache so it's refreshed on next GetAll
-		_cache.Remove(_cacheName);
+		await _cache.RemoveAsync(_cacheName);
 
 		try
 		{
@@ -121,7 +121,7 @@ public class ArticleService : IArticleService
 			return Result<ArticleDto>.Fail("Article id cannot be empty.");
 
 		// Try to get all categories from the cache
-		var articleList = _cache.Get<List<ArticleDto>>(_cacheName);
+		var articleList = await _cache.GetAsync<List<ArticleDto>>(_cacheName);
 
 		// If found in the cache, try to return the matching article
 		var cachedArticle = articleList?.FirstOrDefault(c => c.Id == articleId);
@@ -147,36 +147,29 @@ public class ArticleService : IArticleService
 	/// </summary>
 	/// <param name="entity">The user whose articles are to be retrieved.</param>
 	/// <returns>A <see cref="Result{T}"/> containing a list of articles created by the specified user, or an error message if the operation fails.</returns>
-	public async Task<Result<List<ArticleDto>?>> GetByUserAsync(AppUserDto? entity)
+	public async Task<Result<List<ArticleDto>>> GetByUserAsync(AppUserDto? entity)
 	{
 
 		// Validate input user
 		if (entity == null || string.IsNullOrEmpty(entity.Id))
-			return Result<List<ArticleDto>?>.Fail("Invalid user.");
+			return Result<List<ArticleDto>>.Fail("Invalid user.");
 
-		try
-		{
+		// Query repository for all articles
+		var allArticlesResult = await GetAllAsync();
 
-			// Query repository for all articles
-			var allArticlesResult = await GetAllAsync();
+		if (allArticlesResult.Failure || allArticlesResult.Value is null)
+			return Result<List<ArticleDto>>.Fail("Could not retrieve articles.");
 
-			if (!allArticlesResult.Success || allArticlesResult.Value == null)
-				return Result<List<ArticleDto>?>.Fail("Could not retrieve articles.");
+		// Filter articles where the author matches the given 
+		var allArticles = allArticlesResult.Value;
 
-			// Filter articles where the author matches the given user
-			var userArticles = allArticlesResult.Value
-					.Where(a => a.Author.Id == entity.Id)
-					.ToList();
+		var userArticles = allArticles
+				.Where(a => a.Author.Id == entity.Id)
+				.ToList();
 
-			return Result<List<ArticleDto>?>.Ok(userArticles);
-
-		}
-		catch (Exception ex)
-		{
-
-			return Result<List<ArticleDto>?>.Fail($"An error occurred: {ex.Message}");
-
-		}
+		return userArticles.Count > 0
+				? Result<List<ArticleDto>>.Ok(userArticles)
+				: Result<List<ArticleDto>>.Fail("No articles found for the specified user.");
 
 	}
 
@@ -187,20 +180,23 @@ public class ArticleService : IArticleService
 	/// A <see cref="Result{T}"/> containing a list of <see cref="ArticleDto"/>
 	/// or null if no data is found.
 	/// </returns>
-	public async Task<Result<List<ArticleDto>?>> GetAllAsync()
+	public async Task<Result<List<ArticleDto>>> GetAllAsync()
 	{
 
-		var output = _cache.Get<List<ArticleDto>>(_cacheName);
+		var output = await _cache.GetAsync<List<ArticleDto>>(_cacheName);
 
-		if (output is not null) return Result<List<ArticleDto>?>.Ok(output);
+		if (output is not null) return Result<List<ArticleDto>>.Ok(output);
 
 		var results = await _repository.GetAllAsync();
 
+		// If the repository call fails, return the failure result
+		if (results.Failure) return Result<List<ArticleDto>>.Fail("Failed to retrieve articles.");
+
 		output = results.Value.Adapt<List<ArticleDto>>().ToList();
 
-		_cache.Set(_cacheName, output, TimeSpan.FromDays(1));
+		await _cache.SetAsync(_cacheName, output, TimeSpan.FromDays(1));
 
-		return Result<List<ArticleDto>?>.Ok(output);
+		return Result<List<ArticleDto>>.Ok(output);
 
 	}
 
@@ -218,7 +214,7 @@ public class ArticleService : IArticleService
 			return Result.Fail("Article cannot be null");
 		}
 
-		_cache.Remove(_cacheName);
+		await _cache.RemoveAsync(_cacheName);
 
 		var result = await _repository.UpdateAsync(article.Id, article.Adapt<Article>());
 

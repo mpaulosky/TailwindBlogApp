@@ -18,8 +18,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 	{
 
 		ArgumentNullException.ThrowIfNull(context);
+		ArgumentException.ThrowIfNullOrEmpty(typeof(TEntity).Name, nameof(TEntity));
 
-		var collectionName = CollectionNames.GetCollectionName(nameof(TEntity));
+		var collectionName = CollectionNames.GetCollectionName(typeof(TEntity).Name);
 
 		Collection = context.GetCollection<TEntity>(collectionName);
 		

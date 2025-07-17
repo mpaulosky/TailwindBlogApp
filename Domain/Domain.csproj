@@ -1,25 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Bogus" />
-        <PackageReference Include="FluentValidation" />
-        <PackageReference Include="MongoDB.Driver" />
-        <PackageReference Include="WaffleGenerator.Bogus" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Bogus"/>
+		<PackageReference Include="FluentValidation"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
+		<PackageReference Include="MongoDB.Driver"/>
+		<PackageReference Include="WaffleGenerator.Bogus"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="Domain.Tests.Unit" />
-        <InternalsVisibleTo Include="Architecture.Tests" />
-    </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Domain.Tests.Unit"/>
+		<InternalsVisibleTo Include="Architecture.Tests"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\MyMediator\MyMediator.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\MyMediator\MyMediator.csproj"/>
+	</ItemGroup>
 
 </Project>

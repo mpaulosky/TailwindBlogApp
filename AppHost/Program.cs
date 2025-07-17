@@ -1,38 +1,69 @@
-using Projects;
+// =======================================================
+// Copyright (c) 2025. All rights reserved.
+// File Name :     Program.cs
+// Company :       mpaulosky
+// Author :        Matthew
+// Solution Name : TailwindBlog
+// Project Name :  AppHost
+// =======================================================
 
-var serverName = ServerName;
-var databaseName = DatabaseName;
-var outputCacheName = OutputCache;
+using AppHost;
+
+using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var outputCache = builder.AddRedis(outputCacheName);
+var testOnly = false;
 
-// Add a default admin user and password as parameters
-var adminPassword = builder.AddParameter("AdminPassword", true);
-var adminUser = builder.AddParameter("AdminUser");
+foreach (var arg in args)
+{
+	if (arg.StartsWith("--testonly"))
+	{
+		var parts = arg.Split('=');
 
-// Add environment variable for the MongoDB connection string
-var mongoConnectionString = builder.AddParameter("MongoDbConnectionString", true);
+		if (parts.Length == 2 && bool.TryParse(parts[1], out var result))
+		{
+			testOnly = result;
+		}
+	}
+}
 
-// Create a MongoDB server for articles
-var articleServer = builder.AddMongoDB(serverName)
-		.WithDataVolume()
-		.WithMongoExpress()
-		.WithEnvironment("MONGO_INITDB_ROOT_USERNAME", adminUser)
-		.WithEnvironment("MONGO_INITDB_ROOT_PASSWORD", adminPassword)
-		.WithEnvironment("MongoDb__ConnectionString", mongoConnectionString)
-		.WithLifetime(ContainerLifetime.Persistent);
+var (db, migrationSvc) = builder.AddPostgresServices(testOnly);
 
-// Create a database for articles
-var articleDatabase = articleServer.AddDatabase(databaseName);
+builder.AddProject<Web>(WebApp)
+		.WithReference(db)
+		.WaitForCompletion(migrationSvc)
+		.WithRunE2eTestsCommand()
+		.WithExternalHttpEndpoints();
 
-// Create a web project
-builder.AddProject<Web>("WebApp")
-		.WithExternalHttpEndpoints()
-		.WithReference(outputCache)
-		.WaitFor(outputCache)
-		.WaitFor(articleServer)
-		.WaitFor(articleDatabase);
+if (testOnly)
+{
+	// start the site with runasync and watch for a file to be created called 'stop-aspire' 
+	// to stop the site
+	var theSite = builder.Build();
 
-builder.Build().Run();
+	var fileSystemWatcher = new FileSystemWatcher(".", "stop-aspire")
+	{
+			NotifyFilter = NotifyFilters.FileName | NotifyFilters.CreationTime
+	};
+
+	fileSystemWatcher.Created += async (sender, e) =>
+	{
+		if (e.Name == "stop-aspire")
+		{
+			Console.WriteLine("Stopping the site");
+			await theSite.StopAsync();
+			fileSystemWatcher.Dispose();
+		}
+	};
+
+	fileSystemWatcher.EnableRaisingEvents = true;
+
+	Console.WriteLine("Starting the site in test mode");
+	await theSite.RunAsync();
+
+}
+else
+{
+	builder.Build().Run();
+}

@@ -26,10 +26,12 @@ public static class DependencyInjection
 		ArgumentNullException.ThrowIfNull(services);
 
 		// Only get connection string from environment variable
-		var connectionString = Environment.GetEnvironmentVariable("MongoDb__ConnectionString")
+		var connectionString = Environment.GetEnvironmentVariable("MONGODB_URI")
 													?? throw new InvalidOperationException("MongoDB connection string is not configured.");
 
-		var mongoSettings = new DatabaseSettings(connectionString, DatabaseName);
+		var databaseName = DatabaseName;
+
+		var mongoSettings = new DatabaseSettings(connectionString, databaseName);
 
 		services.AddSingleton<IDatabaseSettings>(mongoSettings);
 

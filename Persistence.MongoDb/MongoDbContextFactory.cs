@@ -22,7 +22,7 @@ public class MongoDbContextFactory : IMongoDbContextFactory
 	/// <param name="client">IMongoClient</param>
 	public MongoDbContextFactory(IDatabaseSettings settings, IMongoClient? client = null)
 	{
-		ConnectionString = settings.ConnectionStrings;
+		ConnectionString = Environment.GetEnvironmentVariable("MONGODB_URI")!;
 		DbName = settings.DatabaseName;
 		Client = client ?? new MongoClient(ConnectionString);
 		Database = Client.GetDatabase(DbName);

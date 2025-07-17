@@ -7,11 +7,14 @@
 // Project Name :  Persistence.MongoDb
 // =======================================================
 
+using MongoDB.Driver;
+
 namespace Persistence.Repositories;
 
 public abstract class Repository<TEntity> : IRepository<TEntity>
-	where TEntity : Entity
+		where TEntity : Entity
 {
+
 	protected readonly IMongoCollection<TEntity> Collection;
 
 	protected Repository(IMongoDbContextFactory context)
@@ -23,7 +26,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 		var collectionName = CollectionNames.GetCollectionName(typeof(TEntity).Name);
 
 		Collection = context.GetCollection<TEntity>(collectionName);
-		
+
 	}
 
 	/// <summary>
@@ -126,8 +129,8 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 			var result = (await Collection.FindAsync(filter)).ToList();
 
 			return result == null || !result.Any()
-				? Result<IEnumerable<TEntity>>.Fail("No entities found")
-				: Result<IEnumerable<TEntity>>.Ok(result.Adapt<IEnumerable<TEntity>>());
+					? Result<IEnumerable<TEntity>>.Fail("No entities found")
+					: Result<IEnumerable<TEntity>>.Ok(result.Adapt<IEnumerable<TEntity>>());
 
 		}
 		catch (Exception ex)

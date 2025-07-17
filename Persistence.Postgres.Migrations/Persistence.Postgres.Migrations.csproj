@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>dotnet-Persistence.Postgres.Migrations-c45e8a09-787a-41fa-9738-981171d18cfa</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Persistence.Postgres\Persistence.Postgres.csproj"/>
+		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj"/>
+	</ItemGroup>
+
+</Project>

@@ -7,6 +7,7 @@
 // Project Name :  Web
 // =======================================================
 
+global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.Extensions.DependencyInjection;
 
 global using MongoDB.Bson;

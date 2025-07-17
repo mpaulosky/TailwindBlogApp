@@ -1,3 +1,5 @@
+using Persistence.Postgres;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
@@ -5,9 +7,12 @@ var config = builder.Configuration;
 // Add service defaults & Aspire client integrations.
 builder.AddServiceDefaults();
 
-builder.Services.AddOutputCache();
+// Register Postgres services
+var pg = new RegisterPostgresServices();
+pg.RegisterServices(builder);
 
-builder.Services.AddPersistence();
+// Add Output Cache
+builder.Services.AddOutputCache();
 
 builder.Services.AddSyncfusionBlazor();
 

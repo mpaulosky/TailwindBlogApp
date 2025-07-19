@@ -18,13 +18,12 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, string.Empty, DateTime.MinValue, null, true) { }
+	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.MinValue, null, true) { }
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="name">The name of the category.</param>
-	/// <param name="slug">A slug of what the category represents.</param>
 	/// <param name="modifiedOn"></param>
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
 	/// <param name="createdOn"></param>
@@ -32,14 +31,12 @@ public class CategoryDto
 	public CategoryDto(
 			ObjectId id,
 			string name,
-			string slug,
 			DateTime createdOn,
 			DateTime? modifiedOn,
 			bool skipValidation = false)
 	{
 		Id = id;
 		Name = name;
-		Slug = slug;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
 
@@ -62,13 +59,6 @@ public class CategoryDto
 	public string Name { get; set; }
 
 	/// <summary>
-	///   Gets the slug of what this category represents.
-	/// </summary>
-	[Required(ErrorMessage = "Slug is required")]
-	[MaxLength(100)]
-	public string Slug { get; set; }
-
-	/// <summary>
 	///   Gets or sets the date and time when the category was created.
 	/// </summary>
 	public DateTime CreatedOn { get; set; }
@@ -86,7 +76,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, string.Empty, DateTime.MinValue, null, true);
+	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, DateTime.MinValue, null, true);
 
 	/// <summary>
 	///   Validates the current state of the category.

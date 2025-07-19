@@ -1,17 +1,16 @@
 @page "/categories"
-@using Action = Syncfusion.Blazor.Grids.Action
-
+@using Microsoft.AspNetCore.Components.QuickGrid.Components
 @inject ICategoryService CategoryService
-@inject IJSRuntime Js
+@inject IJSRuntime JsRuntime
 
 <div class="container mx-auto px-4 py-8">
 	<div class="flex justify-between items-center mb-6">
-		<PageHeadingComponent Level="1" HeaderText="Categories"/>
-		<a href="/categories/create"
-		   class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create
-			New</a>
+		<PageHeadingComponent Level="1" HeaderText="Categories" />
 	</div>
 
+	<a href="/categories/create"
+		class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create
+		New</a>
 	@if (_isLoading)
 	{
 		<div class="flex justify-center items-center py-12">
@@ -28,56 +27,10 @@
 	else
 	{
 		<div class="bg-white shadow-md rounded-lg overflow-hidden">
-			<SfGrid TItem="CategoryDto"
-			        DataSource="@_categories"
-			        AllowPaging="true"
-			        AlowSorting="true"
-			        AllowFiltering="true"
-			        AllowEditing="true"
-			        AllowDeleting="true"
-			        EditSettings="@(new GridEditSettings { AllowEditing = true, AllowDeleting = true, Mode = EditMode.Dialog })"
-			        PageSettings="@(new GridPageSettings { PageSize = 10 })">
-				<GridColumn Field="Id"
-				            HeaderText="ID"
-				            IsPrimaryKey="true"
-				            ValidationRules="@(new ValidationRules { Required = true })"
-				            TextAlign="TextAlign.Right"
-				            Width="140"/>
-				<GridColumn Field="Name"
-				            HeaderText="Name"
-				            Width="180"
-				            TextAlign="TextAlign.Left"/>
-				<GridColumn Field="Description"
-				            HeaderText="Description"
-				            Width="200"
-				            TextAlign="TextAlign.Left"/>
-				<GridColumn Field="CreatedOn"
-				            HeaderText="Created On"
-				            Width="120"
-				            Format="d"
-				            TextAlign="TextAlign.Left"/>
-				<GridColumn Field="ModifiedOn"
-				            HeaderText="Modified On"
-				            Width="120"
-				            Format="d"
-				            TextAlign="TextAlign.Left"/>
-				<GridColumn Field="Archived"
-				            HeaderText="Status"
-				            Width="100"
-				            TextAlign="TextAlign.Left"/>
-				<GridColumn HeaderText="Manage" Width="150" AllowSorting="false" AllowFiltering="false">
-					<GridCommandColumns>
-						<GridCommandColumn Type="CommandButtonType.Edit"
-						                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-edit", CssClass = "e-flat" })"></GridCommandColumn>
-						<GridCommandColumn Type="CommandButtonType.Delete"
-						                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-delete", CssClass = "e-flat" })"></GridCommandColumn>
-						<GridCommandColumn Type="CommandButtonType.Save"
-						                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-save", CssClass = "e-flat" })"></GridCommandColumn>
-						<GridCommandColumn Type="CommandButtonType.Cancel"
-						                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-cancel-icon", CssClass = "e-flat" })"></GridCommandColumn>
-					</GridCommandColumns>
-				</GridColumn>
-			</SfGrid>
+			<QuickGrid Items="_categories">
+				<PropertyColumn Property="@(c => c.Id)" Title="Id" />
+				<PropertyColumn Property="@(c => c.Name)" Title="Name" />
+				/QuickGrid>
 		</div>
 	}
 </div>
@@ -110,89 +63,5 @@
 		StateHasChanged();
 
 	}
-
-	private async Task OnGridActionBegin(ActionEventArgs<CategoryDto> args)
-	{
-
-		switch (args.RequestType)
-		{
-			case Action.BeginEdit:
-
-				// No-op, handled by Syncfusion dialog
-				break;
-
-			case Action.Save:
-
-			{
-				var updated = args.Data;
-
-				if (updated is not null)
-				{
-
-					var result = await CategoryService.UpdateAsync(updated);
-
-					if (!result.Success)
-					{
-
-						await Js.InvokeVoidAsync("alert", "Failed to update category.");
-						args.Cancel = true;
-
-					}
-					else
-					{
-
-						await LoadCategories();
-
-					}
-
-				}
-
-				break;
-			}
-
-			case Action.Delete:
-
-			{
-				var toArchive = args.Data;
-
-				if (toArchive is not null)
-				{
-
-					if (await Js.InvokeAsync<bool>("confirm", "Are you sure you want to archive this category?"))
-					{
-
-						var result = await CategoryService.ArchiveAsync(toArchive);
-
-						if (!result.Success)
-						{
-
-							await Js.InvokeVoidAsync("alert", "Failed to archive category.");
-							args.Cancel = true;
-
-						}
-						else
-						{
-
-							await LoadCategories();
-
-						}
-
-					}
-					else
-					{
-
-						args.Cancel = true;
-
-					}
-
-				}
-
-				break;
-			}
-		}
-
-	}
-
-}
 
 }

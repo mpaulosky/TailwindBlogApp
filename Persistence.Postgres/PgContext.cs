@@ -38,11 +38,6 @@ public class PgContext : DbContext
 
 		modelBuilder
 				.Entity<Category>()
-				.HasIndex(p => p.Slug)
-				.IsUnique();
-
-		modelBuilder
-				.Entity<Category>()
 				.Property(e => e.CreatedOn)
 				.HasConversion(new DateTimeOffsetConverter());
 
@@ -60,6 +55,7 @@ public class DateTimeOffsetConverter : ValueConverter<DateTimeOffset, DateTimeOf
 
 	public DateTimeOffsetConverter() : base(
 			v => v.UtcDateTime,
-			v => v) { }
+			v => v)
+	{ }
 
 }

@@ -13,6 +13,7 @@ global using Microsoft.Extensions.DependencyInjection;
 global using MongoDB.Bson;
 
 global using Persistence;
+global using Persistence.Postgres;
 
 global using ServiceDefaults;
 

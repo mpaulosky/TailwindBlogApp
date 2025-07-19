@@ -1,5 +1,3 @@
-using Persistence.Postgres;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
@@ -13,8 +11,6 @@ pg.RegisterServices(builder);
 
 // Add Output Cache
 builder.Services.AddOutputCache();
-
-builder.Services.AddSyncfusionBlazor();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

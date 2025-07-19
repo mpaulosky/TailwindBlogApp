@@ -1,182 +1,43 @@
 @page "/articles"
+@using Domain.Entities
+@inject NavigationManager Navigation
 
-@using Syncfusion.Blazor.Grids
+<PageHeadingComponent Title="Articles"/>
 
-@inject IArticleService ArticleService
-@inject IJSRuntime Js
+<SfGrid DataSource="_articles" AllowPaging="true" AllowSorting="true">
+	<GridColumns>
+		<GridColumn Field="Title" HeaderText="Title" Width="200" TextAlign="TextAlign.Left"/>
+		<GridColumn Field="Introduction" HeaderText="Intro" Width="250" TextAlign="TextAlign.Left"/>
+		<GridColumn Field="IsPublished" HeaderText="Published" Width="100" TextAlign="TextAlign.Center"/>
+		<GridColumn Field="PublishedOn" HeaderText="Published On" Width="150" Format="d" TextAlign="TextAlign.Center"/>
+		<GridColumn HeaderText="Actions" Width="150">
+			<Template Context="article">
+				<button class="btn btn-sm btn-primary" @onclick="() => GoToDetails(((Article)article).UrlSlug)">Details</button>
+				<button class="btn btn-sm btn-secondary" @onclick="() => GoToEdit(((Article)article).UrlSlug)">Edit</button>
+			</Template>
+		</GridColumn>
+	</GridColumns>
+</SfGrid>
 
-<div class="container mx-auto px-4 py-8">
-	<div class="flex justify-between items-center mb-6">
-		<PageHeadingComponent Level="1" HeaderText="Articles"/>
-		<a href="/articles/create"
-		   class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create
-			New</a>
-	</div>
-
-	@if (_isLoading)
-	{
-		<div class="flex justify-center items-center py-12">
-			<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-		</div>
-	}
-	else if (!ArticleDto.Any())
-	{
-		<div class="bg-gray-50 rounded-lg p-8 text-center">
-			<p class="text-lg text-gray-600">No articles found.</p>
-			<p class="mt-2 text-gray-500">Create a new article to get started.</p>
-		</div>
-	}
-	else
-	{
-		<div class="bg-white shadow-md rounded-lg overflow-hidden">
-			@* <table class="min-w-full divide-y divide-gray-200"> *@
-			@* 	<thead class="bg-gray-50"> *@
-			@* 	<tr> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name *@
-			@* 		</th> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> *@
-			@* 			Description *@
-			@* 		</th> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created *@
-			@* 			On *@
-			@* 		</th> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> *@
-			@* 			Modified *@
-			@* 			On *@
-			@* 		</th> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> *@
-			@* 			Status *@
-			@* 		</th> *@
-			@* 		<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> *@
-			@* 			Actions *@
-			@* 		</th> *@
-			@* 	</tr> *@
-			@* 	</thead> *@
-			@* 	<tbody class="bg-white divide-y divide-gray-200"> *@
-			@* 	@foreach (var article in ArticleDto) *@
-			@* 	{ *@
-			@* 		<tr> *@
-			@* 			<td class="px-6 py-4 whitespace-nowrap"> *@
-			@* 				<a href="/articles/details/@article.Id" class="text-blue-600 hover:underline">@article.Name</a> *@
-			@* 			</td> *@
-			@* 			<td *@
-			@* 				class="px-6 py-4">@(article.Description.Length > 50 ? $"{article.Description.Substring(0, 47)}..." : article.Description)</td> *@
-			@* 			<td class="px-6 py-4 whitespace-nowrap">@article.CreatedOn.ToShortDateString()</td> *@
-			@* 			<td class="px-6 py-4 whitespace-nowrap">@article.ModifiedOn?.ToShortDateString()</td> *@
-			@* 			<td class="px-6 py-4 whitespace-nowrap"> *@
-			@* 				@if (article.Archived) *@
-			@* 				{ *@
-			@* 					<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Archived</span> *@
-			@* 				} *@
-			@* 				else *@
-			@* 				{ *@
-			@* 					<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span> *@
-			@* 				} *@
-			@* 			</td> *@
-			@* 			<td class="px-6 py-4 whitespace-nowrap"> *@
-			@* 				<div class="flex space-x-3"> *@
-			@* 					<a href="/articles/details/@article.Id" class="text-blue-600 hover:text-blue-900">View</a> *@
-			@* 					<a href="/articles/edit/@article.Id" class="text-indigo-600 hover:text-indigo-900">Edit</a> *@
-			@* 					<button class="text-red-600 hover:text-red-900" @onclick="() => ArchiveArticle(article)"> *@
-			@* 						Archive *@
-			@* 					</button> *@
-			@* 				</div> *@
-			@* 			</td> *@
-			@* 		</tr> *@
-			@* 	} *@
-			@* 	</tbody> *@
-			@* </table> *@
-			@* <SfGrid DataSource="@GridData" AllowPaging="true"> *@
-			@* 	<GridEditSettings AllowAdding="true" AllowDeleting="true" AllowEditing="true"></GridEditSettings> *@
-			@* 	<GridColumns> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.Id) HeaderText="ID" IsPrimaryKey="true" TextAlign="TextAlign.Right" Width="140"></GridColumn> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.Title) HeaderText="Title" Width="100"></GridColumn> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.Introduction) HeaderText="Introduction" Width="100"></GridColumn> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.Content) HeaderText="Content" Width="200"></GridColumn> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.CreatedOn) HeaderText="Created On" Format="d" Type="ColumnType.Date" Width="150"></GridColumn> *@
-			@* 		<GridColumn Field=@nameof(ArticleDto.ModifiedOn) HeaderText="Ship Country" *@
-			@* 		            EditType="EditType.DropDownEdit" EditorSettings="@ShipCountryEditParams" Width="150"></GridColumn> *@
-			@* 		<GridColumn HeaderText="Manage Records" Width="150"> *@
-			@* 			<GridCommandColumns> *@
-			@* 				<GridCommandColumn Type="CommandButtonType.Edit" *@
-			@* 				                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-edit", CssClass = "e-flat" })"></GridCommandColumn> *@
-			@* 				<GridCommandColumn Type="CommandButtonType.Delete" *@
-			@* 				                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-delete", CssClass = "e-flat" })"></GridCommandColumn> *@
-			@* 				<GridCommandColumn Type="CommandButtonType.Save" *@
-			@* 				                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-save", CssClass = "e-flat" })"></GridCommandColumn> *@
-			@* 				<GridCommandColumn Type="CommandButtonType.Cancel" *@
-			@* 				                   ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-cancel-icon", CssClass = "e-flat" })"></GridCommandColumn> *@
-			@* 			</GridCommandColumns> *@
-			@* 		</GridColumn> *@
-			@* 	</GridColumns> *@
-			@* </SfGrid> *@
-
-		</div>
-	}
-</div>
+<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
 
 @code {
 
-	private List<ArticleDto> ArticleDto = [];
-	public List<ArticleDto> GridData { get; set; }
+	private readonly List<ArticleDto> _articles = FakeArticleDto.GetArticleDtos(10);
 
-
-	private bool _isLoading = true;
-
-	protected override async Task OnInitializedAsync()
+	private void GoToDetails(string slug)
 	{
-
-		await LoadArticles();
-
+		Navigation.NavigateTo($"/articles/{slug}");
 	}
 
-	private async Task LoadArticles()
+	private void GoToEdit(string slug)
 	{
-
-		_isLoading = true;
-
-		var results = await ArticleService.GetAllAsync();
-
-		ArticleDto = results.Success ? results.Value.Adapt<List<ArticleDto>>() : [];
-		GridData = ArticleDto;
-		_isLoading = false;
-		StateHasChanged();
-
+		Navigation.NavigateTo($"/articles/edit/{slug}");
 	}
 
-	private async Task ArchiveArticle(ArticleDto? article)
+	private void GoToCreate()
 	{
-
-		if (article == null) return;
-
-		if (await Js.InvokeAsync<bool>("confirm", "Are you sure you want to archive this article?"))
-		{
-			var result = await ArticleService.ArchiveAsync(article);
-
-			if (result.Success)
-			{
-
-				await LoadArticles();
-
-			}
-			else
-			{
-
-				await Js.InvokeVoidAsync("alert", "Failed to archive article.");
-
-			}
-
-		}
-		else
-		{
-
-			// User canceled archiving
-			await Js.InvokeVoidAsync("alert", "Article archiving cancelled.");
-
-		}
-
-		StateHasChanged();
-
+		Navigation.NavigateTo("/articles/create");
 	}
 
 }

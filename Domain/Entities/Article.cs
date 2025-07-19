@@ -12,35 +12,44 @@ namespace Domain.Entities;
 /// <summary>
 ///   Represents an article in the blog system.
 /// </summary>
+[Table("Articles")]
+[Index(nameof(UrlSlug), IsUnique = true)]
 public class Article : Entity
 {
 
 	/// <summary>
-	///   Parameterless constructor for serialization and test data generation.
-	/// </summary>
-	public Article() : this(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, false, null, true) { }
-	/// <summary>
 	///   Initializes a new instance of the <see cref="Article" /> class.
 	/// </summary>
-	/// <param name="title">The new title</param>
-	/// <param name="introduction">The new introduction</param>
-	/// <param name="content">The new content</param>
-	/// <param name="coverImageUrl">The new cover image URL</param>
-	/// <param name="urlSlug">The new URL slug</param>
-	/// <param name="author">The new author</param>
-	/// <param name="category">The new category</param>
-	/// <param name="isPublished">The newly published status</param>
-	/// <param name="publishedOn">The new publication date</param>
-	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
+	/// <param name="category">The category associated with the article.</param>
+	/// <param name="author"></param>
+	public Article(Category category, Author author) : this(string.Empty, string.Empty, string.Empty, string.Empty,
+			string.Empty, string.Empty, Guid.Empty, category, author, false, null, true) { }
+
+	/// <summary>
+	///   Initializes a new instance of the <see cref="Article" /> class with specified values.
+	/// </summary>
+	/// <param name="title">The title of the article.</param>
+	/// <param name="introduction">The introduction of the article.</param>
+	/// <param name="content">The main content of the article.</param>
+	/// <param name="coverImageUrl">The URL of the cover image for the article.</param>
+	/// <param name="urlSlug">The URL slug for the article.</param>
+	/// <param name="authorId">The author ID of the article.</param>
+	/// <param name="categoryId">The category ID of the article.</param>
+	/// <param name="category">The category associated with the article.</param>
+	/// <param name="author">The author associated with the article.</param>
+	/// <param name="isPublished">A value indicating whether the article is published.</param>
+	/// <param name="publishedOn">The date and time when the article was published.</param>
+	/// <param name="skipValidation">A value indicating whether to skip validation.</param>
 	public Article(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
+			string authorId,
+			Guid categoryId,
+			Category category,
+			Author author,
 			bool isPublished = false,
 			DateTime? publishedOn = null,
 			bool skipValidation = false)
@@ -50,8 +59,10 @@ public class Article : Entity
 		Content = content;
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
-		Author = author;
+		AuthorId = authorId;
+		CategoryId = categoryId;
 		Category = category;
+		Author = author;
 		IsPublished = isPublished;
 		PublishedOn = publishedOn;
 
@@ -62,28 +73,129 @@ public class Article : Entity
 	}
 
 	/// <summary>
-	///   Updates the article's properties
+	///   Gets or sets the title of the article.
 	/// </summary>
-	/// <param name="title">The new title</param>
-	/// <param name="introduction">The new introduction</param>
-	/// <param name="content"></param>
-	/// <param name="coverImageUrl">The new cover image URL</param>
-	/// <param name="urlSlug">The new URL slug</param>
-	/// <param name="author">The new author</param>
-	/// <param name="category">The new category</param>
-	/// <param name="isPublished">The newly published status</param>
-	/// <param name="publishedOn">The new publication date</param>
-	/// <exception cref="ValidationException">Thrown when validation fails</exception>
+	[Required]
+	[MaxLength(120)]
+	public string Title { get; set; }
+
+	/// <summary>
+	///   Gets or sets the introduction of the article.
+	/// </summary>
+	[MaxLength(250)]
+	public string Introduction { get; set; }
+
+	/// <summary>
+	///   Gets or sets the main content of the article.
+	/// </summary>
+	[Required]
+	[MaxLength(5000)]
+	public string Content { get; set; }
+
+	/// <summary>
+	///   Gets or sets the URL of the cover image for the article.
+	/// </summary>
+	[MaxLength(250)]
+	public string CoverImageUrl { get; set; }
+
+	/// <summary>
+	///   Gets or sets the URL slug for the article, used in the article's URL.
+	/// </summary>
+	[Required]
+	[MaxLength(120)]
+	public string UrlSlug { get; set; }
+
+	/// <summary>
+	///   Gets or sets the author ID of the article.
+	/// </summary>
+	[Required]
+	[ForeignKey(nameof(Author))]
+	[MaxLength(36)] // Assuming AuthorId is a GUID stored as a string
+	public string AuthorId { get; set; }
+
+	/// <summary>
+	///   Represents the author entity associated with the article.
+	///   This property defines the relationship between an article and its author.
+	///   It establishes a navigational property that links the article to the author who created it.
+	/// </summary>
+	public Author Author { get; set; }
+
+	/// <summary>
+	///   Gets or sets the category ID of the article.
+	/// </summary>
+	[ForeignKey(nameof(Category))]
+	public Guid CategoryId { get; set; }
+
+	/// <summary>
+	///   Represents the category entity associated with the article.
+	///   This property defines the relationship between an article and its category.
+	///   It establishes a navigational property that links the article to the category under which it is published.
+	/// </summary>
+	public Category Category { get; set; }
+
+	/// <summary>
+	///   Gets or sets a value indicating whether the article is published.
+	/// </summary>
+	public bool IsPublished { get; set; }
+
+	public static Article Empty { get; } = new (
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			string.Empty,
+			Guid.Empty,
+			Category.Empty,
+			Author.Empty,
+			false,
+			null,
+			true // skipValidation: allow empty instance for tests
+	);
+
+	/// <summary>
+	///   Gets or sets the date and time when the article was published.
+	/// </summary>
+	public DateTime? PublishedOn { get; set; }
+
+	private void ValidateState()
+	{
+		if (string.IsNullOrWhiteSpace(Title))
+		{
+			throw new ValidationException("Title cannot be empty or whitespace.");
+		}
+
+		if (string.IsNullOrWhiteSpace(Content))
+		{
+			throw new ValidationException("Content cannot be empty or whitespace.");
+		}
+
+		if (string.IsNullOrWhiteSpace(UrlSlug))
+		{
+			throw new ValidationException("UrlSlug cannot be empty or whitespace.");
+		}
+
+		if (AuthorId == string.Empty)
+		{
+			throw new ValidationException("AuthorId is required.");
+		}
+
+		if (CategoryId == Guid.Empty)
+		{
+			throw new ValidationException("CategoryId is required.");
+		}
+	}
+
 	public void Update(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
-			bool isPublished,
-			DateTime? publishedOn)
+			Author author,
+			Category category,
+			bool isPublished = false,
+			DateTime? publishedOn = null)
 	{
 		Title = title;
 		Introduction = introduction;
@@ -93,17 +205,26 @@ public class Article : Entity
 		Author = author;
 		Category = category;
 		IsPublished = isPublished;
-		PublishedOn = publishedOn;
-		ModifiedOn = DateTime.UtcNow;
+		PublishedOn = isPublished ? publishedOn : null;
+
+		// Set ModifiedOn (assumed to be declared in base class or somewhere accessible)
+		// If not, please add a public DateTime? ModifiedOn { get; set; } property to Entity
+		// For new articles, do not reset CreatedOn
+		var modifiedOnProp = GetType().GetProperty("ModifiedOn");
+
+		if (modifiedOnProp != null && modifiedOnProp.CanWrite)
+		{
+			modifiedOnProp.SetValue(this, DateTime.UtcNow);
+		}
+
 		ValidateState();
 	}
 
-	public void Publish(DateTime publishedOn)
+	public void Publish(DateTime publishDate)
 	{
 		IsPublished = true;
-		PublishedOn = publishedOn;
+		PublishedOn = publishDate;
 		ModifiedOn = DateTime.UtcNow;
-		ValidateState();
 	}
 
 	public void Unpublish()
@@ -111,84 +232,6 @@ public class Article : Entity
 		IsPublished = false;
 		PublishedOn = null;
 		ModifiedOn = DateTime.UtcNow;
-		ValidateState();
-	}
-
-	// The properties without MaxLength attributes
-	/// <summary>
-	///   Gets or sets the title of the article.
-	/// </summary>
-	public string Title { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the introduction/summary of the article.
-	/// </summary>
-	public string Introduction { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the main content of the article.
-	///   See <see cref="ArticleDtoValidator" /> for validation rules.
-	/// </summary>
-	public string Content { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the URL of the cover image.
-	/// </summary>
-	[Display(Name = "Cover Image URL")]
-	public string CoverImageUrl { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the URL slug for the article.
-	/// </summary>
-	[Display(Name = "Url Slug")]
-	public string UrlSlug { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the author of the article.
-	/// </summary>
-	public AppUserDto Author { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the category of the article.
-	/// </summary>
-	public CategoryDto Category { get;  set; }
-
-	/// <summary>
-	///   Gets or sets whether the article is published.
-	/// </summary>
-	[Display(Name = "Is Published")]
-	public bool IsPublished { get;  set; }
-
-	/// <summary>
-	///   Gets or sets the date when the article was published.
-	/// </summary>
-	[Display(Name = "Published On")]
-	public DateTime? PublishedOn { get;  set; }
-
-	/// <summary>
-	///   Gets an empty article instance.
-	/// </summary>
-	public static Article Empty { get; } = new(
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			string.Empty,
-			AppUserDto.Empty,
-			CategoryDto.Empty)
-	{
-		Id = ObjectId.Empty
-	};
-
-	private void ValidateState()
-	{
-		var validator = new ArticleValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
-		{
-			throw new ValidationException(validationResult.Errors);
-		}
 	}
 
 }

@@ -16,7 +16,7 @@ public interface ICategoryService
 
 	Task<Result> CreateAsync(CategoryDto? category);
 
-	Task<Result<CategoryDto>> GetAsync(ObjectId categoryId);
+	Task<Result<CategoryDto>> GetAsync(Guid categoryId);
 
 	Task<Result<List<CategoryDto>>> GetAllAsync();
 

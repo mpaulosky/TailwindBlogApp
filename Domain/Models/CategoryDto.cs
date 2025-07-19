@@ -18,28 +18,26 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, string.Empty, DateTime.MinValue, null, true) { }
+	public CategoryDto() : this(Guid.Empty, string.Empty, DateTime.MinValue, null, true) { }
+
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
 	/// </summary>
 	/// <param name="id"></param>
 	/// <param name="name">The name of the category.</param>
-	/// <param name="description">A description of what the category represents.</param>
 	/// <param name="modifiedOn"></param>
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
 	/// <param name="createdOn"></param>
 	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	public CategoryDto(
-			ObjectId id,
+			Guid id,
 			string name,
-			string description,
 			DateTime createdOn,
 			DateTime? modifiedOn,
 			bool skipValidation = false)
 	{
 		Id = id;
 		Name = name;
-		Description = description;
 		CreatedOn = createdOn;
 		ModifiedOn = modifiedOn;
 
@@ -52,7 +50,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the category.
 	/// </summary>
-	public ObjectId Id { get; set; }
+	public Guid Id { get; set; }
 
 	/// <summary>
 	///   Gets the name of the category.
@@ -60,13 +58,6 @@ public class CategoryDto
 	[Required(ErrorMessage = "Name is required")]
 	[MaxLength(80)]
 	public string Name { get; set; }
-
-	/// <summary>
-	///   Gets the description of what this category represents.
-	/// </summary>
-	[Required(ErrorMessage = "Description is required")]
-	[MaxLength(100)]
-	public string Description { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date and time when the category was created.
@@ -86,7 +77,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, string.Empty, DateTime.MinValue, null, true);
+	public static CategoryDto Empty => new(Guid.Empty, string.Empty, DateTime.MinValue, null, true);
 
 	/// <summary>
 	///   Validates the current state of the category.

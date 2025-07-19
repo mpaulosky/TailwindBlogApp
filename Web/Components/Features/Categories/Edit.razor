@@ -1,0 +1,48 @@
+@page "/categories/edit/{id:guid}"
+@using Domain.Entities
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Edit Category"/>
+
+@if (_category is null)
+{
+	<p>Category not found.</p>
+}
+else
+{
+	<EditForm Model="_category" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator/>
+		<ValidationSummary/>
+		<div class="mb-3">
+			<label>Name</label>
+			<InputText class="form-control" @bind-Value="_category.Name"/>
+		</div>
+		<button class="btn btn-primary" type="submit">Save</button>
+		<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
+	</EditForm>
+}
+
+@code {
+
+	[Parameter] public Guid Id { get; set; }
+
+	private Category? _category;
+
+	protected override void OnInitialized()
+	{
+		// Replace it with a real data source
+		_category = FakeCategory.GetNewCategory(true);
+	}
+
+	private void HandleValidSubmit()
+	{
+		// TODO: Save changes to backend
+		Navigation.NavigateTo($"/categories/{Id}");
+	}
+
+	private void GoToList()
+	{
+		Navigation.NavigateTo("/categories");
+	}
+
+}

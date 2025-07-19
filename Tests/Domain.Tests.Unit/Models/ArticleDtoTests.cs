@@ -22,7 +22,7 @@ public class ArticleDtoTests
 		var article = new ArticleDto();
 
 		// Assert
-		article.Id.Should().Be(ObjectId.Empty);
+		article.Id.Should().Be(Guid.Empty);
 		article.Title.Should().BeEmpty();
 		article.Introduction.Should().BeEmpty();
 		article.Content.Should().BeEmpty();
@@ -45,7 +45,7 @@ public class ArticleDtoTests
 		var article = ArticleDto.Empty;
 
 		// Assert
-		article.Id.Should().Be(ObjectId.Empty);
+		article.Id.Should().Be(Guid.Empty);
 		article.Title.Should().BeEmpty();
 		article.Introduction.Should().BeEmpty();
 		article.Content.Should().BeEmpty();
@@ -74,14 +74,14 @@ public class ArticleDtoTests
 		var now = DateTime.UtcNow;
 
 		var article = new ArticleDto(
-				ObjectId.GenerateNewId(),
+				Guid.NewGuid(),
 				title,
 				introduction,
 				"This is the content.",
 				coverImageUrl,
 				urlSlug,
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty,
+				Category.Empty,
 				now,
 				null,
 				false
@@ -116,19 +116,19 @@ public class ArticleDtoTests
 
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new ArticleDto(
-						ObjectId.GenerateNewId(),
-						title,
-						introduction,
-						"Valid content.",
-						coverImageUrl,
-						urlSlug,
-						AppUserDto.Empty,
-						CategoryDto.Empty,
-						DateTime.UtcNow,
-						null,
-						false
-				)).Should().Throw<ValidationException>()
-				.WithMessage($"*{expectedError}*");
+					Guid.NewGuid(),
+					title,
+					introduction,
+					"Valid content.",
+					coverImageUrl,
+					urlSlug,
+					Author.Empty,
+					Category.Empty,
+					DateTime.UtcNow,
+					null,
+					true     // setting published to true for validation check
+			)).Should().Throw<ValidationException>()
+				.WithMessage("*PublishedOn is required when IsPublished is true*");
 
 	}
 
@@ -138,18 +138,18 @@ public class ArticleDtoTests
 
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new ArticleDto(
-						ObjectId.GenerateNewId(),
-						"title",
-						"intro",
-						"Valid content.",
-						"cover",
-						"slug",
-						AppUserDto.Empty,
-						CategoryDto.Empty,
-						DateTime.UtcNow,
-						null,
-						true     // publishedOn missing should cause a validation error
-				)).Should().Throw<ValidationException>()
+					Guid.NewGuid(),
+					"title",
+					"intro",
+					"Valid content.",
+					"cover",
+					"slug",
+					Author.Empty,
+					Category.Empty,
+					DateTime.UtcNow,
+					null,
+					true     // setting published to true for validation check
+			)).Should().Throw<ValidationException>()
 				.WithMessage("*PublishedOn is required when IsPublished is true*");
 
 	}

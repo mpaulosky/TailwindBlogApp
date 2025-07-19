@@ -1,0 +1,44 @@
+@page "/categories/{id:guid}"
+@using Domain.Entities
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Category Details"/>
+
+@if (_category is null)
+{
+	<p>Category not found.</p>
+}
+else
+{
+	<div class="card">
+		<div class="card-body">
+			<h2>@_category.Name</h2>
+			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
+			<button class="btn btn-light" @onclick="GoToList">Back to List</button>
+		</div>
+	</div>
+}
+
+@code {
+
+	[Parameter] public Guid Id { get; set; }
+
+	private Category? _category;
+
+	protected override void OnInitialized()
+	{
+		// Replace it with a real data source
+		_category = FakeCategory.GetNewCategory(true);
+	}
+
+	private void GoToEdit()
+	{
+		Navigation.NavigateTo($"/categories/edit/{Id}");
+	}
+
+	private void GoToList()
+	{
+		Navigation.NavigateTo("/categories");
+	}
+
+}

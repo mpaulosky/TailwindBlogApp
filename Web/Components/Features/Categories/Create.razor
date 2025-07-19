@@ -1,0 +1,28 @@
+@page "/categories/create"
+@using Domain.Entities
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Create Category" />
+
+<EditForm Model="category" OnValidSubmit="HandleValidSubmit">
+  <DataAnnotationsValidator />
+  <ValidationSummary />
+  <div class="mb-3">
+    <label>Name</label>
+    <InputText class="form-control" @bind-Value="category.Name" />
+  </div>
+  <button class="btn btn-success" type="submit">Create</button>
+  <button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
+</EditForm>
+
+@code {
+  private Category category = new Category();
+
+  private void HandleValidSubmit()
+  {
+    // TODO: Save new category to backend
+    Navigation.NavigateTo("/categories");
+  }
+
+  private void GoToList() => Navigation.NavigateTo("/categories");
+}

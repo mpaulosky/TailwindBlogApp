@@ -56,9 +56,14 @@ public class ArticleTests
 				introduction,
 				"This is the content.",
 				coverImageUrl,
-				title.GetSlug(),
-				AppUserDto.Empty,
-				CategoryDto.Empty
+				urlSlug,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
+				false,
+				null,
+				true
 		);
 
 		// Assert
@@ -66,7 +71,7 @@ public class ArticleTests
 		article.Introduction.Should().Be(introduction);
 		article.CoverImageUrl.Should().Be(coverImageUrl);
 		article.UrlSlug.Should().Be(urlSlug);
-		article.Author.Should().BeEquivalentTo(AppUserDto.Empty);
+		article.Author.Should().BeEquivalentTo(Author.Empty);
 		article.IsPublished.Should().BeFalse(); // Default value
 		article.PublishedOn.Should().BeNull(); // Default value
 		article.CreatedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(2));
@@ -87,8 +92,8 @@ public class ArticleTests
 		const string urlSlug = "published_article";
 		const bool isPublished = true;
 		var publishedOn = now;
-		var author = FakeAppUserDto.GetNewAppUserDto(true);
-		var category = FakeCategoryDto.GetNewCategoryDto(true);
+		var author = Author.Empty;
+		var category = Category.Empty;
 
 		var article = new Article(
 				title,
@@ -96,19 +101,19 @@ public class ArticleTests
 				content,
 				coverImageUrl,
 				urlSlug,
-				author,
+				author.Id,
+				category.Id,
 				category,
+				author,
 				isPublished,
 				publishedOn,
-				skipValidation: true
+				true
 		);
 
 		// Assert
 		article.IsPublished.Should().BeTrue();
 		article.PublishedOn.Should().Be(now);
 		article.Author.Should().BeEquivalentTo(author);
-
-		// CreatedOn should be close to the current UTC time
 		article.CreatedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 
 	}
@@ -124,15 +129,18 @@ public class ArticleTests
 				"Initial content.",
 				"initial cover",
 				"initial_slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true // skipValidation: only for the test
 		);
 
-		var newAuthor = FakeAppUserDto.GetNewAppUserDto(true);
-		var publishDate = Helpers.Helpers.GetStaticDate();
+		var newAuthor = FakeAuthor.GetNewAuthor(true);
+		var newCategory = FakeCategory.GetNewCategory(true);
+		var publishDate = DateTime.UtcNow;
 
 		// Act
 		article.Update(
@@ -142,7 +150,7 @@ public class ArticleTests
 				"new cover",
 				"new_slug",
 				newAuthor,
-				CategoryDto.Empty,
+				newCategory,
 				true,
 				publishDate
 		);
@@ -153,11 +161,10 @@ public class ArticleTests
 		article.CoverImageUrl.Should().Be("new cover");
 		article.UrlSlug.Should().Be("new_slug");
 		article.Author.Should().BeEquivalentTo(newAuthor);
+		article.Category.Should().BeEquivalentTo(newCategory);
 		article.IsPublished.Should().BeTrue();
 		article.PublishedOn.Should().Be(publishDate);
 		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
-
-		// Allow up to 2-second difference for timing
 		article.ModifiedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 
 	}
@@ -181,8 +188,10 @@ public class ArticleTests
 						"Valid content.",
 						coverImageUrl,
 						urlSlug,
-						AppUserDto.Empty,
-						CategoryDto.Empty
+						Author.Empty.Id,
+						Category.Empty.Id,
+						Category.Empty,
+						Author.Empty
 				)).Should().Throw<ValidationException>()
 				.WithMessage($"*{expectedError}*");
 
@@ -199,8 +208,10 @@ public class ArticleTests
 				"Initial content.",
 				"cover",
 				"slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true
@@ -213,10 +224,8 @@ public class ArticleTests
 						"Updated content.",
 						"new cover",
 						"new_slug",
-						AppUserDto.Empty,
-						CategoryDto.Empty,
-						false,
-						null
+						Author.Empty,
+						Category.Empty
 				)).Should().Throw<ValidationException>()
 				.WithMessage("*Title is required*");
 
@@ -233,8 +242,10 @@ public class ArticleTests
 						"Valid content.",
 						"cover",
 						"slug",
-						AppUserDto.Empty,
-						CategoryDto.Empty,
+						Author.Empty.Id,
+						Category.Empty.Id,
+						Category.Empty,
+						Author.Empty,
 						true     // publishedOn missing should cause a validation error
 				)).Should().Throw<ValidationException>()
 				.WithMessage("*PublishedOn is required when IsPublished is true*");
@@ -252,8 +263,10 @@ public class ArticleTests
 				"content",
 				"cover",
 				"slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true // skipValidation
@@ -283,8 +296,10 @@ public class ArticleTests
 				"content",
 				"cover",
 				"slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				true,
 				DateTime.UtcNow,
 				true // skipValidation

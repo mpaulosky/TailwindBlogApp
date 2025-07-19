@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace Web.Components.Layout;
 
 /// <summary>
@@ -16,16 +18,19 @@ namespace Web.Components.Layout;
 [TestSubject(typeof(MainLayout))]
 public class MainLayoutTest : BunitContext
 {
+	public MainLayoutTest()
+	{
+		this.Services.AddSingleton<IAuthorizationPolicyProvider, DefaultAuthorizationPolicyProvider>();
+	}
 
 	[Fact]
 	public void Should_Render_NavMenu_And_Footer()
 	{
 		// Arrange & Act
-		var cut = Render<MainLayout>();
+		var cut = this.Render<MainLayout>();
 
 		// Assert
 		cut.Markup.Should().Contain("Tailwind Blogs");
 		cut.Markup.Should().Contain("All rights reserved");
 	}
-
 }

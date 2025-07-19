@@ -1,0 +1,49 @@
+@page "/articles/{slug}"
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Article Details"/>
+
+@if (article is null)
+{
+	<p>Article not found.</p>
+}
+else
+{
+	<div class="card">
+		<img src="@article.CoverImageUrl" alt="Cover" class="card-img-top" style="max-height:200px;object-fit:cover;"/>
+		<div class="card-body">
+			<h2>@article.Title</h2>
+			<p>@article.Introduction</p>
+			<div>@((MarkupString)article.Content)</div>
+			<p><strong>Author:</strong> @(article.Author.UserName)</p>
+			<p><strong>Category:</strong> @article.Category.Name</p>
+			<p><strong>Published:</strong> @(article.IsPublished ? "Yes" : "No")</p>
+			<p><strong>Published On:</strong> @article.PublishedOn?.ToString("d")</p>
+			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
+			<button class="btn btn-light" @onclick="GoToList">Back to List</button>
+		</div>
+	</div>
+}
+
+@code {
+
+	[Parameter] public string slug { get; set; }
+
+	private ArticleDto? article;
+
+	protected override void OnInitialized()
+	{
+		article = FakeArticleDto.GetArticleDtos(10).FirstOrDefault(a => a.UrlSlug == slug);
+	}
+
+	private void GoToEdit()
+	{
+		Navigation.NavigateTo($"/articles/edit/{slug}");
+	}
+
+	private void GoToList()
+	{
+		Navigation.NavigateTo("/articles");
+	}
+
+}

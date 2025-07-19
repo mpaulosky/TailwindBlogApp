@@ -10,17 +10,17 @@
 namespace Domain.Fakes;
 
 /// <summary>
-///   Provides fake data generation methods for the <see cref="AppUser" /> entity.
+///   Provides fake data generation methods for the <see cref="Author" /> entity.
 /// </summary>
 public static class FakeAppUser
 {
 
 	/// <summary>
-	///   Generates a new fake <see cref="AppUser" /> object.
+	///   Generates a new fake <see cref="Author" /> object.
 	/// </summary>
 	/// <param name="useSeed">Indicates whether to apply a fixed seed for deterministic results.</param>
-	/// <returns>A single fake <see cref="AppUser" /> object.</returns>
-	public static AppUser GetNewAppUser(bool useSeed = false)
+	/// <returns>A single fake <see cref="Author" /> object.</returns>
+	public static Author GetNewAppUser(bool useSeed = false)
 	{
 
 		return GenerateFake(useSeed).Generate();
@@ -28,12 +28,12 @@ public static class FakeAppUser
 	}
 
 	/// <summary>
-	///   Generates a list of fake <see cref="AppUser" /> objects.
+	///   Generates a list of fake <see cref="Author" /> objects.
 	/// </summary>
-	/// <param name="numberRequested">The number of <see cref="AppUser" /> objects to generate.</param>
+	/// <param name="numberRequested">The number of <see cref="Author" /> objects to generate.</param>
 	/// <param name="useSeed">Indicates whether to apply a fixed seed for deterministic results.</param>
-	/// <returns>A list of fake <see cref="AppUser" /> objects.</returns>
-	public static List<AppUser> GetAppUsers(int numberRequested, bool useSeed = false)
+	/// <returns>A list of fake <see cref="Author" /> objects.</returns>
+	public static List<Author> GetAppUsers(int numberRequested, bool useSeed = false)
 	{
 
 		return GenerateFake(useSeed).Generate(numberRequested);
@@ -41,17 +41,17 @@ public static class FakeAppUser
 	}
 
 	/// <summary>
-	///   Generates a configured <see cref="Faker{T}" /> for creating fake <see cref="AppUser" /> objects.
+	///   Generates a configured <see cref="Faker{T}" /> for creating fake <see cref="Author" /> objects.
 	/// </summary>
 	/// <param name="useSeed">Indicates whether to apply a fixed seed for deterministic results.</param>
-	/// <returns>A configured <see cref="Faker{AppUser}" /> instance.</returns>
-	internal static Faker<AppUser> GenerateFake(bool useSeed = false)
+	/// <returns>A configured <see cref="Faker{Author}" /> instance.</returns>
+	internal static Faker<Author> GenerateFake(bool useSeed = false)
 	{
 
 		const int seed = 621;
 
-		var fake = new Faker<AppUser>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId().ToString())
+		var fake = new Faker<Author>()
+				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
 				.RuleFor(x => x.Roles, f => [f.Random.Enum<Roles>().ToString()]);

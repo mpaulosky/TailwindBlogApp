@@ -17,14 +17,19 @@ public class CollectionNamesTests
 
 	[Theory]
 	[InlineData("Article", "articles")]
-	[InlineData("Categories", "categories")]
+	[InlineData("Category", "categories")]
 	public void GetCollectionName_KnownEntities_ReturnsExpectedCollectionName(string entityName, string expected)
 	{
+
 		// Act
 		var result = CollectionNames.GetCollectionName(entityName);
 
-		// Assert
-		result.Should().Be(expected);
+		// 
+		result.Success.Should().BeTrue();
+		result.Error.Should().BeNull();
+		result.Value.Should().NotBeNullOrEmpty();
+		result.Value.Should().Be(expected);
+
 	}
 
 	[Theory]
@@ -36,7 +41,10 @@ public class CollectionNamesTests
 		var result = CollectionNames.GetCollectionName(entityName);
 
 		// Assert
-		result.Should().BeEmpty();
+		result.Success.Should().BeFalse();
+		result.Error.Should().Be("Invalid entity name provided.");
+		result.Value.Should().BeNullOrEmpty();
+
 	}
 
 }

@@ -18,9 +18,8 @@ public abstract class Entity
 	/// <summary>
 	///   /// Gets the unique identifier for this entity.
 	/// </summary>
-	/// [Key]
-	[BsonId]
-	public ObjectId Id { get; protected init; } = ObjectId.GenerateNewId();
+	[Key]
+	public Guid Id { get; protected init; } = Guid.NewGuid();
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.

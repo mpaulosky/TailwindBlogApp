@@ -1,38 +1,47 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<UserSecretsId>6fd3c1c9-0bfb-4874-bda7-8b93ad7ac2c5</UserSecretsId>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\Domain\Domain.csproj" />
-        <ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Domain\Domain.csproj" />
+		<ProjectReference Include="..\Persistence.Postgres\Persistence.Postgres.csproj" />
+		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Blazored.SessionStorage" />
-      <PackageReference Include="FluentValidation" />
-      <PackageReference Include="Mapster" />
-      <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Blazored.SessionStorage" />
+		<PackageReference Include="FluentValidation" />
+		<PackageReference Include="Mapster" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
+		<PackageReference Include="Syncfusion.Blazor" />
+	</ItemGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="Web.Tests.Bunit" />
-        <InternalsVisibleTo Include="Architecture.Tests" />
-    </ItemGroup>
+	<ItemGroup>
+		<InternalsVisibleTo Include="Web.Tests.Bunit" />
+		<InternalsVisibleTo Include="Architecture.Tests" />
+	</ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Components\Features\Categories\" />
-    </ItemGroup>
+	<Target Name="BuildTailwind" BeforeTargets="Build">
+		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
+	</Target>
 
-    <Target Name="BuildTailwind" BeforeTargets="Build">
-        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
-    </Target>
-
-    <Target Name="WatchTailwind" BeforeTargets="Build">
-        <Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css" />
-    </Target>
+	<Target Name="WatchTailwind" BeforeTargets="Build">
+		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css" />
+	</Target>
 
 </Project>

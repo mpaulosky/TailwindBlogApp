@@ -14,7 +14,7 @@ public static class ServiceNames
 
 	public static string ServerName { get; } = "posts-server";
 
-	public static string DatabaseName { get; } = "blog-app-database";
+	public static string DatabaseName { get; } = "articlesdb";
 
 	public static string OutputCache { get; } = "output-cache";
 

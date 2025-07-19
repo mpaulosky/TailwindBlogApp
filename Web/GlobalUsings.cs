@@ -7,11 +7,16 @@
 // Project Name :  Web
 // =======================================================
 
-global using System;
-
+global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.Extensions.DependencyInjection;
 
 global using MongoDB.Bson;
 
-global using Domain.Models;
+global using Persistence;
+global using Persistence.Postgres;
+
+global using ServiceDefaults;
+
+global using Syncfusion.Blazor;
+
 global using Web.Components;

@@ -48,7 +48,7 @@ public static class FakeArticleDto
 	internal static Faker<ArticleDto> GenerateFake(bool useSeed = false)
 	{
 		var fake = new Faker<ArticleDto>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, Guid.CreateVersion7())
 				.RuleFor(f => f.Title, f => f.WaffleTitle())
 				.RuleFor(f => f.Introduction, f => f.Lorem.Sentence())
 				.RuleFor(f => f.Content, f => f.WaffleMarkdown(5))
@@ -58,8 +58,8 @@ public static class FakeArticleDto
 				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(x => x.PublishedOn, (_, x) => x.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
-				.RuleFor(f => f.Category, _ => FakeCategoryDto.GetNewCategoryDto(useSeed))
-				.RuleFor(f => f.Author, _ => FakeAppUserDto.GetNewAppUserDto(useSeed));
+				.RuleFor(f => f.Category, _ => FakeCategory.GetNewCategory(useSeed))
+				.RuleFor(f => f.Author, _ => FakeAuthor.GetNewAuthor(useSeed));
 
 
 		const int seed = 621;

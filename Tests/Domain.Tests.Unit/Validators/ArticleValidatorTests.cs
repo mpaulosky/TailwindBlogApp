@@ -61,8 +61,10 @@ public class ArticleValidatorTests
 				content,
 				coverImageUrl,
 				urlSlug,
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true
@@ -100,8 +102,10 @@ public class ArticleValidatorTests
 				content,
 				coverImageUrl,
 				urlSlug,
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true
@@ -127,8 +131,10 @@ public class ArticleValidatorTests
 				"content",
 				"cover",
 				"slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				true, // IsPublished
 				null, // PublishedOn missing
 				true
@@ -154,8 +160,10 @@ public class ArticleValidatorTests
 				new string('x', 4001), // Content too long
 				"cover",
 				"slug",
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
 				false,
 				null,
 				true

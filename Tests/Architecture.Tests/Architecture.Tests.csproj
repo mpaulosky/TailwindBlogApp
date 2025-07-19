@@ -1,37 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <IsTestProject>true</IsTestProject>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <Using Include="Xunit" />
-    </ItemGroup>
+	<ItemGroup>
+		<Using Include="Xunit"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" />
-        <PackageReference Include="FluentAssertions" />
-        <PackageReference Include="JetBrains.Annotations" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="NSubstitute" />
-        <PackageReference Include="xunit.runner.visualstudio" />
-        <PackageReference Include="NetArchTest.Rules" />
-        <PackageReference Include="xunit.v3" />
-    </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector"/>
+		<PackageReference Include="FluentAssertions"/>
+		<PackageReference Include="JetBrains.Annotations"/>
+		<PackageReference Include="Microsoft.NET.Test.Sdk"/>
+		<PackageReference Include="NSubstitute"/>
+		<PackageReference Include="xunit.runner.visualstudio"/>
+		<PackageReference Include="NetArchTest.Rules"/>
+		<PackageReference Include="xunit.v3"/>
+	</ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\Domain\Domain.csproj" />
-        <ProjectReference Include="..\..\Persistence.MongoDb\Persistence.MongoDb.csproj" />
-        <ProjectReference Include="..\..\Web\Web.csproj" />
-    </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\AppHost\AppHost.csproj"/>
+		<ProjectReference Include="..\..\Domain\Domain.csproj"/>
+		<ProjectReference Include="..\..\Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj"/>
+		<ProjectReference Include="..\..\Web\Web.csproj"/>
+	</ItemGroup>
 
-    <ItemGroup>
-      <Content Update="xunit.runner.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
-    </ItemGroup>
+	<ItemGroup>
+		<Content Update="xunit.runner.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 </Project>

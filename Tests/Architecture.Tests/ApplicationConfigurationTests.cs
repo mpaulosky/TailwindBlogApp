@@ -9,16 +9,19 @@ namespace Architecture.Tests;
 [ExcludeFromCodeCoverage]
 public class ApplicationConfigurationTests
 {
+
 	[Fact(DisplayName = "Config Test: Configuration classes should follow naming convention")]
 	public void Configuration_Classes_Should_Follow_Naming_Convention()
 	{
 		// Arrange
 		var assemblies = new[]
 		{
-						AssemblyReference.Domain,
-						AssemblyReference.MongoDb,
-						AssemblyReference.Web
-				};
+				AssemblyReference.Domain,
+				AssemblyReference.Persistence,
+				AssemblyReference.Web,
+				AssemblyReference.MyMediator,
+				AssemblyReference.Migrations
+		};
 
 		// Act
 		var result = Types.InAssemblies(assemblies)
@@ -40,10 +43,12 @@ public class ApplicationConfigurationTests
 		// Arrange
 		var assemblies = new[]
 		{
-						AssemblyReference.Domain,
-						AssemblyReference.MongoDb,
-						AssemblyReference.Web
-				};
+				AssemblyReference.Domain,
+				AssemblyReference.Persistence,
+				AssemblyReference.Web,
+				AssemblyReference.MyMediator,
+				AssemblyReference.Migrations
+		};
 
 		// Act
 		var result = Types.InAssemblies(assemblies)
@@ -58,4 +63,5 @@ public class ApplicationConfigurationTests
 		// Assert
 		result.IsSuccessful.Should().BeTrue();
 	}
+
 }

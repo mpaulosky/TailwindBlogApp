@@ -21,7 +21,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new AppUser
+		var user = new Author
 				{ Id = "1", UserName = string.Empty, Email = "test@email.com", Roles = ["Admin"] };
 
 		// Act
@@ -40,8 +40,8 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var dto = new AppUser
-				{ Id = "1", UserName = "user", Email = String.Empty, Roles = ["Admin"] };
+		var dto = new Author
+				{ Id = "1", UserName = "user", Email = string.Empty, Roles = ["Admin"] };
 
 		// Act
 		var result = validator.Validate(dto);
@@ -59,7 +59,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new AppUser
+		var user = new Author
 				{ Id = "1", UserName = "user", Email = "not_an_email", Roles = ["Admin"] };
 
 		// Act
@@ -78,7 +78,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new AppUser
+		var user = new Author
 				{ Id = "1", UserName = "user", Email = "test@email.com", Roles = ["Admin"] };
 
 		// Act

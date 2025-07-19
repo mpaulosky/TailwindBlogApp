@@ -2,7 +2,7 @@
 
 	<div>Author: @Article.Author.UserName</div>
 
-	<div>Created: @Article.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
+	<div>_Created: @Article.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
 
 	@if(@Article.IsPublished)
 	{
@@ -19,6 +19,6 @@
 
 @code {
 
-	[Parameter] public ArticleModel Article { get; set; } = new();
+	[Parameter] public ArticleDto Article { get; set; } = new();
 
 }

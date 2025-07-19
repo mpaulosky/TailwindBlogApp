@@ -1,0 +1,43 @@
+@page "/articles"
+@using Domain.Entities
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Articles"/>
+
+<SfGrid DataSource="_articles" AllowPaging="true" AllowSorting="true">
+	<GridColumns>
+		<GridColumn Field="Title" HeaderText="Title" Width="200" TextAlign="TextAlign.Left"/>
+		<GridColumn Field="Introduction" HeaderText="Intro" Width="250" TextAlign="TextAlign.Left"/>
+		<GridColumn Field="IsPublished" HeaderText="Published" Width="100" TextAlign="TextAlign.Center"/>
+		<GridColumn Field="PublishedOn" HeaderText="Published On" Width="150" Format="d" TextAlign="TextAlign.Center"/>
+		<GridColumn HeaderText="Actions" Width="150">
+			<Template Context="article">
+				<button class="btn btn-sm btn-primary" @onclick="() => GoToDetails(((Article)article).UrlSlug)">Details</button>
+				<button class="btn btn-sm btn-secondary" @onclick="() => GoToEdit(((Article)article).UrlSlug)">Edit</button>
+			</Template>
+		</GridColumn>
+	</GridColumns>
+</SfGrid>
+
+<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Article</button>
+
+@code {
+
+	private readonly List<ArticleDto> _articles = FakeArticleDto.GetArticleDtos(10);
+
+	private void GoToDetails(string slug)
+	{
+		Navigation.NavigateTo($"/articles/{slug}");
+	}
+
+	private void GoToEdit(string slug)
+	{
+		Navigation.NavigateTo($"/articles/edit/{slug}");
+	}
+
+	private void GoToCreate()
+	{
+		Navigation.NavigateTo("/articles/create");
+	}
+
+}

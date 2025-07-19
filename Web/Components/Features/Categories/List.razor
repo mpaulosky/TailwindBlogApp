@@ -1,0 +1,41 @@
+@page "/categories"
+@using Domain.Entities
+@inject NavigationManager Navigation
+
+<PageHeadingComponent Title="Categories"/>
+
+<SfGrid DataSource="_categories" AllowPaging="true" AllowSorting="true">
+	<GridColumns>
+		<GridColumn Field="Name" HeaderText="Name" Width="200" TextAlign="TextAlign.Left"/>
+		<GridColumn HeaderText="Actions" Width="150">
+			<Template Context="category">
+				<button class="btn btn-sm btn-primary" @onclick="() => GoToDetails(((Category)category).Id)">Details</button>
+				<button class="btn btn-sm btn-secondary" @onclick="() => GoToEdit(((Category)category).Id)">Edit</button>
+			</Template>
+		</GridColumn>
+	</GridColumns>
+</SfGrid>
+
+<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Category</button>
+
+@code {
+
+	private readonly List<Category> _categories = FakeCategory.GetCategories(3, true);
+
+	private void GoToDetails(Guid id)
+	{
+		Navigation.NavigateTo($"/categories/{id}");
+	}
+
+	private void GoToEdit(Guid id)
+	{
+		Navigation.NavigateTo($"/categories/edit/{id}");
+	}
+
+	private void GoToCreate()
+	{
+		Navigation.NavigateTo("/categories/create");
+	}
+
+
+}

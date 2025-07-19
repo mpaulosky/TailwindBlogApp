@@ -51,9 +51,10 @@ public static class FakeCategoryDto
 		const int seed = 621;
 
 		var fake = new Faker<CategoryDto>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, Guid.CreateVersion7)
 				.RuleFor(x => x.Name, f => f.Commerce.ProductName())
-				.RuleFor(x => x.Description, (_, x) => x.Name.GetSlug());
+				.RuleFor(x => x.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
+				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate());
 
 		return useSeed ? fake.UseSeed(seed) : fake;
 

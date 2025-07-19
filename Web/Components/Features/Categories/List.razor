@@ -1,67 +1,41 @@
 @page "/categories"
-@using Microsoft.AspNetCore.Components.QuickGrid.Components
-@inject ICategoryService CategoryService
-@inject IJSRuntime JsRuntime
+@using Domain.Entities
+@inject NavigationManager Navigation
 
-<div class="container mx-auto px-4 py-8">
-	<div class="flex justify-between items-center mb-6">
-		<PageHeadingComponent Level="1" HeaderText="Categories" />
-	</div>
+<PageHeadingComponent Title="Categories"/>
 
-	<a href="/categories/create"
-		class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Create
-		New</a>
-	@if (_isLoading)
+<SfGrid DataSource="_categories" AllowPaging="true" AllowSorting="true">
+	<GridColumns>
+		<GridColumn Field="Name" HeaderText="Name" Width="200" TextAlign="TextAlign.Left"/>
+		<GridColumn HeaderText="Actions" Width="150">
+			<Template Context="category">
+				<button class="btn btn-sm btn-primary" @onclick="() => GoToDetails(((Category)category).Id)">Details</button>
+				<button class="btn btn-sm btn-secondary" @onclick="() => GoToEdit(((Category)category).Id)">Edit</button>
+			</Template>
+		</GridColumn>
+	</GridColumns>
+</SfGrid>
+
+<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Category</button>
+
+@code {
+
+	private readonly List<Category> _categories = FakeCategory.GetCategories(3, true);
+
+	private void GoToDetails(Guid id)
 	{
-		<div class="flex justify-center items-center py-12">
-			<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-		</div>
-	}
-	else if (!_categories.Any())
-	{
-		<div class="bg-gray-50 rounded-lg p-8 text-center">
-			<p class="text-lg text-gray-600">No categories found.</p>
-			<p class="mt-2 text-gray-500">Create a new category to get started.</p>
-		</div>
-	}
-	else
-	{
-		<div class="bg-white shadow-md rounded-lg overflow-hidden">
-			<QuickGrid Items="_categories">
-				<PropertyColumn Property="@(c => c.Id)" Title="Id" />
-				<PropertyColumn Property="@(c => c.Name)" Title="Name" />
-				/QuickGrid>
-		</div>
-	}
-</div>
-
-@code
-{
-
-	private List<CategoryDto> _categories = [];
-
-	private bool _isLoading = true;
-
-	protected override async Task OnInitializedAsync()
-	{
-
-		await LoadCategories();
-
+		Navigation.NavigateTo($"/categories/{id}");
 	}
 
-	private async Task LoadCategories()
+	private void GoToEdit(Guid id)
 	{
-
-		_isLoading = true;
-
-		var results = await CategoryService.GetAllAsync();
-
-		_categories = results.Success ? results.Value.Adapt<List<CategoryDto>>() : [];
-
-		_isLoading = false;
-
-		StateHasChanged();
-
+		Navigation.NavigateTo($"/categories/edit/{id}");
 	}
+
+	private void GoToCreate()
+	{
+		Navigation.NavigateTo("/categories/create");
+	}
+
 
 }

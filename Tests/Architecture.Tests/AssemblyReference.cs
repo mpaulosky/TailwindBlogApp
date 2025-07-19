@@ -7,14 +7,25 @@
 // Project Name :  Architecture.Tests
 // =======================================================
 
-using Persistence;
+using MyMediator;
+
+using Persistence.Postgres;
+using Persistence.Postgres.Migrations;
 
 namespace Architecture.Tests;
 
 [ExcludeFromCodeCoverage]
 public static class AssemblyReference
 {
+
 	public static Assembly Domain => typeof(Result).Assembly;
+
 	public static Assembly Web => Assembly.Load("Web");
-	public static Assembly MongoDb => typeof(MongoDbRepository<>).Assembly;
+
+	public static Assembly Persistence => typeof(PgContext).Assembly;
+
+	public static Assembly MyMediator => typeof(ISender).Assembly;
+
+	public static Assembly Migrations => typeof(Worker).Assembly;
+
 }

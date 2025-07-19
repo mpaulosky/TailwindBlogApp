@@ -118,52 +118,52 @@ public class Article : Entity
 	/// <summary>
 	///   Gets or sets the title of the article.
 	/// </summary>
-	public string Title { get;  set; }
+	public string Title { get; set; }
 
 	/// <summary>
 	///   Gets or sets the introduction/summary of the article.
 	/// </summary>
-	public string Introduction { get;  set; }
+	public string Introduction { get; set; }
 
 	/// <summary>
 	///   Gets or sets the main content of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public string Content { get;  set; }
+	public string Content { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL of the cover image.
 	/// </summary>
 	[Display(Name = "Cover Image URL")]
-	public string CoverImageUrl { get;  set; }
+	public string CoverImageUrl { get; set; }
 
 	/// <summary>
 	///   Gets or sets the URL slug for the article.
 	/// </summary>
 	[Display(Name = "Url Slug")]
-	public string UrlSlug { get;  set; }
+	public string UrlSlug { get; set; }
 
 	/// <summary>
 	///   Gets or sets the author of the article.
 	/// </summary>
-	public AppUserDto Author { get;  set; }
+	public AppUserDto Author { get; set; }
 
 	/// <summary>
 	///   Gets or sets the category of the article.
 	/// </summary>
-	public CategoryDto Category { get;  set; }
+	public CategoryDto Category { get; set; }
 
 	/// <summary>
 	///   Gets or sets whether the article is published.
 	/// </summary>
 	[Display(Name = "Is Published")]
-	public bool IsPublished { get;  set; }
+	public bool IsPublished { get; set; }
 
 	/// <summary>
 	///   Gets or sets the date when the article was published.
 	/// </summary>
 	[Display(Name = "Published On")]
-	public DateTime? PublishedOn { get;  set; }
+	public DateTime? PublishedOn { get; set; }
 
 	/// <summary>
 	///   Gets an empty article instance.

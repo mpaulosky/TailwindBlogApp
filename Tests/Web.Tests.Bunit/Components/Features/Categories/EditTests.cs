@@ -32,15 +32,15 @@ public class EditTests : BunitContext
 
 		// Arrange
 		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
-		_categoryServiceSub.GetAsync(Arg.Any<ObjectId>()).Returns(_ => tcs.Task);
+		_categoryServiceSub.GetAsync(Arg.Any<Guid>()).Returns(_ => tcs.Task);
 
 		// Act
 		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, ObjectId.GenerateNewId()));
+				.Add(p => p.Id, Guid.CreateVersion7()));
 
 		// Assert
 		cut.Markup.Should().Contain("animate-spin");
-		cut.Markup.Should().Contain("Edit Categories");
+		cut.Markup.Should().Contain("_Edit Categories");
 
 		// Complete the service call to avoid test hang
 		tcs.SetResult(Result.Ok(CategoryDto.Empty));
@@ -52,7 +52,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
-		var categoryId = ObjectId.GenerateNewId();
+		var categoryId = Guid.CreateVersion7();
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
 
 		// Act
@@ -84,7 +84,7 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Edit Categories");
+		cut.Markup.Should().Contain("_Edit Categories");
 		cut.Markup.Should().Contain("Update the category information");
 		cut.Find("form").Should().NotBeNull();
 		cut.Find("#name").Should().NotBeNull();
@@ -271,7 +271,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
-		var categoryId = ObjectId.GenerateNewId();
+		var categoryId = Guid.CreateVersion7();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		categoryDto.Id = categoryId;
 
@@ -285,7 +285,7 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<ObjectId>(id => id == categoryId));
+		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<Guid>(id => id == categoryId));
 
 	}
 
@@ -294,11 +294,11 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
-		_categoryServiceSub.GetAsync(ObjectId.Empty).Returns(Result<CategoryDto>.Fail("Invalid ID"));
+		_categoryServiceSub.GetAsync(Guid.Empty).Returns(Result<CategoryDto>.Fail("Invalid ID"));
 
 		// Act
 		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, ObjectId.Empty));
+				.Add(p => p.Id, Guid.Empty));
 
 		// Wait for the component to finish loading
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
@@ -324,7 +324,7 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Edit Categories");
+		cut.Markup.Should().Contain("_Edit Categories");
 		cut.Markup.Should().Contain("Update the category information");
 
 	}
@@ -385,7 +385,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
-		var categoryId = ObjectId.GenerateNewId();
+		var categoryId = Guid.CreateVersion7();
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
 
 		var cut = Render<Edit>(parameters => parameters

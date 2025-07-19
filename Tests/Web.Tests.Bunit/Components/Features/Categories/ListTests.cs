@@ -7,12 +7,10 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-using Microsoft.Extensions.Options;
-
 namespace Web.Components.Features.Categories;
 
 /// <summary>
-///   Unit tests for <see cref="List" />
+///   Unit tests for <see cref="List{T}" />
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(List))]
@@ -77,12 +75,12 @@ public class ListTests : BunitContext
 							<h1 class="text-3xl font-bold tracking-tight text-gray-50 py-4">Categories</h1>
 						</header>
 						<a href="/categories/create" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-							Create New
+							_Create New
 						</a>
 					</div>
 					<div class="bg-gray-50 rounded-lg p-8 text-center">
 						<p class="text-lg text-gray-600">No categories found.</p>
-						<p class="mt-2 text-gray-500">Create a new category to get started.</p>
+						<p class="mt-2 text-gray-500">_Create a new category to get started.</p>
 					</div>
 				</div>
 				""";
@@ -122,7 +120,7 @@ public class ListTests : BunitContext
 	// 	// Arrange
 	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new _List<CategoryDto> { categoryDto }));
 
 	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
 
@@ -132,7 +130,7 @@ public class ListTests : BunitContext
 
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
@@ -149,7 +147,7 @@ public class ListTests : BunitContext
 	// 	// Arrange
 	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new _List<CategoryDto> { categoryDto }));
 
 	// 	var jsRuntime = Substitute.For<IJSRuntime>();
 
@@ -157,7 +155,7 @@ public class ListTests : BunitContext
 
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
@@ -189,7 +187,7 @@ public class ListTests : BunitContext
 	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
@@ -218,7 +216,7 @@ public class ListTests : BunitContext
 	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
@@ -236,7 +234,7 @@ public class ListTests : BunitContext
 	// 	// Arrange
 	// 	var longDesc = new string('x', 100);
 
-	// 	var categories = new List<CategoryDto>
+	// 	var categories = new _List<CategoryDto>
 	// 	{
 	// 			new()
 	// 			{
@@ -249,7 +247,7 @@ public class ListTests : BunitContext
 	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(categories));
 
 	// 	// Act
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Assert
 	// 	cut.Markup.Should().Contain("...");
@@ -284,8 +282,8 @@ public class ListTests : BunitContext
 	// 	};
 
 	// 	_categoryServiceSub.GetAllAsync().Returns(
-	// 			Result.Ok(new List<CategoryDto> { categoryDto }),
-	// 			Result.Ok(new List<CategoryDto> { archivedCategoryDto })
+	// 			Result.Ok(new _List<CategoryDto> { categoryDto }),
+	// 			Result.Ok(new _List<CategoryDto> { archivedCategoryDto })
 	// 	);
 
 	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
@@ -294,7 +292,7 @@ public class ListTests : BunitContext
 	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
@@ -313,14 +311,14 @@ public class ListTests : BunitContext
 	// 	// Arrange
 	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new _List<CategoryDto> { categoryDto }));
 	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Fail("Archive failed"));
 
 	// 	var jsRuntime = Substitute.For<IJSRuntime>();
 	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
 	// 	Services.AddSingleton(jsRuntime);
 
-	// 	var cut = Render<List>();
+	// 	var cut = Render<_List>();
 
 	// 	// Act
 	// 	await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));

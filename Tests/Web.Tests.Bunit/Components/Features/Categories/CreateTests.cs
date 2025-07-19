@@ -34,7 +34,7 @@ public class CreateTests : BunitContext
 		var cut = Render<Create>();
 
 		// Assert
-		cut.Markup.Should().Contain("Create Categories");
+		cut.Markup.Should().Contain("_Create Categories");
 		cut.Find("form").Should().NotBeNull();
 		cut.Find("#name").Should().NotBeNull();
 

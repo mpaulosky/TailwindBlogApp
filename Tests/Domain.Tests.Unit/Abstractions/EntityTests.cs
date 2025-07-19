@@ -22,7 +22,7 @@ public class EntityTests
 		var entity = new TestEntity();
 
 		// Assert
-		entity.Id.Should().NotBe(ObjectId.Empty);
+		entity.Id.Should().NotBe(Guid.Empty);
 
 	}
 
@@ -63,5 +63,5 @@ public class EntityTests
 	}
 
 	private class TestEntity : Entity { }
-	
+
 }

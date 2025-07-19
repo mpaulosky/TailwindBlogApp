@@ -32,9 +32,10 @@ public class DetailsTests : BunitContext
 
 		// Arrange
 		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
-		_categoryServiceSub.GetAsync(Arg.Any<ObjectId>()).Returns(_ => tcs.Task);
+		_categoryServiceSub.GetAsync(Arg.Any<Guid>()).Returns(_ => tcs.Task);
+
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, ObjectId.GenerateNewId()));
+				.Add(p => p.Id, Guid.CreateVersion7()));
 
 		// Act & Assert
 		// While the service task is not completed, the component should be loading
@@ -51,7 +52,7 @@ public class DetailsTests : BunitContext
 
 		// Arrange
 		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, ObjectId.GenerateNewId()));
+				.Add(p => p.Id, Guid.CreateVersion7()));
 
 		// Act
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -63,6 +64,7 @@ public class DetailsTests : BunitContext
 		cut.Markup.Should().Contain("Return to categories");
 
 	}
+
 	[Fact]
 	public void RendersCategoryDetails_WhenCategoryIsPresent()
 	{
@@ -72,7 +74,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete and category loaded
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -97,7 +99,7 @@ public class DetailsTests : BunitContext
 
 
 		// Assert
-		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<ObjectId>(id => id == categoryDto.Id));
+		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<Guid>(id => id == categoryDto.Id));
 
 		cut.Instance.GetType().GetProperty("_category")?.GetValue(cut.Instance)
 				.Should().Be(categoryDto);
@@ -113,7 +115,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -133,7 +135,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -153,7 +155,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -174,7 +176,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -194,7 +196,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -210,10 +212,13 @@ public class DetailsTests : BunitContext
 	public void HandlesServiceException_Gracefully()
 	{
 		// Arrange
-		var categoryId = ObjectId.GenerateNewId(); _categoryServiceSub.GetAsync(categoryId).Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
+		var categoryId = Guid.CreateVersion7();
+
+		_categoryServiceSub.GetAsync(categoryId)
+				.Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryId));
+				.Add(p => p.Id, categoryId));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -228,7 +233,7 @@ public class DetailsTests : BunitContext
 	{
 		// Arrange
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, ObjectId.Empty));
+				.Add(p => p.Id, Guid.Empty));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -248,7 +253,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
@@ -268,7 +273,7 @@ public class DetailsTests : BunitContext
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, categoryDto.Id));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);

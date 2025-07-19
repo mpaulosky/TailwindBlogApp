@@ -22,7 +22,7 @@ public class CategoryDtoTests
 		var category = new CategoryDto();
 
 		// Assert
-		category.Id.Should().Be(ObjectId.Empty);
+		category.Id.Should().Be(Guid.Empty);
 		category.Name.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
@@ -37,7 +37,7 @@ public class CategoryDtoTests
 		var category = CategoryDto.Empty;
 
 		// Assert
-		category.Id.Should().Be(ObjectId.Empty);
+		category.Id.Should().Be(Guid.Empty);
 		category.Name.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
@@ -54,12 +54,8 @@ public class CategoryDtoTests
 		// Arrange & Act
 		var now = DateTime.UtcNow;
 
-		var category = new CategoryDto(
-				ObjectId.GenerateNewId(),
-				name,
-				now,
-				null
-		);
+		var category = FakeCategoryDto.GetNewCategoryDto(true);
+		category.Name = name;
 
 		// Assert
 		category.Name.Should().Be(name);
@@ -77,7 +73,7 @@ public class CategoryDtoTests
 
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new CategoryDto(
-						ObjectId.GenerateNewId(),
+						Guid.CreateVersion7(),
 						name,
 						DateTime.UtcNow,
 						null

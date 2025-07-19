@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     AppUserTests.cs
+// File Name :     AuthorTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -10,11 +10,11 @@
 namespace Domain.Entities;
 
 /// <summary>
-///   Unit tests for the <see cref="AppUser" /> entity.
+///   Unit tests for the <see cref="Author" /> entity.
 /// </summary>
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(AppUser))]
-public class AppUserTests
+[TestSubject(typeof(Author))]
+public class AuthorTests
 {
 
 	[Fact]
@@ -22,7 +22,7 @@ public class AppUserTests
 	{
 
 		// Arrange & Act
-		var user = new AppUser(Guid.NewGuid().ToString(), "TestUser", "test@example.com", ["Admin"]);
+		var user = new Author(Guid.NewGuid().ToString(), "TestUser", "test@example.com", ["Admin"]);
 
 		// Assert
 		user.UserName.Should().Be("TestUser");
@@ -37,7 +37,7 @@ public class AppUserTests
 	{
 
 		// Arrange & Act
-		var user = AppUser.Empty;
+		var user = Author.Empty;
 
 		// Assert
 		user.Id.Should().BeEmpty();
@@ -52,7 +52,7 @@ public class AppUserTests
 	{
 
 		// Arrange
-		var user = new AppUser(Guid.NewGuid().ToString(), "OldName", "old@example.com", ["User"]);
+		var user = new Author(Guid.NewGuid().ToString(), "OldName", "old@example.com", ["User"]);
 
 		// Act
 		user.Update("NewName", "new@example.com");
@@ -68,13 +68,13 @@ public class AppUserTests
 	{
 
 		// Arrange
-		var user = new AppUser(Guid.NewGuid().ToString(), "User", "user@example.com", ["User"]);
+		var user = new Author(Guid.NewGuid().ToString(), "User", "user@example.com", ["User"]);
 
 		// Act
 		user.UpdateRoles(["Admin", "Editor"]);
 
 		// Assert
-		user.Roles.Should().BeEquivalentTo(["Admin", "Editor"]);
+		user.Roles.Should().BeEquivalentTo( "Admin", "Editor");
 
 	}
 
@@ -87,7 +87,7 @@ public class AppUserTests
 	{
 
 		// Arrange & Act & Assert
-		FluentActions.Invoking(() => new AppUser(Guid.NewGuid().ToString(), userName, email, ["User"]))
+		FluentActions.Invoking(() => new Author(Guid.NewGuid().ToString(), userName, email, ["User"]))
 				.Should().Throw<ValidationException>()
 				.WithMessage($"*{expectedError}*");
 
@@ -98,7 +98,7 @@ public class AppUserTests
 	{
 
 		// Arrange, Act & Assert
-		FluentActions.Invoking(() => new AppUser(Guid.NewGuid().ToString(), "User", "user@example.com", null!))
+		FluentActions.Invoking(() => new Author(Guid.NewGuid().ToString(), "User", "user@example.com", null!))
 				.Should().Throw<ValidationException>()
 				.WithMessage("*Roles collection cannot be null*");
 

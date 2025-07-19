@@ -21,7 +21,7 @@ public class CategoryTests
 		// Arrange & Act
 		var article = new Category(
 				string.Empty,
-				skipValidation: true
+				true
 		);
 
 		// Assert
@@ -39,7 +39,7 @@ public class CategoryTests
 		var article = Category.Empty;
 
 		// Assert
-		article.Id.Should().Be(ObjectId.Empty);
+		article.Id.Should().Be(Guid.Empty);
 		article.Name.Should().BeEmpty();
 
 	}

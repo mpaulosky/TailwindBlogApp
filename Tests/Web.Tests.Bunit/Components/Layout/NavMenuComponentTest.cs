@@ -9,6 +9,9 @@
 
 namespace Web.Components.Layout;
 
+using Microsoft.AspNetCore.Authorization;
+using Bunit;
+
 /// <summary>
 ///   bUnit tests for NavMenuComponent.
 /// </summary>
@@ -16,17 +19,20 @@ namespace Web.Components.Layout;
 [TestSubject(typeof(NavMenuComponent))]
 public class NavMenuComponentTest : BunitContext
 {
+	public NavMenuComponentTest()
+	{
+		this.Services.AddSingleton<IAuthorizationPolicyProvider, DefaultAuthorizationPolicyProvider>();
+	}
 
 	[Fact]
 	public void Should_Render_NavMenu_Links()
 	{
 		// Arrange & Act
-		var cut = Render<NavMenuComponent>();
+		var cut = this.Render<NavMenuComponent>();
 
 		// Assert
 		cut.Markup.Should().Contain("Articles");
 		cut.Markup.Should().Contain("Contact");
 		cut.Markup.Should().Contain("About");
 	}
-
 }

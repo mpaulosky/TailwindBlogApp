@@ -25,10 +25,6 @@ public class CategoryDtoValidator : AbstractValidator<CategoryDto>
 				.NotEmpty().WithMessage("Name is required")
 				.MaximumLength(80);
 
-		RuleFor(x => x.Slug)
-				.NotEmpty().WithMessage("Slug is required")
-				.MaximumLength(100);
-
 	}
 
 }

@@ -50,12 +50,12 @@ public class PgContext : DbContext
 
 }
 
-public class DateTimeOffsetConverter : ValueConverter<DateTimeOffset, DateTimeOffset>
+public class DateTimeOffsetConverter : ValueConverter<DateTimeOffset, DateTime>
 {
 
 	public DateTimeOffsetConverter() : base(
-			v => v.UtcDateTime,
-			v => v)
+			v => v.UtcDateTime, // Store as UTC DateTime
+			v => new DateTimeOffset(v, TimeSpan.Zero)) // Retrieve as DateTimeOffset (UTC)
 	{ }
 
 }

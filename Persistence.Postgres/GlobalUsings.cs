@@ -7,8 +7,11 @@
 // Project Name :  Persistence.Postgres
 // =======================================================
 
+global using Domain.Abstractions;
 global using Domain.Entities;
 global using Domain.Interfaces;
+
+global using Mapster;
 
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;

@@ -7,12 +7,7 @@
 // Project Name :  Persistence.MongoDb
 // =======================================================
 
-using Domain.Abstractions;
 using Domain.Models;
-
-using Mapster;
-
-using MongoDB.Bson;
 
 namespace Persistence.Postgres.Services;
 
@@ -120,49 +115,6 @@ public class ArticleService : IArticleService
 	}
 
 	/// <summary>
-	///   Retrieves a article by its unique identifier.
-	/// </summary>
-	/// <param name="articleId">The unique identifier of the article to retrieve.</param>
-	/// <returns>
-	///   A <see cref="Result{T}" /> containing a <see cref="ArticleDto" /> if successful, or a failure result with an
-	///   error message.
-	/// </returns>
-	public async Task<Result<ArticleDto>> GetAsync(ObjectId articleId)
-	{
-
-		// Validate input
-		if (articleId == ObjectId.Empty)
-		{
-			return Result<ArticleDto>.Fail("Article id cannot be empty.");
-		}
-
-		// Try to get all categories from the cache
-		var articleList = await _cache.GetAsync<List<ArticleDto>>(_cacheName);
-
-		// If found in the cache, try to return the matching article
-		var cachedArticle = articleList?.FirstOrDefault(c => c.Id == articleId);
-
-		if (cachedArticle != null)
-		{
-			return Result.Ok(cachedArticle);
-		}
-
-		// Not cached, get from repository
-		var article = await _repository.GetAsync(articleId);
-
-		if (article.Failure)
-		{
-			return Result<ArticleDto>.Fail("Article not found.");
-		}
-
-		// Adapt model to DTO if necessary, otherwise return directly
-		var dto = article.Value.Adapt<ArticleDto>();
-
-		return Result.Ok(dto);
-
-	}
-
-	/// <summary>
 	///   Retrieves all articles created by a specific user.
 	/// </summary>
 	/// <param name="entity">The user whose articles are to be retrieved.</param>
@@ -252,6 +204,49 @@ public class ArticleService : IArticleService
 		var result = await _repository.UpdateAsync(article.Id, article.Adapt<Article>());
 
 		return result.Failure ? Result.Fail("Failed to update article") : Result.Ok();
+
+	}
+
+	/// <summary>
+	///   Retrieves a article by its unique identifier.
+	/// </summary>
+	/// <param name="articleId">The unique identifier of the article to retrieve.</param>
+	/// <returns>
+	///   A <see cref="Result{T}" /> containing a <see cref="ArticleDto" /> if successful, or a failure result with an
+	///   error message.
+	/// </returns>
+	public async Task<Result<ArticleDto>> GetAsync(Guid articleId)
+	{
+
+		// Validate input
+		if (articleId == Guid.Empty)
+		{
+			return Result<ArticleDto>.Fail("Article id cannot be empty.");
+		}
+
+		// Try to get all categories from the cache
+		var articleList = await _cache.GetAsync<List<ArticleDto>>(_cacheName);
+
+		// If found in the cache, try to return the matching article
+		var cachedArticle = articleList?.FirstOrDefault(c => c.Id == articleId);
+
+		if (cachedArticle != null)
+		{
+			return Result.Ok(cachedArticle);
+		}
+
+		// Not cached, get from repository
+		var article = await _repository.GetAsync(articleId);
+
+		if (article.Failure)
+		{
+			return Result<ArticleDto>.Fail("Article not found.");
+		}
+
+		// Adapt model to DTO if necessary, otherwise return directly
+		var dto = article.Value.Adapt<ArticleDto>();
+
+		return Result.Ok(dto);
 
 	}
 

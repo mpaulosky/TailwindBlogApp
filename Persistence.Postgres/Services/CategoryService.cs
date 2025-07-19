@@ -7,12 +7,7 @@
 // Project Name :  Persistence.MongoDb
 // =============================================
 
-using Domain.Abstractions;
 using Domain.Models;
-
-using Mapster;
-
-using MongoDB.Bson;
 
 namespace Persistence.Postgres.Services;
 
@@ -120,49 +115,6 @@ public class CategoryService : ICategoryService
 	}
 
 	/// <summary>
-	///   Retrieves a category by its unique identifier.
-	/// </summary>
-	/// <param name="categoryId">The unique identifier of the category to retrieve.</param>
-	/// <returns>
-	///   A <see cref="Result{T}" /> containing a <see cref="CategoryDto" /> if successful, or a failure result with an
-	///   error message.
-	/// </returns>
-	public async Task<Result<CategoryDto>> GetAsync(ObjectId categoryId)
-	{
-
-		// Validate input
-		if (categoryId == ObjectId.Empty)
-		{
-			return Result<CategoryDto>.Fail("Category id cannot be empty.");
-		}
-
-		// Try to get all categories from the cache
-		var categoryList = await _cache.GetAsync<List<CategoryDto>>(_cacheName);
-
-		// If found in the cache, try to return the matching category
-		var cachedCategory = categoryList?.FirstOrDefault(c => c.Id == categoryId);
-
-		if (cachedCategory != null)
-		{
-			return Result.Ok(cachedCategory);
-		}
-
-		// Not cached, get from repository
-		var category = await _repository.GetAsync(categoryId);
-
-		if (category.Failure)
-		{
-			return Result<CategoryDto>.Fail("Category not found.");
-		}
-
-		// Adapt model to DTO if necessary, otherwise return directly
-		var dto = category.Value.Adapt<CategoryDto>();
-
-		return Result.Ok(dto);
-
-	}
-
-	/// <summary>
 	///   Retrieves all category data asynchronously.
 	/// </summary>
 	/// <returns>
@@ -214,6 +166,49 @@ public class CategoryService : ICategoryService
 		var result = await _repository.UpdateAsync(category.Id, category.Adapt<Category>());
 
 		return result.Failure ? Result.Fail("Failed to update category") : Result.Ok();
+
+	}
+
+	/// <summary>
+	///   Retrieves a category by its unique identifier.
+	/// </summary>
+	/// <param name="categoryId">The unique identifier of the category to retrieve.</param>
+	/// <returns>
+	///   A <see cref="Result{T}" /> containing a <see cref="CategoryDto" /> if successful, or a failure result with an
+	///   error message.
+	/// </returns>
+	public async Task<Result<CategoryDto>> GetAsync(Guid categoryId)
+	{
+
+		// Validate input
+		if (categoryId == Guid.Empty)
+		{
+			return Result<CategoryDto>.Fail("Category id cannot be empty.");
+		}
+
+		// Try to get all categories from the cache
+		var categoryList = await _cache.GetAsync<List<CategoryDto>>(_cacheName);
+
+		// If found in the cache, try to return the matching category
+		var cachedCategory = categoryList?.FirstOrDefault(c => c.Id == categoryId);
+
+		if (cachedCategory != null)
+		{
+			return Result.Ok(cachedCategory);
+		}
+
+		// Not cached, get from repository
+		var category = await _repository.GetAsync(categoryId);
+
+		if (category.Failure)
+		{
+			return Result<CategoryDto>.Fail("Category not found.");
+		}
+
+		// Adapt model to DTO if necessary, otherwise return directly
+		var dto = category.Value.Adapt<CategoryDto>();
+
+		return Result.Ok(dto);
 
 	}
 

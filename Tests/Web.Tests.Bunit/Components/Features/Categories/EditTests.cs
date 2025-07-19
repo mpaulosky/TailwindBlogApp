@@ -88,7 +88,6 @@ public class EditTests : BunitContext
 		cut.Markup.Should().Contain("Update the category information");
 		cut.Find("form").Should().NotBeNull();
 		cut.Find("#name").Should().NotBeNull();
-		cut.Find("#description").Should().NotBeNull();
 		cut.Find("button[type='submit']").Should().NotBeNull();
 
 	}
@@ -110,10 +109,8 @@ public class EditTests : BunitContext
 
 		// Assert
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 
 		nameInput.GetAttribute("value").Should().Be(categoryDto.Name);
-		descriptionInput.GetAttribute("value").Should().Be(categoryDto.Slug);
 
 	}
 
@@ -144,32 +141,6 @@ public class EditTests : BunitContext
 	}
 
 	[Fact]
-	public void Shows_Validation_Error_When_Slug_Is_Empty()
-	{
-
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Wait for the component to finish loading
-		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
-		var descriptionInput = cut.Find("#description");
-		var form = cut.Find("form");
-
-		// Act
-		descriptionInput.Change("");
-		form.Submit();
-
-		// Assert
-		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Slug is required</div>""");
-
-	}
-
-	[Fact]
 	public async Task Submits_Valid_Form_And_Navigates_On_Success()
 	{
 
@@ -185,17 +156,15 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 		var form = cut.Find("form");
 
 		// Act
 		await cut.InvokeAsync(() => nameInput.Change("Updated Name"));
-		await cut.InvokeAsync(() => descriptionInput.Change("Updated Slug"));
 		await cut.InvokeAsync(() => form.Submit());
 
 		// Assert
 		await _categoryServiceSub.Received(1).UpdateAsync(Arg.Is<CategoryDto>(dto =>
-				dto.Name == "Updated Name" && dto.Slug == "Updated Slug"));
+				dto.Name == "Updated Name"));
 
 	}
 
@@ -378,15 +347,11 @@ public class EditTests : BunitContext
 		// Assert
 		var form = cut.Find("form");
 		var nameLabel = cut.Find("label[for='name']");
-		var descriptionLabel = cut.Find("label[for='description']");
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 
 		form.Should().NotBeNull();
 		nameLabel.TextContent.Should().Contain("Categories Name");
-		descriptionLabel.TextContent.Should().Contain("Slug");
 		nameInput.GetAttribute("class").Should().Contain("w-full px-3 py-2 border");
-		descriptionInput.GetAttribute("class").Should().Contain("w-full px-3 py-2 border");
 
 	}
 

@@ -57,30 +57,12 @@ public class CreateTests : BunitContext
 	}
 
 	[Fact(Skip = "Skipping due to incomplete test case")]
-	public void Shows_Validation_Error_When_Description_Is_Empty()
-	{
-		// Arrange
-		var cut = Render<Create>();
-		var nameInput = cut.Find("#name");
-		var form = cut.Find("form");
-
-		// Act
-		nameInput.Change("Test Name"); // Set valid name
-		form.Submit();
-
-		// Assert
-		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Description is required</div>""");
-
-	}
-
-	[Fact(Skip = "Skipping due to incomplete test case")]
 	public async Task Submits_Valid_Form_And_Navigates()
 	{
 
 		// Arrange
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 		var form = cut.Find("form");
 
 		_categoryServiceSub.CreateAsync(Arg.Any<CategoryDto>())
@@ -88,7 +70,6 @@ public class CreateTests : BunitContext
 
 		// Act
 		await cut.InvokeAsync(() => nameInput.Change("Test"));
-		await cut.InvokeAsync(() => descriptionInput.Change("Test Description"));
 		await cut.InvokeAsync(() => form.Submit());
 
 		// Assert
@@ -103,7 +84,6 @@ public class CreateTests : BunitContext
 		// Arrange
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 		var form = cut.Find("form");
 
 		_categoryServiceSub.CreateAsync(Arg.Any<CategoryDto>())
@@ -111,7 +91,6 @@ public class CreateTests : BunitContext
 
 		// Act
 		await cut.InvokeAsync(() => nameInput.Change("Test"));
-		await cut.InvokeAsync(() => descriptionInput.Change("Test Description"));
 		await cut.InvokeAsync(() => form.Submit());
 
 		// Assert
@@ -125,7 +104,6 @@ public class CreateTests : BunitContext
 		// Arrange
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");
-		var descriptionInput = cut.Find("#description");
 		var form = cut.Find("form");
 		var submitButton = cut.Find("button[type='submit']");
 
@@ -134,7 +112,6 @@ public class CreateTests : BunitContext
 
 		// Act
 		nameInput.Change("Test");
-		descriptionInput.Change("Test Description");
 		form.Submit();
 
 		// Assert

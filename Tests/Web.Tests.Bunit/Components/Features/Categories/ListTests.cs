@@ -7,6 +7,8 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
+using Microsoft.Extensions.Options;
+
 namespace Web.Components.Features.Categories;
 
 /// <summary>
@@ -21,12 +23,11 @@ public class ListTests : BunitContext
 
 	public ListTests()
 	{
-
 		Services.AddSingleton(_categoryServiceSub);
 
 	}
 
-	/*[Fact]
+	[Fact]
 	public void RendersLoadingSpinner_WhenIsLoading()
 	{
 
@@ -114,225 +115,221 @@ public class ListTests : BunitContext
 
 	}
 
-	[Fact]
-	public async Task ArchiveCategory_CallsService_WhenConfirmed()
-	{
+	// [Fact]
+	// public async Task ArchiveCategory_CallsService_WhenConfirmed()
+	// {
 
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+	// 	// Arrange
+	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-		_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
 
-		_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
+	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
 
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(_ => new ValueTask<bool>(true));
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(_ => new ValueTask<bool>(true));
 
-		Services.AddSingleton(jsRuntime);
+	// 	Services.AddSingleton(jsRuntime);
 
-		var cut = Render<List>();
+	// 	var cut = Render<List>();
 
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
+	// 	// Act
+	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
 
-		// Assert
-		await _categoryServiceSub.Received(1).ArchiveAsync(categoryDto);
+	// 	// Assert
+	// 	await _categoryServiceSub.Received(1).ArchiveAsync(categoryDto);
 
-	}
+	// }
 
-	[Fact]
-	public async Task ArchiveCategory_DoesNotCallService_WhenNotConfirmed()
-	{
+	// [Fact]
+	// public async Task ArchiveCategory_DoesNotCallService_WhenNotConfirmed()
+	// {
 
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+	// 	// Arrange
+	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-		_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
 
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(_ => new ValueTask<bool>(false));
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(_ => new ValueTask<bool>(false));
 
-		Services.AddSingleton(jsRuntime);
+	// 	Services.AddSingleton(jsRuntime);
 
-		var cut = Render<List>();
+	// 	var cut = Render<List>();
 
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
+	// 	// Act
+	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
 
-		// Assert
-		await _categoryServiceSub.DidNotReceive().ArchiveAsync(categoryDto);
+	// 	// Assert
+	// 	await _categoryServiceSub.DidNotReceive().ArchiveAsync(categoryDto);
 
-	}
+	// }
 
-	[Fact]
-	public async Task Refreshes_List_After_Successful_Archive()
-	{
+	// [Fact]
+	// public async Task Refreshes_List_After_Successful_Archive()
+	// {
 
-		// Arrange
-		var categoriesDto = FakeCategoryDto.GetCategoriesDto(3, true);
-		categoriesDto[0].Archived = false;
+	// 	// Arrange
+	// 	var categoriesDto = FakeCategoryDto.GetCategoriesDto(3, true);
+	// 	categoriesDto[0].Archived = false;
 
-		var categoriesDto2 = categoriesDto.ToList();
-		categoriesDto2[0].Archived = true; // Simulate archiving the first category
+	// 	var categoriesDto2 = categoriesDto.ToList();
+	// 	categoriesDto2[0].Archived = true; // Simulate archiving the first category
 
-		_categoryServiceSub.GetAllAsync().Returns(
-				Result.Ok(categoriesDto),
-				Result.Ok(categoriesDto2) // Second call after archive
-		);
+	// 	_categoryServiceSub.GetAllAsync().Returns(
+	// 			Result.Ok(categoriesDto),
+	// 			Result.Ok(categoriesDto2) // Second call after archive
+	// 	);
 
-		_categoryServiceSub.ArchiveAsync(categoriesDto[0]).Returns(Result.Ok());
+	// 	_categoryServiceSub.ArchiveAsync(categoriesDto[0]).Returns(Result.Ok());
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
-		Services.AddSingleton(jsRuntime);
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
+	// 	Services.AddSingleton(jsRuntime);
 
-		var cut = Render<List>();
+	// 	var cut = Render<List>();
 
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
+	// 	// Act
+	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
 
-		// Assert
-		await _categoryServiceSub.Received(2).GetAllAsync(); // Verify list was refreshed
+	// 	// Assert
+	// 	await _categoryServiceSub.Received(2).GetAllAsync(); // Verify list was refreshed
 
-		cut.Markup.Should()
-				.Contain(
-						"""<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Archived</span>"""); // Verify UI updated
+	// 	cut.Markup.Should()
+	// 			.Contain(
+	// 					"""<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Archived</span>"""); // Verify UI updated
 
-	}
+	// }
 
-	[Fact]
-	public async Task Refreshes_List_After_Failed_Archive()
-	{
+	// [Fact]
+	// public async Task Refreshes_List_After_Failed_Archive()
+	// {
 
-		// Arrange
-		var categoriesDto = FakeCategoryDto.GetCategoriesDto(1, true);
+	// 	// Arrange
+	// 	var categoriesDto = FakeCategoryDto.GetCategoriesDto(1, true);
 
-		_categoryServiceSub.GetAllAsync().Returns(Result.Ok(categoriesDto));
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(categoriesDto));
 
-		_categoryServiceSub.ArchiveAsync(categoriesDto[0]).Returns(Result.Fail("Failed to archive category"));
+	// 	_categoryServiceSub.ArchiveAsync(categoriesDto[0]).Returns(Result.Fail("Failed to archive category"));
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
-		Services.AddSingleton(jsRuntime);
-
-		var cut = Render<List>();
-
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
-
-		// Assert
-		await _categoryServiceSub.Received(1).GetAllAsync(); // Verify list was refreshed
-		cut.Markup.Should().Contain("Archive");
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(true);
+	// 	Services.AddSingleton(jsRuntime);
 
-	}
-
-	[Fact]
-	public void Truncates_Long_Descriptions_In_List()
-	{
+	// 	var cut = Render<List>();
 
-		// Arrange
-		var longDesc = new string('x', 100);
+	// 	// Act
+	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoriesDto[0]));
 
-		var categories = new List<CategoryDto>
-		{
-				new()
-				{
-						Id = ObjectId.GenerateNewId(),
-						Name = "Test",
-						Description = longDesc,
-						CreatedOn = DateTime.Now
-				}
-		};
+	// 	// Assert
+	// 	await _categoryServiceSub.Received(1).GetAllAsync(); // Verify list was refreshed
+	// 	cut.Markup.Should().Contain("Archive");
 
-		_categoryServiceSub.GetAllAsync().Returns(Result.Ok(categories));
+	// }
 
-		// Act
-		var cut = Render<List>();
+	// [Fact]
+	// public void Truncates_Long_Descriptions_In_List()
+	// {
 
-		// Assert
-		cut.Markup.Should().NotContain(longDesc);
-		cut.Markup.Should().Contain("...");
+	// 	// Arrange
+	// 	var longDesc = new string('x', 100);
 
-	}
+	// 	var categories = new List<CategoryDto>
+	// 	{
+	// 			new()
+	// 			{
+	// 					Id = ObjectId.GenerateNewId(),
+	// 					Name = "Test",
+	// 					CreatedOn = DateTime.Now
+	// 			}
+	// 	};
 
-	[Fact]
-	public async Task Shows_Archived_Status_And_Updates_ModifiedOn_After_Archive()
-	{
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(categories));
 
-		// Arrange
-		var originalCreatedOn = DateTime.UtcNow.AddDays(-2);
-		var originalModifiedOn = null as DateTime?;
-		var archivedModifiedOn = DateTime.UtcNow.AddDays(-1);
+	// 	// Act
+	// 	var cut = Render<List>();
 
-		var categoryDto = new CategoryDto
-		{
-				Id = ObjectId.GenerateNewId(),
-				Name = "ToArchive",
-				Description = "Desc",
-				CreatedOn = originalCreatedOn,
-				ModifiedOn = originalModifiedOn,
-				Archived = false
-		};
+	// 	// Assert
+	// 	cut.Markup.Should().Contain("...");
 
-		var archivedCategoryDto = new CategoryDto
-		{
-				Id = categoryDto.Id,
-				Name = categoryDto.Name,
-				Description = categoryDto.Description,
-				CreatedOn = originalCreatedOn,
-				ModifiedOn = archivedModifiedOn,
-				Archived = true
-		};
+	// }
 
-		_categoryServiceSub.GetAllAsync().Returns(
-				Result.Ok(new List<CategoryDto> { categoryDto }),
-				Result.Ok(new List<CategoryDto> { archivedCategoryDto })
-		);
+	// [Fact]
+	// public async Task Shows_Archived_Status_And_Updates_ModifiedOn_After_Archive()
+	// {
 
-		_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
+	// 	// Arrange
+	// 	var originalCreatedOn = DateTime.UtcNow.AddDays(-2);
+	// 	var originalModifiedOn = null as DateTime?;
+	// 	var archivedModifiedOn = DateTime.UtcNow.AddDays(-1);
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
-		Services.AddSingleton(jsRuntime);
+	// 	var categoryDto = new CategoryDto
+	// 	{
+	// 		Id = ObjectId.GenerateNewId(),
+	// 		Name = "ToArchive",
+	// 		CreatedOn = originalCreatedOn,
+	// 		ModifiedOn = originalModifiedOn,
+	// 		Archived = false
+	// 	};
 
-		var cut = Render<List>();
+	// 	var archivedCategoryDto = new CategoryDto
+	// 	{
+	// 		Id = categoryDto.Id,
+	// 		Name = categoryDto.Name,
+	// 		CreatedOn = originalCreatedOn,
+	// 		ModifiedOn = archivedModifiedOn,
+	// 		Archived = true
+	// 	};
 
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
+	// 	_categoryServiceSub.GetAllAsync().Returns(
+	// 			Result.Ok(new List<CategoryDto> { categoryDto }),
+	// 			Result.Ok(new List<CategoryDto> { archivedCategoryDto })
+	// 	);
 
-		// Assert
-		cut.Markup.Should().Contain("Archived");
-		cut.Markup.Should().Contain(originalCreatedOn.ToString("M/d/yyyy"));
-		cut.Markup.Should().Contain(archivedModifiedOn.ToString("M/d/yyyy"));
+	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Ok());
 
-	}
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
+	// 	Services.AddSingleton(jsRuntime);
 
-	[Fact]
-	public async Task ArchiveCategory_Shows_Error_When_Service_Fails()
-	{
+	// 	var cut = Render<List>();
 
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+	// 	// Act
+	// 	//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
 
-		_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
-		_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Fail("Archive failed"));
+	// 	// Assert
+	// 	cut.Markup.Should().Contain("Archived");
+	// 	cut.Markup.Should().Contain(originalCreatedOn.ToString("M/d/yyyy"));
+	// 	cut.Markup.Should().Contain(archivedModifiedOn.ToString("M/d/yyyy"));
 
-		var jsRuntime = Substitute.For<IJSRuntime>();
-		jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
-		Services.AddSingleton(jsRuntime);
+	// }
 
-		var cut = Render<List>();
+	// [Fact]
+	// public async Task ArchiveCategory_Shows_Error_When_Service_Fails()
+	// {
 
-		// Act
-		//await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
+	// 	// Arrange
+	// 	var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 
-		// Assert
-		cut.Markup.Should().Contain("Archive");
+	// 	_categoryServiceSub.GetAllAsync().Returns(Result.Ok(new List<CategoryDto> { categoryDto }));
+	// 	_categoryServiceSub.ArchiveAsync(categoryDto).Returns(Result.Fail("Archive failed"));
 
-		// Optionally, check for an error message if surfaced in UI
+	// 	var jsRuntime = Substitute.For<IJSRuntime>();
+	// 	jsRuntime.InvokeAsync<bool>("confirm", Arg.Any<object[]>()).Returns(new ValueTask<bool>(true));
+	// 	Services.AddSingleton(jsRuntime);
 
-	}*/
+	// 	var cut = Render<List>();
+
+	// 	// Act
+	// 	await cut.InvokeAsync(() => cut.Instance.ArchiveCategory(categoryDto));
+
+	// 	// Assert
+	// 	cut.Markup.Should().Contain("Archive");
+
+	// 	// Optionally, check for an error message if surfaced in UI
+
+	// }
 
 }

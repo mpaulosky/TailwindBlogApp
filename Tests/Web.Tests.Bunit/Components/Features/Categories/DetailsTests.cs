@@ -81,8 +81,6 @@ public class DetailsTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.Name);
-		cut.Markup.Should().Contain(categoryDto.Slug);
-
 	}
 
 	[Fact]
@@ -212,7 +210,7 @@ public class DetailsTests : BunitContext
 	public void HandlesServiceException_Gracefully()
 	{
 		// Arrange
-		var categoryId = ObjectId.GenerateNewId();        _categoryServiceSub.GetAsync(categoryId).Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
+		var categoryId = ObjectId.GenerateNewId(); _categoryServiceSub.GetAsync(categoryId).Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
 
 		var cut = Render<Details>(parameters => parameters
 			.Add(p => p.Id, categoryId));
@@ -260,26 +258,6 @@ public class DetailsTests : BunitContext
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.CreatedOn.ToLocalTime().ToString("g"));
 		cut.Markup.Should().Contain(categoryDto.ModifiedOn.Value.ToLocalTime().ToString("g"));
-	}
-
-	[Fact]
-	public void Displays_Truncated_Slug_If_Too_Long()
-	{
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.Slug = new string('x', 200); // Very long description
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		var cut = Render<Details>(parameters => parameters
-			.Add(p => p.Id, categoryDto.Id));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
-		// Assert - verify the description is shown without truncation in the details view
-		cut.Markup.Should().Contain(categoryDto.Slug);
 	}
 
 	[Fact]

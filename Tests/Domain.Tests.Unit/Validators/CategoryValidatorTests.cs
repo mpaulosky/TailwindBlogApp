@@ -40,18 +40,15 @@ public class CategoryValidatorTests
 	}
 
 	[Theory]
-	[InlineData("", "slug", "Name is required")]
-	[InlineData("name", "", "Slug is required")]
+	[InlineData("", "Name is required")]
 	public void Validate_WhenRequiredPropertyMissing_ShouldHaveError(
 			string name,
-			string slug,
 			string expectedError)
 	{
 
 		// Arrange
 		var category = new Category(
 				name,
-				slug,
 				true
 		);
 
@@ -65,19 +62,15 @@ public class CategoryValidatorTests
 	}
 
 	[Theory]
-	[InlineData("name", "slug", 81, "Name")]
-	[InlineData("name", "slug", 101, "Slug")]
+	[InlineData(81, "Name")]
 	public void Validate_WhenPropertyTooLong_ShouldHaveError(
-			string name,
-			string slug,
 			int length,
 			string propertyName)
 	{
 
 		// Arrange
 		var category = new Category(
-				propertyName == "Name" ? new string('x', length) : name,
-				propertyName == "Slug" ? new string('x', length) : slug,
+				propertyName == "Name" ? new string('x', length) : "name",
 				true
 		);
 

@@ -24,7 +24,6 @@ public class CategoryDtoTests
 		// Assert
 		category.Id.Should().Be(ObjectId.Empty);
 		category.Name.Should().BeEmpty();
-		category.Slug.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
 
@@ -40,18 +39,16 @@ public class CategoryDtoTests
 		// Assert
 		category.Id.Should().Be(ObjectId.Empty);
 		category.Name.Should().BeEmpty();
-		category.Slug.Should().BeEmpty();
 		category.CreatedOn.Should().Be(DateTime.MinValue);
 		category.ModifiedOn.Should().BeNull();
 
 	}
 
 	[Theory]
-	[InlineData("Test Name", "Test Slug")]
-	[InlineData("Another Name", "Another Slug")]
+	[InlineData("Test Name")]
+	[InlineData("Another Name")]
 	public void CategoryDto_WhenPropertiesSet_ShouldHaveCorrectValues(
-			string name,
-			string description)
+			string name)
 	{
 
 		// Arrange & Act
@@ -60,25 +57,21 @@ public class CategoryDtoTests
 		var category = new CategoryDto(
 				ObjectId.GenerateNewId(),
 				name,
-				description,
 				now,
 				null
 		);
 
 		// Assert
 		category.Name.Should().Be(name);
-		category.Slug.Should().Be(description);
 		category.CreatedOn.Should().Be(now);
 		category.ModifiedOn.Should().BeNull();
 
 	}
 
 	[Theory]
-	[InlineData("", "description", "Name is required")]
-	[InlineData("Name", "", "Slug is required")]
+	[InlineData("", "Name is required")]
 	public void CategoryDto_WhenCreated_ShouldValidateRequiredFields(
 			string name,
-			string description,
 			string expectedError)
 	{
 
@@ -86,7 +79,6 @@ public class CategoryDtoTests
 		FluentActions.Invoking(() => new CategoryDto(
 						ObjectId.GenerateNewId(),
 						name,
-						description,
 						DateTime.UtcNow,
 						null
 				)).Should().Throw<ValidationException>()

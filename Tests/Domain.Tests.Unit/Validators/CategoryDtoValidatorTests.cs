@@ -20,7 +20,7 @@ public class CategoryDtoValidatorTests
 
 		// Arrange
 		var validator = new CategoryDtoValidator();
-		var dto = new CategoryDto { Name = string.Empty, Slug = "desc" };
+		var dto = new CategoryDto { Name = string.Empty };
 
 		// Act
 		var result = validator.Validate(dto);
@@ -32,29 +32,12 @@ public class CategoryDtoValidatorTests
 	}
 
 	[Fact]
-	public void Should_Fail_When_Slug_Is_Empty()
-	{
-
-		// Arrange
-		var validator = new CategoryDtoValidator();
-		var dto = new CategoryDto { Name = "name", Slug = string.Empty };
-
-		// Act
-		var result = validator.Validate(dto);
-
-		// Assert
-		result.IsValid.Should().BeFalse();
-		result.Errors.Should().Contain(e => e.PropertyName == "Slug");
-
-	}
-
-	[Fact]
 	public void Should_Pass_With_Valid_Fields()
 	{
 
 		// Arrange
 		var validator = new CategoryDtoValidator();
-		var dto = new CategoryDto { Name = "ValidName", Slug = "ValidSlug" };
+		var dto = new CategoryDto { Name = "ValidName" };
 
 		// Act
 		var result = validator.Validate(dto);

@@ -25,7 +25,6 @@ public class FakeCategoryTests
 		result.Should().NotBeNull();
 		result.Should().BeOfType<Category>();
 		result.Name.Should().NotBeNullOrEmpty();
-		result.Slug.Should().NotBeNullOrEmpty();
 
 	}
 
@@ -41,7 +40,6 @@ public class FakeCategoryTests
 		result1.Should().NotBeNull();
 		result2.Should().NotBeNull();
 		result1.Name.Should().Be(result2.Name);
-		result1.Slug.Should().Be(result2.Slug);
 
 	}
 
@@ -60,7 +58,6 @@ public class FakeCategoryTests
 		results.Should().HaveCount(count);
 		results.Should().AllBeOfType<Category>();
 		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Name));
-		results.Should().OnlyContain(c => !string.IsNullOrEmpty(c.Slug));
 
 	}
 
@@ -84,7 +81,6 @@ public class FakeCategoryTests
 		for (var i = 0; i < count; i++)
 		{
 			results1[i].Name.Should().Be(results2[i].Name);
-			results1[i].Slug.Should().Be(results2[i].Slug);
 		}
 
 	}
@@ -101,7 +97,6 @@ public class FakeCategoryTests
 		category.Should().NotBeNull();
 		category.Name.Should().NotBeNullOrEmpty();
 		category.Name.Should().BeOneOf(Enum.GetNames<CategoryNames>());
-		category.Slug.Should().Contain(category.Name.ToLowerInvariant());
 
 	}
 
@@ -118,7 +113,6 @@ public class FakeCategoryTests
 
 		// Assert
 		category1.Name.Should().Be(category2.Name);
-		category1.Slug.Should().Be(category2.Slug);
 
 	}
 

@@ -20,10 +20,10 @@ public interface IRepository<T> where T : class
 
 	Task<Result> CreateAsync(T entity);
 
-	Task<Result<T>> GetAsync(ObjectId entityId);
+	Task<Result<T>> GetAsync(Guid entityId);
 
 	Task<Result<IEnumerable<T>>> GetAllAsync();
 
-	Task<Result> UpdateAsync(ObjectId entityId, T entity);
+	Task<Result> UpdateAsync(Guid entityId, T entity);
 
 }

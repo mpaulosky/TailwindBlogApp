@@ -16,7 +16,7 @@ public interface IArticleService
 
 	Task<Result> CreateAsync(ArticleDto? article);
 
-	Task<Result<ArticleDto>> GetAsync(ObjectId articleId);
+	Task<Result<ArticleDto>> GetAsync(Guid articleId);
 
 	Task<Result<List<ArticleDto>>> GetByUserAsync(AppUserDto? entity);
 

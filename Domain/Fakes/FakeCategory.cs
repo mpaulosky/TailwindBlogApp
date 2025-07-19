@@ -50,7 +50,7 @@ public class FakeCategory
 		const int seed = 621;
 
 		var fake = new Faker<Category>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId())
+				.RuleFor(x => x.Id, Guid.CreateVersion7)
 				.RuleFor(x => x.Name, f => f.Random.Enum<CategoryNames>().ToString())
 				.RuleFor(x => x.CreatedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate());

@@ -12,6 +12,8 @@ namespace Domain.Entities;
 /// <summary>
 ///   Represents a blog category that can be assigned to posts.
 /// </summary>
+[Table("Categories")]
+[Index(nameof(Name), IsUnique = true)]
 public class Category : Entity
 {
 
@@ -37,19 +39,21 @@ public class Category : Entity
 	}
 
 	/// <summary>
-	///   Gets the name of the category.
+	///   Gets or sets the name of the category.
 	/// </summary>
 	[Required(ErrorMessage = "Name is required")]
 	[MaxLength(80)]
 	public string Name { get; set; }
 
+	public ICollection<Article> Articles { get; set; } = new List<Article>();
+
 	/// <summary>
-	///   Gets an empty category instance.
+	///   Gets the name of the category.
 	/// </summary>
 	public static Category Empty =>
 			new(string.Empty, true)
 			{
-				Id = ObjectId.Empty
+					Id = Guid.Empty
 			};
 
 	/// <summary>
@@ -60,13 +64,7 @@ public class Category : Entity
 	/// <exception cref="ValidationException">Thrown when the name is empty or whitespace.</exception>
 	public void Update(string name)
 	{
-		if (string.IsNullOrWhiteSpace(name))
-		{
-			throw new ValidationException("Name is required");
-		}
-
 		Name = name;
-		ModifiedOn = DateTime.Now;
 		ValidateState();
 	}
 
@@ -76,12 +74,9 @@ public class Category : Entity
 	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
 	private void ValidateState()
 	{
-		var validator = new CategoryValidator();
-		var validationResult = validator.Validate(this);
-
-		if (!validationResult.IsValid)
+		if (string.IsNullOrWhiteSpace(Name))
 		{
-			throw new ValidationException(validationResult.Errors);
+			throw new ValidationException("Category name cannot be empty or whitespace.");
 		}
 	}
 

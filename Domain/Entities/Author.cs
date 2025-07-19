@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     AppUser.cs
+// File Name :     Author.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -12,23 +12,23 @@ namespace Domain.Entities;
 /// <summary>
 ///   Domain entity representing an application user.
 /// </summary>
-public class AppUser
+public class Author
 {
 
 	/// <summary>
-	/// Parameterless constructor for serialization and test data generation.
+	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public AppUser() : this(string.Empty, string.Empty, string.Empty, [], true) { }
+	public Author() : this(string.Empty, string.Empty, string.Empty, [], true) { }
 
 	/// <summary>
-	///   Initializes a new instance of the <see cref="AppUser" /> class.
+	///   Initializes a new instance of the <see cref="Author" /> class.
 	/// </summary>
 	/// <param name="id">The users Id</param>
 	/// <param name="userName">The username of the user.</param>
 	/// <param name="email">The email address of the user.</param>
 	/// <param name="roles">The list of roles assigned to the user.</param>
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
-	public AppUser(string id, string userName, string email, List<string> roles, bool skipValidation = false)
+	public Author(string id, string userName, string email, List<string> roles, bool skipValidation = false)
 	{
 		Id = id;
 		UserName = userName;
@@ -65,9 +65,9 @@ public class AppUser
 	public List<string> Roles { get; set; }
 
 	/// <summary>
-	///   Gets an empty instance of AppUser with default values.
+	///   Gets an empty instance of Author with default values.
 	/// </summary>
-	public static AppUser Empty => new(string.Empty, string.Empty, string.Empty, [], true);
+	public static Author Empty => new(string.Empty, string.Empty, string.Empty, [], true);
 
 	/// <summary>
 	///   Updates the user's information.
@@ -100,4 +100,5 @@ public class AppUser
 		var validator = new AppUserValidator();
 		validator.ValidateAndThrow(this);
 	}
+
 }

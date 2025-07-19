@@ -19,7 +19,9 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public ArticleDto() : this(ObjectId.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, AppUserDto.Empty, CategoryDto.Empty, DateTime.MinValue, null, false, null, true) { }
+	public ArticleDto() : this(Guid.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty,
+			Author.Empty, Category.Empty, DateTime.MinValue, null, false, null, true) { }
+
 	/// <summary>
 	///   Initializes a new instance of the <see cref="ArticleDto" /> class.
 	/// </summary>
@@ -38,14 +40,14 @@ public sealed class ArticleDto
 	/// <param name="skipValidation">If true, skips validation on construction.</param>
 	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	public ArticleDto(
-			ObjectId id,
+			Guid id,
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			AppUserDto author,
-			CategoryDto category,
+			Author author,
+			Category category,
 			DateTime createdOn,
 			DateTime? modifiedOn,
 			bool isPublished,
@@ -74,7 +76,7 @@ public sealed class ArticleDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the article.
 	/// </summary>
-	public ObjectId Id { get; set; }
+	public Guid Id { get; set; }
 
 	/// <summary>
 	///   Gets or sets the title of the article.
@@ -110,17 +112,18 @@ public sealed class ArticleDto
 	///   Gets or sets the author information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public AppUserDto Author { get; set; }
+	public Author Author { get; set; }
 
 	/// <summary>
 	///   Gets or sets the category information of the article.
 	///   See <see cref="ArticleDtoValidator" /> for validation rules.
 	/// </summary>
-	public CategoryDto Category { get; set; }
+	public Category Category { get; set; }
 
 	/// <summary>
 	///   Gets the date and time when this entity was created.
-	/// </summary>)]
+	/// </summary>
+	/// )]
 	[Display(Name = "Created On")]
 	public DateTime CreatedOn { get; set; }
 
@@ -152,14 +155,14 @@ public sealed class ArticleDto
 	/// </summary>
 	public static ArticleDto Empty { get; } =
 		new(
-				ObjectId.Empty,
+				Guid.Empty,
 				string.Empty,
 				string.Empty,
 				string.Empty,
 				string.Empty,
 				string.Empty,
-				AppUserDto.Empty,
-				CategoryDto.Empty,
+				Author.Empty,
+				Category.Empty,
 				DateTime.MinValue,
 				null,
 				false,

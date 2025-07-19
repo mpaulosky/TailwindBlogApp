@@ -10,6 +10,7 @@
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
+global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Threading;
 global using System.Threading.Tasks;
 global using System.Web;
@@ -30,5 +31,7 @@ global using Domain.Enums;
 global using Domain.Helpers;
 global using Domain.Interfaces;
 global using Domain.Validators;
+
+global using Microsoft.EntityFrameworkCore;
 
 global using ValidationException = FluentValidation.ValidationException;

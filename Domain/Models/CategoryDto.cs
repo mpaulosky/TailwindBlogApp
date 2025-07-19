@@ -18,7 +18,8 @@ public class CategoryDto
 	/// <summary>
 	///   Parameterless constructor for serialization and test data generation.
 	/// </summary>
-	public CategoryDto() : this(ObjectId.Empty, string.Empty, DateTime.MinValue, null, true) { }
+	public CategoryDto() : this(Guid.Empty, string.Empty, DateTime.MinValue, null, true) { }
+
 	/// <summary>
 	///   Initializes a new instance of the <see cref="CategoryDto" /> class.
 	/// </summary>
@@ -29,7 +30,7 @@ public class CategoryDto
 	/// <param name="createdOn"></param>
 	/// <exception cref="ValidationException">Thrown when validation fails</exception>
 	public CategoryDto(
-			ObjectId id,
+			Guid id,
 			string name,
 			DateTime createdOn,
 			DateTime? modifiedOn,
@@ -49,7 +50,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets or sets the unique identifier for the category.
 	/// </summary>
-	public ObjectId Id { get; set; }
+	public Guid Id { get; set; }
 
 	/// <summary>
 	///   Gets the name of the category.
@@ -76,7 +77,7 @@ public class CategoryDto
 	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
-	public static CategoryDto Empty => new(ObjectId.Empty, string.Empty, DateTime.MinValue, null, true);
+	public static CategoryDto Empty => new(Guid.Empty, string.Empty, DateTime.MinValue, null, true);
 
 	/// <summary>
 	///   Validates the current state of the category.

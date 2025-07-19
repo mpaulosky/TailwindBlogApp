@@ -51,7 +51,7 @@ public static class FakeAppUserDto
 		const int seed = 621;
 
 		var fake = new Faker<AppUserDto>()
-				.RuleFor(x => x.Id, ObjectId.GenerateNewId().ToString())
+				.RuleFor(x => x.Id, Guid.CreateVersion7().ToString())
 				.RuleFor(x => x.UserName, f => f.Name.FullName())
 				.RuleFor(x => x.Email, (f, u) => f.Internet.Email(u.UserName))
 				.RuleFor(x => x.Roles, f => [f.Random.Enum<Roles>().ToString()]);

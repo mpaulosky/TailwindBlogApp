@@ -22,28 +22,8 @@ public class EditTests : BunitContext
 	public EditTests()
 	{
 
+		Services.AddScoped<CascadingAuthenticationState>();
 		Services.AddSingleton(_categoryServiceSub);
-
-	}
-
-	[Fact]
-	public void Renders_Loading_Spinner_Initially()
-	{
-
-		// Arrange
-		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
-		_categoryServiceSub.GetAsync(Arg.Any<Guid>()).Returns(_ => tcs.Task);
-
-		// Act
-		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, Guid.CreateVersion7()));
-
-		// Assert
-		cut.Markup.Should().Contain("animate-spin");
-		cut.Markup.Should().Contain("_Edit Categories");
-
-		// Complete the service call to avoid test hang
-		tcs.SetResult(Result.Ok(CategoryDto.Empty));
 
 	}
 
@@ -52,8 +32,9 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryId = Guid.CreateVersion7();
-		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
+		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Category not found"));
 
 		// Act
 		var cut = Render<Edit>(parameters => parameters
@@ -63,8 +44,8 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Category not found or has been deleted");
-		cut.Markup.Should().Contain("Return to categories");
+		cut.Markup.Should().Contain("Category not found");
+		cut.Markup.Should().Contain("Edit Category");
 
 	}
 
@@ -73,6 +54,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -84,11 +66,14 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("_Edit Categories");
-		cut.Markup.Should().Contain("Update the category information");
+		cut.Markup.Should().Contain("Edit Category");
+		cut.Markup.Should().Contain("Category Name");
+		cut.Markup.Should().Contain("Save Changes");
+		cut.Markup.Should().Contain("Cancel");
+		cut.Markup.Should().NotContain("animate-spin");
+		cut.Markup.Should().NotContain("Loading...");
+		cut.Markup.Should().Contain(categoryDto.Name);
 		cut.Find("form").Should().NotBeNull();
-		cut.Find("#name").Should().NotBeNull();
-		cut.Find("button[type='submit']").Should().NotBeNull();
 
 	}
 
@@ -97,6 +82,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -119,6 +105,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -136,7 +123,7 @@ public class EditTests : BunitContext
 		form.Submit();
 
 		// Assert
-		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Name is required</div>""");
+		cut.Markup.Should().Contain("Name is required");
 
 	}
 
@@ -145,6 +132,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
@@ -173,6 +161,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Fail("Update failed"));
@@ -194,34 +183,35 @@ public class EditTests : BunitContext
 	}
 
 	[Fact]
-	public void Disables_Submit_Button_When_Submitting()
+	public async Task Disables_Submit_Button_When_Submitting()
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
+		// Simulate a long-running update operation
 		var tcs = new TaskCompletionSource<Result>();
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(_ => tcs.Task);
 
-		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
+		var cut = Render<Edit>(parameters => parameters.Add(p => p.Id, categoryDto.Id));
+		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"));
 
-		// Wait for the component to finish loading
-		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+		// Change input and submit form
+		var nameInput = cut.Find("#name");
+		await cut.InvokeAsync(() => nameInput.Change("Updated Name"));
+		var submitTask = cut.InvokeAsync(() => cut.Find("form").Submit());
 
-		var form = cut.Find("form");
+		// Assert: submit button is disabled and text is 'Updating...'
 		var submitButton = cut.Find("button[type='submit']");
-
-		// Act
-		form.Submit();
-
-		// Assert
 		submitButton.HasAttribute("disabled").Should().BeTrue();
-		cut.Markup.Should().Contain("Saving...");
+		submitButton.TextContent.Trim().Should().Be("Updating...");
 
-		// Complete the task to avoid test hang
+		// Allow async submit to finish, don't forget this!
 		tcs.SetResult(Result.Ok());
+		await submitTask;
+
 
 	}
 
@@ -230,6 +220,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -242,6 +233,7 @@ public class EditTests : BunitContext
 		// Assert
 		cut.Markup.Should().Contain("Save Changes");
 		cut.Markup.Should().NotContain("Saving...");
+		cut.Markup.Should().Contain("Cancel");
 
 	}
 
@@ -250,6 +242,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -258,11 +251,11 @@ public class EditTests : BunitContext
 
 		// Wait for the component to finish loading
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
+		var cancelButton = cut.Find("button[type='button']");
 
 		// Assert
-		var cancelLink = cut.Find("a[href='/categories']");
-		cancelLink.Should().NotBeNull();
-		cancelLink.TextContent.Should().Contain("Cancel");
+		cancelButton.Should().NotBeNull();
+		cancelButton.TextContent.Should().Contain("Cancel");
 
 	}
 
@@ -271,6 +264,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryId = Guid.CreateVersion7();
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		categoryDto.Id = categoryId;
@@ -294,6 +288,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		_categoryServiceSub.GetAsync(Guid.Empty).Returns(Result<CategoryDto>.Fail("Invalid ID"));
 
 		// Act
@@ -304,7 +299,7 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("Category not found or has been deleted");
+		cut.Markup.Should().Contain("Category not found");
 
 	}
 
@@ -313,6 +308,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
@@ -324,34 +320,10 @@ public class EditTests : BunitContext
 		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
 
 		// Assert
-		cut.Markup.Should().Contain("_Edit Categories");
-		cut.Markup.Should().Contain("Update the category information");
-
-	}
-
-	[Fact]
-	public void Renders_Correct_Form_Structure()
-	{
-
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		// Act
-		var cut = Render<Edit>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Wait for the component to finish loading
-		cut.WaitForState(() => !cut.Markup.Contains("animate-spin"), TimeSpan.FromSeconds(5));
-
-		// Assert
-		var form = cut.Find("form");
-		var nameLabel = cut.Find("label[for='name']");
-		var nameInput = cut.Find("#name");
-
-		form.Should().NotBeNull();
-		nameLabel.TextContent.Should().Contain("Categories Name");
-		nameInput.GetAttribute("class").Should().Contain("w-full px-3 py-2 border");
+		cut.Markup.Should().Contain("Edit Category");
+		cut.Markup.Should().Contain("Category Name");
+		cut.Markup.Should().Contain("Save Changes");
+		cut.Markup.Should().Contain("Cancel");
 
 	}
 
@@ -360,6 +332,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 		_categoryServiceSub.UpdateAsync(Arg.Any<CategoryDto>()).Returns(Result.Ok());
@@ -385,6 +358,7 @@ public class EditTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryId = Guid.CreateVersion7();
 		_categoryServiceSub.GetAsync(categoryId).Returns(Result<CategoryDto>.Fail("Not found"));
 

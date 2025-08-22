@@ -7,6 +7,8 @@
 // Project Name :  Persistence.Postgres
 // =======================================================
 
+using Persistence.Postgres.Repositories;
+
 namespace Persistence.Postgres;
 
 public class RegisterPostgresServices : IRegisterServices
@@ -24,7 +26,10 @@ public class RegisterPostgresServices : IRegisterServices
 		});
 
 		// Register services
-		host.Services.AddScoped<ICacheService, CacheService>();
+		host.Services.AddMemoryCache();
+		host.Services.AddSingleton<ICacheService, CacheService>();
+		host.Services.AddTransient<IArticleRepository, ArticleRepository>();
+		host.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 		host.Services.AddScoped<IArticleService, ArticleService>();
 		host.Services.AddScoped<ICategoryService, CategoryService>();
 

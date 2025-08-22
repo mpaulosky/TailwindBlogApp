@@ -138,14 +138,14 @@ public class Article : Entity
 	/// </summary>
 	public bool IsPublished { get; set; }
 
-	public static Article Empty { get; } = new (
+	public static Article Empty { get; } = new(
 			string.Empty,
 			string.Empty,
 			string.Empty,
 			string.Empty,
 			string.Empty,
-			string.Empty,
-			Guid.Empty,
+			Author.Empty.Id,
+			Category.Empty.Id,
 			Category.Empty,
 			Author.Empty,
 			false,
@@ -158,42 +158,14 @@ public class Article : Entity
 	/// </summary>
 	public DateTime? PublishedOn { get; set; }
 
-	private void ValidateState()
-	{
-		if (string.IsNullOrWhiteSpace(Title))
-		{
-			throw new ValidationException("Title cannot be empty or whitespace.");
-		}
-
-		if (string.IsNullOrWhiteSpace(Content))
-		{
-			throw new ValidationException("Content cannot be empty or whitespace.");
-		}
-
-		if (string.IsNullOrWhiteSpace(UrlSlug))
-		{
-			throw new ValidationException("UrlSlug cannot be empty or whitespace.");
-		}
-
-		if (AuthorId == string.Empty)
-		{
-			throw new ValidationException("AuthorId is required.");
-		}
-
-		if (CategoryId == Guid.Empty)
-		{
-			throw new ValidationException("CategoryId is required.");
-		}
-	}
-
 	public void Update(
 			string title,
 			string introduction,
 			string content,
 			string coverImageUrl,
 			string urlSlug,
-			Author author,
 			Category category,
+			Guid categoryId,
 			bool isPublished = false,
 			DateTime? publishedOn = null)
 	{
@@ -202,8 +174,8 @@ public class Article : Entity
 		Content = content;
 		CoverImageUrl = coverImageUrl;
 		UrlSlug = urlSlug;
-		Author = author;
 		Category = category;
+		CategoryId = categoryId;
 		IsPublished = isPublished;
 		PublishedOn = isPublished ? publishedOn : null;
 
@@ -232,6 +204,33 @@ public class Article : Entity
 		IsPublished = false;
 		PublishedOn = null;
 		ModifiedOn = DateTime.UtcNow;
+	}
+
+	/// <summary>
+	///   Validates the state of the entity using FluentValidation.
+	/// </summary>
+	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
+	private void ValidateState()
+	{
+
+		var validator = new ArticleValidator();
+
+		var validationResult = validator.Validate(this);
+
+		if (!validationResult.IsValid)
+		{
+			throw new ValidationException(validationResult.Errors);
+		}
+
+	}
+
+	/// <summary>
+	///   Protected parameterless constructor for EF Core, Bogus, and serialization.
+	/// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+	public Article()
+	{
+		// For Bogus, EF, and serialization
 	}
 
 }

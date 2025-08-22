@@ -22,6 +22,7 @@ public class CreateTests : BunitContext
 	public CreateTests()
 	{
 
+		Services.AddScoped<CascadingAuthenticationState>();
 		Services.AddSingleton(_categoryServiceSub);
 
 	}
@@ -30,13 +31,19 @@ public class CreateTests : BunitContext
 	public void Renders_Form_And_Heading()
 	{
 
-		// Arrange & Act
+		// Arrange
+		Helpers.SetAuthorization(this);
+
+		// Act
 		var cut = Render<Create>();
 
 		// Assert
-		cut.Markup.Should().Contain("_Create Categories");
+		cut.Markup.Should().Contain("Create Category");
+		cut.Markup.Should().Contain("Name");
+		cut.Markup.Should().Contain("Create");
+		cut.Markup.Should().Contain("Cancel");
 		cut.Find("form").Should().NotBeNull();
-		cut.Find("#name").Should().NotBeNull();
+		cut.Find("button[type='submit']").TextContent.Should().Contain("Save Changes");
 
 	}
 
@@ -45,6 +52,7 @@ public class CreateTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var cut = Render<Create>();
 		var form = cut.Find("form");
 
@@ -52,36 +60,38 @@ public class CreateTests : BunitContext
 		form.Submit();
 
 		// Assert
-		cut.Markup.Should().Contain("""<div class="text-red-500 text-sm mt-1">Name is required</div>""");
+		cut.Markup.Should().Contain("Name is required");
 
 	}
 
-	[Fact(Skip = "Skipping due to incomplete test case")]
+	[Fact]
 	public async Task Submits_Valid_Form_And_Navigates()
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
+		var navMan = Services.GetRequiredService<BunitNavigationManager>();
 		var cut = Render<Create>();
-		var nameInput = cut.Find("#name");
-		var form = cut.Find("form");
 
 		_categoryServiceSub.CreateAsync(Arg.Any<CategoryDto>())
 				.Returns(Task.FromResult(Result.Ok()));
 
 		// Act
-		await cut.InvokeAsync(() => nameInput.Change("Test"));
-		await cut.InvokeAsync(() => form.Submit());
+		await cut.InvokeAsync(() => cut.Find("#name").Change("Test Category"));
+		await cut.InvokeAsync(() => cut.Find("form").Submit());
 
 		// Assert
-		await _categoryServiceSub.Received(1).CreateAsync(Arg.Any<CategoryDto>());
+		await _categoryServiceSub.Received(1).CreateAsync(Arg.Is<CategoryDto>(dto => dto.Name == "Test Category"));
+		navMan.Uri.Should().EndWith("/categories");
 
 	}
 
-	[Fact(Skip = "Skipping due to incomplete test case")]
+	[Fact]
 	public async Task Shows_Error_Message_On_Service_Exception()
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");
 		var form = cut.Find("form");
@@ -98,10 +108,11 @@ public class CreateTests : BunitContext
 
 	}
 
-	[Fact(Skip = "Skipping due to incomplete test case")]
+	[Fact]
 	public void Disables_Submit_Button_While_Submitting()
 	{
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var cut = Render<Create>();
 		var nameInput = cut.Find("#name");
 		var form = cut.Find("form");
@@ -125,12 +136,18 @@ public class CreateTests : BunitContext
 	public void Cancel_Link_Navigates_To_Categories_List()
 	{
 		// Arrange
+		Helpers.SetAuthorization(this);
+		var navMan = Services.GetRequiredService<BunitNavigationManager>();
 		var cut = Render<Create>();
 
+		var cancelButton = cut.Find("button[type='button']");
+
+		// Act
+		cancelButton.Click();
+
 		// Assert
-		var cancelLink = cut.Find("a[href='/categories']");
-		cancelLink.Should().NotBeNull();
-		cancelLink.TextContent.Should().Contain("Cancel");
+		navMan.Uri.Should().EndWith("/categories");
+
 	}
 
 }

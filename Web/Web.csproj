@@ -8,40 +8,40 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Domain\Domain.csproj" />
-		<ProjectReference Include="..\Persistence.Postgres\Persistence.Postgres.csproj" />
-		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj" />
+		<ProjectReference Include="..\Domain\Domain.csproj"/>
+		<ProjectReference Include="..\Persistence.Postgres\Persistence.Postgres.csproj"/>
+		<ProjectReference Include="..\ServiceDefaults\ServiceDefaults.csproj"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Blazored.SessionStorage" />
-		<PackageReference Include="FluentValidation" />
-		<PackageReference Include="Mapster" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" />
-		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" />
-		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+		<PackageReference Include="Auth0.AspNetCore.Authentication"/>
+		<PackageReference Include="Blazored.SessionStorage"/>
+		<PackageReference Include="FluentValidation"/>
+		<PackageReference Include="Mapster"/>
+		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid"/>
+		<PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter"/>
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly"/>
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
-		<PackageReference Include="Syncfusion.Blazor" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="Web.Tests.Bunit" />
-		<InternalsVisibleTo Include="Architecture.Tests" />
+		<InternalsVisibleTo Include="Web.Tests.Bunit"/>
+		<InternalsVisibleTo Include="Architecture.Tests"/>
 	</ItemGroup>
 
 	<Target Name="BuildTailwind" BeforeTargets="Build">
-		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css" />
+		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run build:css"/>
 	</Target>
 
 	<Target Name="WatchTailwind" BeforeTargets="Build">
-		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css" />
+		<Exec WorkingDirectory="$(MSBuildProjectDirectory)" Command="npm run watch:css"/>
 	</Target>
 
 </Project>

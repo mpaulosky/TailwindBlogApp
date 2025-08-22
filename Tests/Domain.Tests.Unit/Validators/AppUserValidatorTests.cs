@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppUserValidatorTests.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// AppUser :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Domain.Tests.Unit
 // =======================================================
@@ -21,7 +21,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new Author
+		var user = new AppUser
 				{ Id = "1", UserName = string.Empty, Email = "test@email.com", Roles = ["Admin"] };
 
 		// Act
@@ -40,7 +40,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var dto = new Author
+		var dto = new AppUser
 				{ Id = "1", UserName = "user", Email = string.Empty, Roles = ["Admin"] };
 
 		// Act
@@ -59,7 +59,7 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new Author
+		var user = new AppUser
 				{ Id = "1", UserName = "user", Email = "not_an_email", Roles = ["Admin"] };
 
 		// Act
@@ -78,8 +78,8 @@ public class AppUserValidatorTests
 		// Arrange
 		var validator = new AppUserValidator();
 
-		var user = new Author
-				{ Id = "1", UserName = "user", Email = "test@email.com", Roles = ["Admin"] };
+		var user = new AppUser
+				{ Id = "12345", UserName = "user", Email = "test@email.com", Roles = ["Admin"] };
 
 		// Act
 		var result = validator.Validate(user);

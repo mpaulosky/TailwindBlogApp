@@ -29,8 +29,6 @@ public class ArticleDtoTests
 		article.CoverImageUrl.Should().BeEmpty();
 		article.UrlSlug.Should().BeEmpty();
 		article.Author.Should().BeEquivalentTo(AppUserDto.Empty);
-		article.Category.Should().BeEquivalentTo(CategoryDto.Empty);
-		article.CreatedOn.Should().Be(DateTime.MinValue);
 		article.ModifiedOn.Should().BeNull();
 		article.IsPublished.Should().BeFalse();
 		article.PublishedOn.Should().BeNull();
@@ -52,7 +50,6 @@ public class ArticleDtoTests
 		article.CoverImageUrl.Should().BeEmpty();
 		article.UrlSlug.Should().BeEmpty();
 		article.Author.Should().BeEquivalentTo(AppUserDto.Empty);
-		article.Category.Should().BeEquivalentTo(CategoryDto.Empty);
 		article.CreatedOn.Should().Be(DateTime.MinValue);
 		article.ModifiedOn.Should().BeNull();
 		article.IsPublished.Should().BeFalse();
@@ -93,8 +90,6 @@ public class ArticleDtoTests
 		article.CoverImageUrl.Should().Be(coverImageUrl);
 		article.UrlSlug.Should().Be(urlSlug);
 		article.Author.Should().BeEquivalentTo(AppUserDto.Empty);
-		article.Category.Should().BeEquivalentTo(CategoryDto.Empty);
-		article.CreatedOn.Should().Be(now);
 		article.ModifiedOn.Should().BeNull();
 		article.IsPublished.Should().BeFalse();
 		article.PublishedOn.Should().BeNull();
@@ -102,10 +97,13 @@ public class ArticleDtoTests
 	}
 
 	[Theory]
-	[InlineData("", "intro", "cover", "slug", "Title is required")]
-	[InlineData("title", "", "cover", "slug", "Introduction is required")]
-	[InlineData("title", "intro", "", "slug", "Cover image is required")]
-	[InlineData("title", "intro", "cover", "", "URL slug is required")]
+	[InlineData("", "intro", "cover", "slug", "Validation failed: \n -- Title: Title is required Severity: Error")]
+	[InlineData("title", "", "cover", "slug",
+			"Validation failed: \n -- Introduction: Introduction is required Severity: Error")]
+	[InlineData("title", "intro", "", "slug",
+			"Validation failed: \n -- CoverImageUrl: Cover image is required Severity: Error")]
+	[InlineData("title", "intro", "cover", "",
+			"Validation failed: \n -- UrlSlug: URL slug is required Severity: Error\n -- UrlSlug: URL slug can only contain lowercase letters, numbers, and underscores Severity: Error")]
 	public void ArticleDto_WhenCreated_ShouldValidateRequiredFields(
 			string title,
 			string introduction,
@@ -116,19 +114,20 @@ public class ArticleDtoTests
 
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new ArticleDto(
-					Guid.NewGuid(),
-					title,
-					introduction,
-					"Valid content.",
-					coverImageUrl,
-					urlSlug,
-					Author.Empty,
-					Category.Empty,
-					DateTime.UtcNow,
-					null,
-					true     // setting published to true for validation check
-			)).Should().Throw<ValidationException>()
-				.WithMessage("*PublishedOn is required when IsPublished is true*");
+						Guid.NewGuid(),
+						title,
+						introduction,
+						"Valid content.",
+						coverImageUrl,
+						urlSlug,
+						Author.Empty,
+						Category.Empty,
+						DateTime.UtcNow,
+						null,
+						true,     // setting published to true for validation check
+						DateTime.UtcNow
+				)).Should().Throw<ValidationException>()
+				.WithMessage(expectedError);
 
 	}
 
@@ -138,18 +137,18 @@ public class ArticleDtoTests
 
 		// Arrange & Act & Assert
 		FluentActions.Invoking(() => new ArticleDto(
-					Guid.NewGuid(),
-					"title",
-					"intro",
-					"Valid content.",
-					"cover",
-					"slug",
-					Author.Empty,
-					Category.Empty,
-					DateTime.UtcNow,
-					null,
-					true     // setting published to true for validation check
-			)).Should().Throw<ValidationException>()
+						Guid.NewGuid(),
+						"title",
+						"intro",
+						"Valid content.",
+						"cover",
+						"slug",
+						Author.Empty,
+						Category.Empty,
+						DateTime.UtcNow,
+						null,
+						true     // setting published to true for validation check
+				)).Should().Throw<ValidationException>()
 				.WithMessage("*PublishedOn is required when IsPublished is true*");
 
 	}

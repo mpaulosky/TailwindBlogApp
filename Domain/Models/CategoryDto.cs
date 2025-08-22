@@ -70,11 +70,6 @@ public class CategoryDto
 	public DateTime? ModifiedOn { get; set; }
 
 	/// <summary>
-	///   Gets or sets a value indicating whether the article is marked as deleted.
-	/// </summary>
-	public bool Archived { get; set; }
-
-	/// <summary>
 	///   Gets an empty category instance.
 	/// </summary>
 	public static CategoryDto Empty => new(Guid.Empty, string.Empty, DateTime.MinValue, null, true);

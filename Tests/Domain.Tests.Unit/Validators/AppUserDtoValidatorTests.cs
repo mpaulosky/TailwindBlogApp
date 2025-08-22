@@ -41,7 +41,7 @@ public class AppUserDtoValidatorTests
 		var validator = new AppUserDtoValidator();
 
 		var dto = new AppUserDto
-				{ Id = "1", UserName = "user", Email = String.Empty, Roles = ["Admin"] };
+				{ Id = "1", UserName = "user", Email = string.Empty, Roles = ["Admin"] };
 
 		// Act
 		var result = validator.Validate(dto);
@@ -79,7 +79,7 @@ public class AppUserDtoValidatorTests
 		var validator = new AppUserDtoValidator();
 
 		var dto = new AppUserDto
-				{ Id = "1", UserName = "user", Email = "test@email.com", Roles = ["Admin"] };
+				{ Id = "12345", UserName = "user", Email = "test@email.com", Roles = ["Admin"] };
 
 		// Act
 		var result = validator.Validate(dto);

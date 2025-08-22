@@ -7,7 +7,6 @@
 // Project Name :  Web.Tests.Bunit
 // =======================================================
 
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Http;
 
 namespace Web.Components.Pages;
@@ -50,7 +49,7 @@ public class ErrorPageTest : BunitContext
 
 		// Simulate a request ID being set
 		cut.Instance.GetType().GetField("_requestId",
-						System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+						BindingFlags.NonPublic | BindingFlags.Instance)!
 				.SetValue(cut.Instance, "REQ-12345");
 
 		cut.Render();
@@ -60,7 +59,7 @@ public class ErrorPageTest : BunitContext
 		cut.Markup.Should().Contain("REQ-12345");
 
 	}
-	
+
 	[Fact]
 	public void ErrorPage_Uses_HttpContext_If_Provided()
 	{
@@ -78,10 +77,10 @@ public class ErrorPageTest : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain("Test-Trace-Id");
-		
+
 	}
 
-	
+
 	[Fact]
 	public void ErrorPage_Should_Not_Render_RequestId_When_Absent()
 	{
@@ -91,7 +90,7 @@ public class ErrorPageTest : BunitContext
 
 		// Simulate no request ID
 		cut.Instance.GetType().GetField("_requestId",
-						System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+						BindingFlags.NonPublic | BindingFlags.Instance)!
 				.SetValue(cut.Instance, null);
 
 		cut.Render();

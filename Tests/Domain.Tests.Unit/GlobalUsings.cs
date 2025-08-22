@@ -21,4 +21,6 @@ global using Domain.Fakes;
 global using Domain.Helpers;
 global using Domain.Models;
 
+global using NSubstitute;
+
 global using Xunit;

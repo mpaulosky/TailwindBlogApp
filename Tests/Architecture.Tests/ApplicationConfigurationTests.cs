@@ -4,7 +4,7 @@
 // Project Name:  Architecture.Tests
 // =======================================================
 
-namespace Architecture.Tests;
+namespace Architecture;
 
 [ExcludeFromCodeCoverage]
 public class ApplicationConfigurationTests

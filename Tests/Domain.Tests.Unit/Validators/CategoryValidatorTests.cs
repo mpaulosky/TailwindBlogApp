@@ -40,7 +40,7 @@ public class CategoryValidatorTests
 	}
 
 	[Theory]
-	[InlineData("", "Name is required")]
+	[InlineData("", "Name is required.")]
 	public void Validate_WhenRequiredPropertyMissing_ShouldHaveError(
 			string name,
 			string expectedError)

@@ -2,9 +2,9 @@
 
 	<div>Author: @Article.Author.UserName</div>
 
-	<div>_Created: @Article.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
+	<div>Created: @Article.CreatedOn.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
 
-	@if(@Article.IsPublished)
+	@if (Article.IsPublished)
 	{
 		<div>Published: @Article.PublishedOn?.ToString("M/d/yyyy", CultureInfo.InvariantCulture)</div>
 	}
@@ -15,7 +15,7 @@
 
 	<div>Categories: @Article.Category.Name</div>
 
-	</div>
+</div>
 
 @code {
 

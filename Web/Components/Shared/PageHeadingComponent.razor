@@ -1,31 +1,36 @@
 <PageTitle>@HeaderText</PageTitle>
 
-<header 
-	class="mx-auto max-w-7xl mb-6
-				px-4 py-4 sm:px-4 md:px-6 lg:px-8 
-				rounded-md shadow-md 
-				shadow-blue-500">
+<header class="mx-auto 
+	max-w-7xl 
+	mb-6
+	p-1 
+	sm:px-4 
+	md:px-6 
+	lg:px-8 
+	rounded-md 
+	shadow-md 
+	shadow-blue-500">
 
-		@switch (Level)
-		{
-			case "1":
+	@switch (Level)
+	{
+		case "1":
 
-				<h1 class=@($"text-3xl font-bold tracking-tight py-4 {TextColorClass}")>@HeaderText</h1>
+			<h1 class=@($"text-3xl font-bold tracking-tight {TextColorClass}")>@HeaderText</h1>
 
-				break;
+			break;
 
-			case "2":
+		case "2":
 
-				<h2 class=@($"text-2xl font-bold tracking-tight py-4 {TextColorClass}")>@HeaderText</h2>
+			<h2 class=@($"text-2xl font-bold tracking-tight {TextColorClass}")>@HeaderText</h2>
 
-				break;
+			break;
 
-			case "3":
+		case "3":
 
-				<h3 class=@($"text-1xl font-bold tracking-tight py-4 {TextColorClass}")>@HeaderText</h3>
+			<h3 class=@($"text-1xl font-bold tracking-tight {TextColorClass}")>@HeaderText</h3>
 
-				break;
-		}
+			break;
+	}
 
 </header>
 

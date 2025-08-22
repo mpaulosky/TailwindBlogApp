@@ -14,10 +14,12 @@ public class ArticleDtoValidator : AbstractValidator<ArticleDto>
 
 	public ArticleDtoValidator()
 	{
+
 		RuleFor(x => x.Id)
-				.NotNull()
-				.WithMessage("Id is required");
-		
+				.NotNull().WithMessage("Id is required")
+				.Must(id => Guid.TryParse(id.ToString(), out _))
+				.WithMessage("Id must be a valid GUID");
+
 		RuleFor(x => x.Title)
 				.NotEmpty()
 				.WithMessage("Title is required")

@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppUserDtoValidator.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// AppUser :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Domain
 // =======================================================
@@ -21,7 +21,8 @@ public class AppUserDtoValidator : AbstractValidator<AppUserDto>
 	public AppUserDtoValidator()
 	{
 		RuleFor(x => x.Id)
-				.NotEmpty().WithMessage("User ID is required");
+				.NotEmpty().WithMessage("User ID is required")
+				.Length(3, 50).WithMessage("User ID must be between 3 and 50 characters");
 
 		RuleFor(x => x.UserName)
 				.NotEmpty().WithMessage("Username is required")

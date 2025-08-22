@@ -23,26 +23,7 @@ public class DetailsTests : BunitContext
 	{
 
 		Services.AddSingleton(_categoryServiceSub);
-
-	}
-
-	[Fact]
-	public void RendersLoadingSpinner_WhenIsLoading()
-	{
-
-		// Arrange
-		var tcs = new TaskCompletionSource<Result<CategoryDto>>();
-		_categoryServiceSub.GetAsync(Arg.Any<Guid>()).Returns(_ => tcs.Task);
-
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, Guid.CreateVersion7()));
-
-		// Act & Assert
-		// While the service task is not completed, the component should be loading
-		cut.Markup.Should().Contain("animate-spin");
-
-		// Complete the service call to avoid test hang
-		tcs.SetResult(Result.Ok(CategoryDto.Empty));
+		Services.AddCascadingAuthenticationState();
 
 	}
 
@@ -51,6 +32,8 @@ public class DetailsTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
+
 		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, Guid.CreateVersion7()));
 
@@ -60,8 +43,7 @@ public class DetailsTests : BunitContext
 		cut.Render();
 
 		// Assert
-		cut.Markup.Should().Contain("Categories not found");
-		cut.Markup.Should().Contain("Return to categories");
+		cut.Markup.Should().Contain("Category not found");
 
 	}
 
@@ -70,49 +52,87 @@ public class DetailsTests : BunitContext
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
 		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
-		// Simulate loading complete and category loaded
+		// Simulate loading complete and article loaded
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
 		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
 		cut.Render();
 
 		// Assert
 		cut.Markup.Should().Contain(categoryDto.Name);
+		cut.Markup.Should().Contain("Created On: 1/1/2025");
+		cut.Markup.Should().Contain("Modified On: 1/1/2025");
+		cut.Find("button.btn-secondary").Should().NotBeNull();
+		cut.Find("button.btn-light").Should().NotBeNull();
+
 	}
 
 	[Fact]
-	public async Task CallsCategoryService_OnInitializedAsync()
+	public void HasCorrectNavigationButtons()
 	{
 
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
+
+		var cut = Render<Details>(parameters => parameters
+				.Add(p => p.Id, categoryDto.Id));
+
+		// Simulate loading complete
+		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
+		cut.Render();
+
+		// Assert
+		cut.Find("button.btn-secondary").Should().NotBeNull();
+		cut.Find("button.btn-light").Should().NotBeNull();
+
+	}
+
+	[Fact]
+	public void NavigatesToEditPage_WhenEditButtonClicked()
+	{
+
+		// Arrange
+		Helpers.SetAuthorization(this);
+		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
+		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
+
+		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
+
+		var cut = Render<Details>(parameters => parameters
+				.Add(p => p.Id, categoryDto.Id));
+
+		// Simulate loading complete
+		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
+		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
+		cut.Render();
 
 		// Act
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
+		cut.Find("button.btn-secondary").Click();
 
 		// Assert
-		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<Guid>(id => id == categoryDto.Id));
-
-		cut.Instance.GetType().GetProperty("_category")?.GetValue(cut.Instance)
-				.Should().Be(categoryDto);
+		navigationManager.Uri.Should().EndWith($"/categories/edit/{categoryDto.Id}");
 
 	}
 
 	[Fact]
-	public void DisplaysNever_WhenModifiedOnIsNull()
+	public void NavigatesToListPage_WhenBackButtonClicked()
 	{
+
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.ModifiedOn = null;
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
+
+		var navigationManager = Services.GetRequiredService<BunitNavigationManager>();
 
 		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
@@ -122,116 +142,21 @@ public class DetailsTests : BunitContext
 		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
 		cut.Render();
 
+		// Act
+		cut.Find("button.btn-light").Click();
+
 		// Assert
-		cut.Markup.Should().Contain("Never");
+		navigationManager.Uri.Should().EndWith("/categories");
 	}
 
 	[Fact]
-	public void DisplaysModifiedOn_WhenPresent()
+	public void HandlesEmptyGuid()
 	{
+
 		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.ModifiedOn = DateTime.UtcNow;
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
+		Helpers.SetAuthorization(this);
+		_categoryServiceSub.GetAsync(Guid.Empty).Returns(Result.Fail<CategoryDto>("Not found"));
 
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
-		// Assert
-		cut.Markup.Should().Contain(categoryDto.ModifiedOn.Value.ToLocalTime().ToString("g"));
-	}
-
-	[Fact]
-	public void DisplaysCorrectStatus_WhenActive()
-	{
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.Archived = false;
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
-		// Assert
-		cut.Markup.Should().Contain("Active");
-		cut.Find(".bg-green-100").Should().NotBeNull();
-	}
-
-	[Fact]
-	public void DisplaysCorrectStatus_WhenArchived()
-	{
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.Archived = true;
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
-		// Assert
-		cut.Markup.Should().Contain("Archived");
-		cut.Find(".bg-red-100").Should().NotBeNull();
-	}
-
-	[Fact]
-	public void HasCorrectNavigationLinks()
-	{
-		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
-
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
-		// Assert
-		cut.Find("a[href='/categories']").Should().NotBeNull();
-		cut.Find($"a[href='/categories/edit/{categoryDto.Id}']").Should().NotBeNull();
-	}
-
-	[Fact]
-	public void HandlesServiceException_Gracefully()
-	{
-		// Arrange
-		var categoryId = Guid.CreateVersion7();
-
-		_categoryServiceSub.GetAsync(categoryId)
-				.Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
-
-		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryId));
-
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Render();
-
-		// Assert
-		cut.Markup.Should().Contain("Categories not found or has been deleted");
-	}
-
-	[Fact]
-	public void HandlesEmptyObjectId()
-	{
-		// Arrange
 		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, Guid.Empty));
 
@@ -240,49 +165,49 @@ public class DetailsTests : BunitContext
 		cut.Render();
 
 		// Assert
-		cut.Markup.Should().Contain("Categories not found or has been deleted");
+		cut.Markup.Should().Contain("Category not found");
+
 	}
 
 	[Fact]
-	public void FormatsDates_InLocalTimeZone()
+	public void HandlesServiceException_Gracefully()
 	{
+
 		// Arrange
-		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
-		categoryDto.CreatedOn = DateTime.UtcNow.AddDays(-1);
-		categoryDto.ModifiedOn = DateTime.UtcNow;
-		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
+		Helpers.SetAuthorization(this);
+		var articleId = Guid.CreateVersion7();
+
+		_categoryServiceSub.GetAsync(articleId)
+				.Returns(Task.FromException<Result<CategoryDto>>(new Exception("Service error")));
 
 		var cut = Render<Details>(parameters => parameters
-				.Add(p => p.Id, categoryDto.Id));
+				.Add(p => p.Id, articleId));
 
 		// Simulate loading complete
 		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
 		cut.Render();
 
 		// Assert
-		cut.Markup.Should().Contain(categoryDto.CreatedOn.ToLocalTime().ToString("g"));
-		cut.Markup.Should().Contain(categoryDto.ModifiedOn.Value.ToLocalTime().ToString("g"));
+		cut.Markup.Should().Contain("Category not found");
+
 	}
 
 	[Fact]
-	public void Shows_Metadata_Section_WhenDisplayingCategory()
+	public async Task CallsCategoryService_OnInitializedAsync()
 	{
+
 		// Arrange
+		Helpers.SetAuthorization(this);
 		var categoryDto = FakeCategoryDto.GetNewCategoryDto(true);
 		_categoryServiceSub.GetAsync(categoryDto.Id).Returns(Result.Ok(categoryDto));
 
+		// Act
 		var cut = Render<Details>(parameters => parameters
 				.Add(p => p.Id, categoryDto.Id));
 
-		// Simulate loading complete
-		cut.Instance.GetType().GetProperty("_isLoading")?.SetValue(cut.Instance, false);
-		cut.Instance.GetType().GetProperty("_category")?.SetValue(cut.Instance, categoryDto);
-		cut.Render();
-
 		// Assert
-		cut.FindAll("dt").Count.Should().BeGreaterThan(0); // Has metadata labels
-		cut.FindAll("dd").Count.Should().BeGreaterThan(0); // Has metadata values
+		await _categoryServiceSub.Received(1).GetAsync(Arg.Is<Guid>(id => id == categoryDto.Id));
+
 	}
 
 }

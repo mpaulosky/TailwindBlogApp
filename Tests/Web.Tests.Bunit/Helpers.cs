@@ -9,6 +9,7 @@
 
 namespace Web;
 
+[ExcludeFromCodeCoverage]
 public static class Helpers
 {
 

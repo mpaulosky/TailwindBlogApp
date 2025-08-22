@@ -7,16 +7,20 @@
 // Project Name :  Architecture.Tests
 // =======================================================
 
-namespace Architecture.Tests;
+namespace Architecture;
 
 /// <summary>
-/// Extensions for architecture tests to help with common test patterns
+///   Extensions for architecture tests to help with common test patterns
 /// </summary>
 [ExcludeFromCodeCoverage]
 internal static class ArchitectureTestExtensions
 {
+
 	// Assembly helper
-	public static Assembly GetAssembly<T>() => typeof(T).Assembly;
+	public static Assembly GetAssembly<T>()
+	{
+		return typeof(T).Assembly;
+	}
 
 	// Dependency checks
 	public static bool HasDependencyOn(this string dependency, Assembly assembly)
@@ -59,10 +63,10 @@ internal static class ArchitectureTestExtensions
 
 		var forbiddenDependencies = new[]
 		{
-						$"{baseNamespace}.Infrastructure",
-						$"{baseNamespace}.Application",
-						$"{baseNamespace}.Web"
-				};
+				$"{baseNamespace}.Infrastructure",
+				$"{baseNamespace}.Application",
+				$"{baseNamespace}.Web"
+		};
 
 		// A clean architecture is violated if any domain types have forbidden dependencies
 		return !domainTypes.Any(t =>
@@ -77,6 +81,7 @@ internal static class ArchitectureTestExtensions
 		foreach (var prop in type.GetProperties())
 		{
 			referencedTypes.Add(prop.PropertyType);
+
 			if (prop.PropertyType.IsGenericType)
 			{
 				referencedTypes.UnionWith(prop.PropertyType.GetGenericArguments());
@@ -102,4 +107,5 @@ internal static class ArchitectureTestExtensions
 
 		return types.Any();
 	}
+
 }

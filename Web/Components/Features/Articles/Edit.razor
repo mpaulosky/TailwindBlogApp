@@ -1,58 +1,171 @@
-@page "/articles/edit/{slug}"
-@using Domain.Fakes
-@using Domain.Entities
+@page "/articles/edit/{id:guid}"
+
 @inject NavigationManager Navigation
+@inject IArticleService ArticleService
+@attribute [Authorize(Roles = "Admin,Author")]
 
-<PageHeadingComponent Title="Edit Article" />
+<PageHeadingComponent HeaderText="Edit Article" Level="1" TextColorClass="blue-500"/>
 
-@if (article is null)
+@if (_isLoading)
 {
-  <p>Article not found.</p>
+	<LoadingComponent/>
+}
+else if (_article is null)
+{
+	<p>Article not found.</p>
 }
 else
 {
-  <EditForm Model="article" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <div class="mb-3">
-      <label>Title</label>
-      <InputText class="form-control" @bind-Value="article.Title" />
-    </div>
-    <div class="mb-3">
-      <label>Introduction</label>
-      <InputText class="form-control" @bind-Value="article.Introduction" />
-    </div>
-    <div class="mb-3">
-      <label>Content</label>
-      <InputTextArea class="form-control" @bind-Value="article.Content" Rows="6" />
-    </div>
-    <div class="mb-3">
-      <label>Cover Image URL</label>
-      <InputText class="form-control" @bind-Value="article.CoverImageUrl" />
-    </div>
-    <div class="mb-3">
-      <label>Published</label>
-      <InputCheckbox class="form-check-input" @bind-Value="article.IsPublished" />
-    </div>
-    <button class="btn btn-primary" type="submit">Save</button>
-    <button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
-  </EditForm>
+	<EditForm Model="_article" OnValidSubmit="HandleValidSubmit">
+		<DataAnnotationsValidator/>
+		<ValidationSummary/>
+		@if (!string.IsNullOrEmpty(_errorMessage))
+		{
+			<div class="alert alert-danger">@_errorMessage</div>
+		}
+		<div class="mb-3">
+			<label>Title</label>
+			<InputText class="form-control" @bind-Value="_article.Title"/>
+		</div>
+		<div class="mb-3">
+			<label>Introduction</label>
+			<InputText class="form-control" @bind-Value="_article.Introduction"/>
+		</div>
+		<div class="mb-3">
+			<label>Content</label>
+			<InputTextArea class="form-control" @bind-Value="_article.Content" Rows="6"/>
+		</div>
+		<div class="mb-3">
+			<label>Cover Image URL</label>
+			<InputText class="form-control" @bind-Value="_article.CoverImageUrl"/>
+		</div>
+		<div class="mb-3">
+			<label>Published</label>
+			<InputCheckbox class="form-check-input" @bind-Value="_article.IsPublished"/>
+		</div>
+		<button class="btn btn-success" type="submit"
+						disabled="@_isSubmitting">@(_isSubmitting ? "Updating..." : "Edit")</button>
+		<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
+	</EditForm>
 }
 
 @code {
-  [Parameter] public string slug { get; set; }
-  private ArticleDto? article;
 
-  protected override void OnInitialized()
-  {
-    article = FakeArticleDto.GetArticleDtos(10).FirstOrDefault(a => a.UrlSlug == slug);
-  }
+	/// <summary>
+	///   Gets or sets the id of the article to edit.
+	/// </summary>
+	[Parameter]
+	public required Guid Id { get; set; }
 
-  private void HandleValidSubmit()
-  {
-    // TODO: Save changes to backend
-    Navigation.NavigateTo($"/articles/{slug}");
-  }
+	/// <summary>
+	///   Indicates whether the article is currently being loaded.
+	/// </summary>
+	private bool _isLoading = true;
 
-  private void GoToList() => Navigation.NavigateTo("/articles");
+	/// <summary>
+	///   Indicates whether the form is currently being submitted.
+	/// </summary>
+	private bool _isSubmitting;
+
+	/// <summary>
+	///   The article being edited, or null if not found.
+	/// </summary>
+	private ArticleDto? _article;
+
+	/// <summary>
+	///   Stores error messages for display in the UI.
+	/// </summary>
+	private string? _errorMessage;
+
+
+	/// <summary>
+	///   Initializes the component by loading the article data.
+	/// </summary>
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		try
+		{
+			// Guard against a null service or null task result from substitutes/mocks
+			var resultTask = ArticleService?.GetAsync(Id);
+
+			if (resultTask is null)
+			{
+				_article = null;
+				_errorMessage = _errorMessage ?? "Unable to load the article.";
+				_isLoading = false;
+
+				return;
+			}
+
+			var articleResult = await resultTask;
+
+			if (articleResult is not null && articleResult.Success)
+			{
+				_article = articleResult.Value;
+				_isLoading = false;
+			}
+			else
+			{
+				var error = articleResult?.Error ?? "An error occurred while fetching the article.";
+				Console.WriteLine(error);
+				_errorMessage = error;
+				_article = null;
+				_isLoading = false;
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex);
+			_errorMessage = "An unexpected error occurred while initializing the page.";
+			_article = null;
+			_isLoading = false;
+		}
+	}
+
+	/// <summary>
+	///   Handles the submission of the edit form when valid.
+	///   Updates the article and navigates back to the article detail page.
+	/// </summary>
+	private async Task HandleValidSubmit()
+	{
+
+		_isSubmitting = true;
+
+		var result = await ArticleService.UpdateAsync(_article);
+
+		if (result.Success)
+		{
+
+			Console.WriteLine("Category updated successfully.");
+
+			_isSubmitting = false;
+
+			_isLoading = false;
+
+			Navigation.NavigateTo("/categories");
+
+		}
+		else
+		{
+
+			Console.WriteLine(result.Error ?? "An error occurred while updating the article.");
+			_errorMessage = result.Error ?? "An error occurred while updating the article.";
+			_isSubmitting = false;
+			_isLoading = false;
+			StateHasChanged();
+
+		}
+
+	}
+
+	/// <summary>
+	///   Navigates the user back to the article's list page.
+	/// </summary>
+	private void GoToList()
+	{
+		Navigation.NavigateTo("/articles");
+	}
+
 }

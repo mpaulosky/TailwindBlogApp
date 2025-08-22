@@ -25,10 +25,10 @@ public class HomePageTest : BunitContext
 		const string expectedHtml =
 				"""
 				<header class="mx-auto max-w-7xl mb-6
-								px-4 py-4 sm:px-4 md:px-6 lg:px-8 
+								p-1 sm:px-4 md:px-6 lg:px-8 
 								rounded-md shadow-md 
 								shadow-blue-500">
-				  <h1 class="text-3xl font-bold tracking-tight text-gray-50 py-4">Home - TailwindBlog</h1>
+				  <h1 class="text-3xl font-bold tracking-tight text-gray-50">Home - TailwindBlog</h1>
 				</header>
 				<h1>Hello, world!</h1>
 				Welcome to your new app.

@@ -25,7 +25,9 @@ public class ArticleRepository : Repository<Article>, IArticleRepository
 	/// <param name="context">The Postgres database context.</param>
 	public ArticleRepository(PgContext? context) : base(context)
 	{
-		_context = context;
+
+		_context = context ?? throw new ArgumentNullException(nameof(context));
+
 	}
 
 	/// <summary>
@@ -38,6 +40,11 @@ public class ArticleRepository : Repository<Article>, IArticleRepository
 		if (string.IsNullOrWhiteSpace(entity.Id))
 		{
 			return Result.Fail<IEnumerable<Article>>("User ID cannot be empty");
+		}
+
+		if (_context == null)
+		{
+			return Result.Fail<IEnumerable<Article>>("Database context is not available");
 		}
 
 		var articles = await _context.Articles

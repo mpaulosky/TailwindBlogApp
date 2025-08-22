@@ -7,63 +7,23 @@
 // Project Name :  AppHost
 // =======================================================
 
-using AppHost;
-
 using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var testOnly = false;
-
-foreach (var arg in args)
-{
-	if (arg.StartsWith("--testonly"))
-	{
-		var parts = arg.Split('=');
-
-		if (parts.Length == 2 && bool.TryParse(parts[1], out var result))
+var pgServer = builder.AddPostgres(ServerName)
+		.WithLifetime(ContainerLifetime.Persistent)
+		.WithDataVolume($"{ServerName}-test-data")
+		.WithPgAdmin(config =>
 		{
-			testOnly = result;
-		}
-	}
-}
+			config.WithImageTag("latest");
+			config.WithLifetime(ContainerLifetime.Persistent);
+		});
 
-var (db, migrationSvc) = builder.AddPostgresServices(testOnly);
+var db = pgServer.AddDatabase(DatabaseName);
 
 builder.AddProject<Web>(WebApp)
-		.WithReference(db)
-		.WaitForCompletion(migrationSvc)
-		.WithRunE2eTestsCommand()
+		.WithReference(db).WaitFor(db)
 		.WithExternalHttpEndpoints();
 
-if (testOnly)
-{
-	// start the site with runasync and watch for a file to be created called 'stop-aspire' 
-	// to stop the site
-	var theSite = builder.Build();
-
-	var fileSystemWatcher = new FileSystemWatcher(".", "stop-aspire")
-	{
-			NotifyFilter = NotifyFilters.FileName | NotifyFilters.CreationTime
-	};
-
-	fileSystemWatcher.Created += async (sender, e) =>
-	{
-		if (e.Name == "stop-aspire")
-		{
-			Console.WriteLine("Stopping the site");
-			await theSite.StopAsync();
-			fileSystemWatcher.Dispose();
-		}
-	};
-
-	fileSystemWatcher.EnableRaisingEvents = true;
-
-	Console.WriteLine("Starting the site in test mode");
-	await theSite.RunAsync();
-
-}
-else
-{
-	builder.Build().Run();
-}
+builder.Build().Run();

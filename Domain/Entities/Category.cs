@@ -69,15 +69,21 @@ public class Category : Entity
 	}
 
 	/// <summary>
-	///   Validates the current state of the category.
+	///   Validates the state of the entity using FluentValidation.
 	/// </summary>
 	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
 	private void ValidateState()
 	{
-		if (string.IsNullOrWhiteSpace(Name))
+
+		var validator = new CategoryValidator();
+
+		var validationResult = validator.Validate(this);
+
+		if (!validationResult.IsValid)
 		{
-			throw new ValidationException("Category name cannot be empty or whitespace.");
+			throw new ValidationException(validationResult.Errors);
 		}
+
 	}
 
 }

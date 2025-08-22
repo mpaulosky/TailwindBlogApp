@@ -1,41 +1,88 @@
 @page "/categories"
-@using Domain.Entities
+
 @inject NavigationManager Navigation
+@inject ICategoryService CategoryService
+@attribute [Authorize(Roles = "Admin")]
 
-<PageHeadingComponent Title="Categories"/>
+<PageHeadingComponent HeaderText="Categories" Level="1" TextColorClass="blue-500"/>
 
-<SfGrid DataSource="_categories" AllowPaging="true" AllowSorting="true">
-	<GridColumns>
-		<GridColumn Field="Name" HeaderText="Name" Width="200" TextAlign="TextAlign.Left"/>
-		<GridColumn HeaderText="Actions" Width="150">
-			<Template Context="category">
-				<button class="btn btn-sm btn-primary" @onclick="() => GoToDetails(((Category)category).Id)">Details</button>
-				<button class="btn btn-sm btn-secondary" @onclick="() => GoToEdit(((Category)category).Id)">Edit</button>
-			</Template>
-		</GridColumn>
-	</GridColumns>
-</SfGrid>
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_categories is null || !_categories.Any())
+{
+	<div class="alert alert-info">
+		No categories available.
+		<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Category</button>
+	</div>
+}
+else
+{
+	<QuickGrid Class="table" Items="_categories" Pagination="_pagination">
+		<PropertyColumn Property="category => category.Name" Sortable="true"/>
+		<PropertyColumn Property="category => category.CreatedOn" Title="Created On" Format="{0:d}"/>
+		<PropertyColumn Property="category => category.ModifiedOn" Title="Modified On" Format="{0:d}"/>
 
-<button class="btn btn-success mt-3" @onclick="GoToCreate">Create New Category</button>
+		<TemplateColumn Context="category">
+			<a href="@($"categories/edit?id={category.Id}")">Edit</a> |
+			<a href="@($"categories/details?id={category.Id}")">Details</a> |
+			<a href="@($"categories/delete?id={category.Id}")">Delete</a>
+		</TemplateColumn>
+	</QuickGrid>
+}
 
 @code {
 
-	private readonly List<Category> _categories = FakeCategory.GetCategories(3, true);
+	/// <summary>
+	///   The list of categories displayed in the grid.
+	/// </summary>
+	private IQueryable<CategoryDto>? _categories;
 
-	private void GoToDetails(Guid id)
+	/// <summary>
+	///   Pagination state for the article's list.
+	/// </summary>
+	private readonly PaginationState _pagination = new()  { ItemsPerPage = 5 };
+
+	/// <summary>
+	///   Indicates whether the page is loading data.
+	/// </summary>
+	private bool _isLoading = true;
+
+	/// <summary>
+	///   Called when the component is initialized. Loads all categories for display.
+	/// </summary>
+	protected override void OnInitialized()
 	{
-		Navigation.NavigateTo($"/categories/{id}");
+
+		base.OnInitialized();
+
+		var result = CategoryService.GetAllAsync().Result;
+
+		if (result.Success)
+		{
+
+			_categories = result.Value?.AsQueryable() ?? null;
+
+		}
+		else
+		{
+
+			Console.WriteLine(result.Error ?? "An error occurred while fetching categories.");
+			_categories = null;
+
+		}
+
+		_isLoading = false;
+
 	}
 
-	private void GoToEdit(Guid id)
-	{
-		Navigation.NavigateTo($"/categories/edit/{id}");
-	}
-
+	/// <summary>
+	///   Navigates to the creation category page.
+	/// </summary>
 	private void GoToCreate()
 	{
 		Navigation.NavigateTo("/categories/create");
 	}
-
 
 }

@@ -7,12 +7,7 @@
 // Project Name :  Architecture.Tests
 // =======================================================
 
-using MyMediator;
-
-using Persistence.Postgres;
-using Persistence.Postgres.Migrations;
-
-namespace Architecture.Tests;
+namespace Architecture;
 
 [ExcludeFromCodeCoverage]
 public static class AssemblyReference

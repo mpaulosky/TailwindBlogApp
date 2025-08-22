@@ -1,24 +1,31 @@
-@page "/articles/{slug}"
+@page "/articles/{id:guid}"
+
 @inject NavigationManager Navigation
+@inject IArticleService ArticleService
+@attribute [Authorize(Roles = "Admin,Author")]
 
-<PageHeadingComponent Title="Article Details"/>
+<PageHeadingComponent HeaderText="Article Details" Level="1" TextColorClass="blue-500"/>
 
-@if (article is null)
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_article is null)
 {
 	<p>Article not found.</p>
 }
 else
 {
 	<div class="card">
-		<img src="@article.CoverImageUrl" alt="Cover" class="card-img-top" style="max-height:200px;object-fit:cover;"/>
+		<img src="@_article.CoverImageUrl" alt="Cover" class="card-img-top" style="max-height:200px;object-fit:cover;"/>
 		<div class="card-body">
-			<h2>@article.Title</h2>
-			<p>@article.Introduction</p>
-			<div>@((MarkupString)article.Content)</div>
-			<p><strong>Author:</strong> @(article.Author.UserName)</p>
-			<p><strong>Category:</strong> @article.Category.Name</p>
-			<p><strong>Published:</strong> @(article.IsPublished ? "Yes" : "No")</p>
-			<p><strong>Published On:</strong> @article.PublishedOn?.ToString("d")</p>
+			<h2>@_article.Title</h2>
+			<p>@_article.Introduction</p>
+			<div>@((MarkupString)_article.Content)</div>
+			<p><strong>Author:</strong> @(_article.Author.UserName)</p>
+			<p><strong>Category:</strong> @_article.Category.Name</p>
+			<p><strong>Published:</strong> @(_article.IsPublished ? "Yes" : "No")</p>
+			<p><strong>Published On:</strong> @_article.PublishedOn?.ToString("d")</p>
 			<button class="btn btn-secondary" @onclick="GoToEdit">Edit</button>
 			<button class="btn btn-light" @onclick="GoToList">Back to List</button>
 		</div>
@@ -27,20 +34,63 @@ else
 
 @code {
 
-	[Parameter] public string slug { get; set; }
+	/// <summary>
+	///   The unique identifier of the article to display.
+	/// </summary>
+	[Parameter]
+	public required Guid Id { get; set; }
 
-	private ArticleDto? article;
+	/// <summary>
+	///   The article data to be displayed on the page.
+	/// </summary>
+	private ArticleDto? _article;
 
-	protected override void OnInitialized()
+	/// <summary>
+	///   Indicates whether the component is currently loading data.
+	/// </summary>
+	private bool _isLoading = true;
+
+	/// <summary>
+	///   Initializes the component by loading the article data.
+	/// </summary>
+	protected override async Task OnInitializedAsync()
 	{
-		article = FakeArticleDto.GetArticleDtos(10).FirstOrDefault(a => a.UrlSlug == slug);
+		try
+		{
+			var result = await ArticleService.GetAsync(Id);
+
+			if (result.Success)
+			{
+				_article = result.Value;
+			}
+			else
+			{
+				Console.WriteLine(result.Error ?? "An error occurred while fetching the article.");
+				_article = null;
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Exception occurred: {ex.Message}");
+			_article = null;
+		}
+		finally
+		{
+			_isLoading = false;
+		}
 	}
 
+	/// <summary>
+	///   Navigates to the edit page for the current article.
+	/// </summary>
 	private void GoToEdit()
 	{
-		Navigation.NavigateTo($"/articles/edit/{slug}");
+		Navigation.NavigateTo($"/articles/edit/{Id}");
 	}
 
+	/// <summary>
+	///   Navigates back to the articles list page.
+	/// </summary>
 	private void GoToList()
 	{
 		Navigation.NavigateTo("/articles");

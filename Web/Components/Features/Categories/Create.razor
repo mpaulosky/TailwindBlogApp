@@ -1,28 +1,84 @@
 @page "/categories/create"
-@using Domain.Entities
-@inject NavigationManager Navigation
 
-<PageHeadingComponent Title="Create Category" />
+@inject NavigationManager NavMan
+@inject ICategoryService CategoryService
+@attribute [Authorize(Roles = "Admin")]
 
-<EditForm Model="category" OnValidSubmit="HandleValidSubmit">
-  <DataAnnotationsValidator />
-  <ValidationSummary />
-  <div class="mb-3">
-    <label>Name</label>
-    <InputText class="form-control" @bind-Value="category.Name" />
-  </div>
-  <button class="btn btn-success" type="submit">Create</button>
-  <button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
+<PageHeadingComponent HeaderText="Create Category" Level="1" TextColorClass="blue-500"/>
+
+<EditForm Model="_category" OnValidSubmit="HandleValidSubmit">
+	<DataAnnotationsValidator/>
+	<ValidationSummary/>
+	@if (!string.IsNullOrEmpty(_errorMessage))
+	{
+		<div class="alert alert-danger">@_errorMessage</div>
+	}
+	<div class="mb-3">
+		<label for="name">Name</label>
+		<InputText id="name" class="form-control" @bind-Value="_category.Name"/>
+	</div>
+	<button class="btn btn-success" type="submit" disabled="@_isSubmitting">
+		@(_isSubmitting ? "Creating..." : "Save Changes")
+	</button>
+	<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
 </EditForm>
 
 @code {
-  private Category category = new Category();
 
-  private void HandleValidSubmit()
-  {
-    // TODO: Save new category to backend
-    Navigation.NavigateTo("/categories");
-  }
+	/// <summary>
+	///   The category model bound to the form.
+	/// </summary>
+	private readonly CategoryDto _category = new();
 
-  private void GoToList() => Navigation.NavigateTo("/categories");
+	/// <summary>
+	///   Stores the error message to display in the UI.
+	/// </summary>
+	private string? _errorMessage;
+
+	/// <summary>
+	///   Indicates whether the form is currently submitting.
+	/// </summary>
+	private bool _isSubmitting;
+
+	/// <summary>
+	///   Handles the valid form submission event for creating a category.
+	/// </summary>
+	/// <returns>A <see cref="Task" /> representing the asynchronous operation.</returns>
+	private async Task HandleValidSubmit()
+	{
+		_isSubmitting = true;
+
+		if (_category.Name.Trim().Length == 0)
+		{
+			_isSubmitting = false;
+			_errorMessage = "Name cannot be empty.";
+
+			return;
+		}
+
+		var result = await CategoryService.CreateAsync(_category);
+
+		if (result.Success)
+		{
+			Console.WriteLine("Category created successfully.");
+			_isSubmitting = false;
+			NavMan.NavigateTo("/categories");
+		}
+		else
+		{
+			Console.WriteLine(result.Error ?? "An error occurred while creating the category.");
+			_errorMessage = result.Error ?? "An error occurred while creating the category.";
+			_isSubmitting = false;
+			StateHasChanged();
+		}
+	}
+
+	/// <summary>
+	///   Navigates to the category list page.
+	/// </summary>
+	private void GoToList()
+	{
+		NavMan.NavigateTo("/categories");
+	}
+
 }

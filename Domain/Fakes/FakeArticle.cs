@@ -68,8 +68,8 @@ public static class FakeArticle
 				.RuleFor(f => f.ModifiedOn, _ => Helpers.Helpers.GetStaticDate())
 				.RuleFor(f => f.IsPublished, f => f.Random.Bool())
 				.RuleFor(x => x.PublishedOn, (_, x) => x.IsPublished ? Helpers.Helpers.GetStaticDate() : null)
-				.RuleFor(f => f.Category, _ => null)
-				.RuleFor(f => f.Author, _ => null);
+				.RuleFor(f => f.Category, _ => FakeCategory.GetNewCategory(useSeed))
+				.RuleFor(f => f.Author, _ => FakeAuthor.GetNewAuthor(useSeed));
 
 
 		const int seed = 621;

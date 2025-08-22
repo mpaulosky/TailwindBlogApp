@@ -22,10 +22,10 @@ public class AppUserDtoTests
 		var roles = new List<string> { "Admin" };
 
 		// Act
-		var dto = new AppUserDto("id", "user", "email@test.com", roles);
+		var dto = new AppUserDto("12345", "user", "email@test.com", roles);
 
 		// Assert
-		dto.Id.Should().Be("id");
+		dto.Id.Should().Be("12345");
 		dto.UserName.Should().Be("user");
 		dto.Email.Should().Be("email@test.com");
 		dto.Roles.Should().BeEquivalentTo(roles);
@@ -65,9 +65,9 @@ public class AppUserDtoTests
 	public void Update_Should_Update_UserNameAndEmail()
 	{
 		// Arrange
-		var dto = new AppUserDto("id", "oldUsername", "old@example.com", ["User"], true);
-		var newUsername = "newUsername";
-		var newEmail = "new@example.com";
+		var dto = new AppUserDto("12345", "oldUsername", "old@example.com", ["User"], true);
+		const string newUsername = "newUsername";
+		const string newEmail = "new@example.com";
 
 		// Act
 		dto.Update(newUsername, newEmail);
@@ -75,8 +75,8 @@ public class AppUserDtoTests
 		// Assert
 		dto.UserName.Should().Be(newUsername);
 		dto.Email.Should().Be(newEmail);
-		dto.Id.Should().Be("id"); // Unchanged
-		dto.Roles.Should().BeEquivalentTo(["User"]); // Unchanged
+		dto.Id.Should().Be("12345"); // Unchanged
+		dto.Roles.Should().BeEquivalentTo( "User"); // Unchanged
 	}
 
 	[Fact]

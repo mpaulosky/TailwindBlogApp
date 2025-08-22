@@ -14,6 +14,8 @@ namespace Domain.Models;
 public class CategoryDtoTests
 {
 
+	private static readonly DateTime _staticDate = new(2025, 1, 1);
+
 	[Fact]
 	public void CategoryDto_WhenCreated_ShouldHaveEmptyProperties()
 	{
@@ -52,15 +54,13 @@ public class CategoryDtoTests
 	{
 
 		// Arrange & Act
-		var now = DateTime.UtcNow;
-
 		var category = FakeCategoryDto.GetNewCategoryDto(true);
 		category.Name = name;
 
 		// Assert
 		category.Name.Should().Be(name);
-		category.CreatedOn.Should().Be(now);
-		category.ModifiedOn.Should().BeNull();
+		category.CreatedOn.Should().Be(_staticDate);
+		category.ModifiedOn.Should().Be(_staticDate);
 
 	}
 

@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     PostInfoComponentTest.cs
+// File Name :     PostInfoComponentTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -14,7 +14,7 @@ namespace Web.Components.Shared;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(PostInfoComponent))]
-public class PostInfoComponentTest : BunitContext
+public class PostInfoComponentTests : BunitContext
 {
 
 	[Fact]
@@ -44,6 +44,13 @@ public class PostInfoComponentTest : BunitContext
 		// Assert
 		cut.MarkupMatches(expectedHtml);
 
+	}
+
+	[Fact]
+	public void Renders_With_Default_Parameters()
+	{
+		var cut = Render<PostInfoComponent>();
+		cut.Markup.Should().NotBeNullOrWhiteSpace();
 	}
 
 }

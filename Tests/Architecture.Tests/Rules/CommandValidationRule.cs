@@ -7,17 +7,17 @@
 // Project Name :  Architecture.Tests
 // =======================================================
 
-namespace Architecture.Tests.Rules;
+namespace Architecture.Rules;
 
 /// <summary>
-/// A custom rule that validates whether a command type implements IRequest or IValidatable interfaces.
+///   A custom rule that validates whether a command type implements IRequest or IValidatable interfaces.
 /// </summary>
 [ExcludeFromCodeCoverage]
 public class CommandValidationRule : ICustomRule
 {
 
 	/// <summary>
-	/// Checks if the type implements either IRequest or IValidatable interfaces.
+	///   Checks if the type implements either IRequest or IValidatable interfaces.
 	/// </summary>
 	/// <param name="type">The type to check.</param>
 	/// <returns>True if the type implements required interfaces, false otherwise.</returns>

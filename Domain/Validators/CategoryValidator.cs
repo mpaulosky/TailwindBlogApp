@@ -21,8 +21,13 @@ public class CategoryValidator : AbstractValidator<Category>
 	public CategoryValidator()
 	{
 
+		RuleFor(x => x.Id)
+				.NotNull().WithMessage("Id is required")
+				.Must(id => Guid.TryParse(id.ToString(), out _))
+				.WithMessage("Id must be a valid GUID.");
+
 		RuleFor(x => x.Name)
-				.NotEmpty().WithMessage("Name is required")
+				.NotEmpty().WithMessage("Name is required.")
 				.MaximumLength(80);
 
 	}

@@ -1,10 +1,16 @@
 @page "/categories/edit/{id:guid}"
-@using Domain.Entities
+
 @inject NavigationManager Navigation
+@inject ICategoryService CategoryService
+@attribute [Authorize(Roles = "Admin")]
 
-<PageHeadingComponent Title="Edit Category"/>
+<PageHeadingComponent HeaderText="Edit Category" Level="1" TextColorClass="blue-500"/>
 
-@if (_category is null)
+@if (_isLoading)
+{
+	<LoadingComponent/>
+}
+else if (_category is null)
 {
 	<p>Category not found.</p>
 }
@@ -13,11 +19,22 @@ else
 	<EditForm Model="_category" OnValidSubmit="HandleValidSubmit">
 		<DataAnnotationsValidator/>
 		<ValidationSummary/>
+		@if (!string.IsNullOrEmpty(_errorMessage))
+		{
+			<div class="alert alert-danger">@_errorMessage</div>
+		}
 		<div class="mb-3">
-			<label>Name</label>
-			<InputText class="form-control" @bind-Value="_category.Name"/>
+			<label for="name">Category Name</label>
+			<InputText id="name" class="form-control" @bind-Value="_category.Name"/>
 		</div>
-		<button class="btn btn-primary" type="submit">Save</button>
+		@if (_isSubmitting)
+		{
+			<button class="btn btn-success" type="submit" disabled>Updating...</button>
+		}
+		else
+		{
+			<button class="btn btn-success" type="submit">Save Changes</button>
+		}
 		<button class="btn btn-light ms-2" type="button" @onclick="GoToList">Cancel</button>
 	</EditForm>
 }
@@ -26,18 +43,62 @@ else
 
 	[Parameter] public Guid Id { get; set; }
 
-	private Category? _category;
+	private CategoryDto? _category;
 
-	protected override void OnInitialized()
+	private string? _errorMessage;
+
+	private bool _isLoading = true;
+
+	private bool _isSubmitting;
+
+	// Change from OnInitialized to OnInitializedAsync and use await
+	protected override async Task OnInitializedAsync()
 	{
-		// Replace it with a real data source
-		_category = FakeCategory.GetNewCategory(true);
+		var result = await CategoryService.GetAsync(Id);
+
+		if (result.Success)
+		{
+			_category = result.Value ?? null;
+			_isLoading = false;
+		}
+		else
+		{
+			Console.WriteLine(result.Error ?? "An error occurred while fetching categories.");
+			_errorMessage = result.Error ?? "An error occurred while fetching the category.";
+			_category = null;
+			_isLoading = false;
+			StateHasChanged();
+		}
 	}
 
-	private void HandleValidSubmit()
+	private async Task HandleValidSubmit()
 	{
-		// TODO: Save changes to backend
-		Navigation.NavigateTo($"/categories/{Id}");
+		if (_category?.Name is null || _category.Name.Trim().Length == 0)
+		{
+			_errorMessage = "Name cannot be null or empty.";
+
+			return;
+		}
+
+		_isSubmitting = true;
+
+		var result = await CategoryService.UpdateAsync(_category);
+
+		if (result.Success)
+		{
+			Console.WriteLine("Category updated successfully.");
+			_isSubmitting = false;
+			_isLoading = false;
+			Navigation.NavigateTo("/categories");
+		}
+		else
+		{
+			Console.WriteLine(result.Error ?? "An error occurred while updating the category.");
+			_errorMessage = result.Error ?? "An error occurred while updating the category.";
+			_isSubmitting = false;
+			_isLoading = false;
+			StateHasChanged();
+		}
 	}
 
 	private void GoToList()

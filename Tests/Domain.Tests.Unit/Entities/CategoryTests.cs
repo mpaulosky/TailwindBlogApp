@@ -14,20 +14,22 @@ namespace Domain.Entities;
 public class CategoryTests
 {
 
+	private static readonly DateTime _staticDate = new(2025, 1, 1);
+
 	[Fact]
 	public void Category_WhenCreated_ShouldHaveEmptyProperties()
 	{
 
 		// Arrange & Act
-		var article = new Category(
+		var category = new Category(
 				string.Empty,
 				true
 		);
 
 		// Assert
-		article.Name.Should().BeEmpty();
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
-		article.ModifiedOn.Should().BeNull();
+		category.Name.Should().BeEmpty();
+		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
+		category.ModifiedOn.Should().BeNull();
 
 	}
 
@@ -36,11 +38,13 @@ public class CategoryTests
 	{
 
 		// Arrange & Act
-		var article = Category.Empty;
+		var category = Category.Empty;
 
 		// Assert
-		article.Id.Should().Be(Guid.Empty);
-		article.Name.Should().BeEmpty();
+		category.Id.Should().Be(Guid.Empty);
+		category.Name.Should().BeEmpty();
+		category.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
+		category.ModifiedOn.Should().BeNull();
 
 	}
 
@@ -52,14 +56,16 @@ public class CategoryTests
 	{
 
 		// Arrange & Act
-		var article = new Category(
-				name
-		);
+		var category = FakeCategory.GetNewCategory(true);
+		category.Name = name;
+		category.ModifiedOn = null;
 
 		// Assert
-		article.Name.Should().Be(name);
-		article.CreatedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromDays(1));
-		article.ModifiedOn.Should().BeNull(); // Default value
+		category.Id.Should().NotBe(Guid.Empty);
+		category.Name.Should().NotBeEmpty();
+		category.Name.Should().Be(name);
+		category.CreatedOn.Should().Be(_staticDate);
+		category.ModifiedOn.Should().BeNull(); // Default value
 
 	}
 
@@ -68,24 +74,23 @@ public class CategoryTests
 	{
 
 		// Arrange
-		var article = new Category(
-				"initial Name"
-		);
+		var category = FakeCategory.GetNewCategory(true);
 
 		// Act
-		article.Update(
+		category.Update(
 				"new Name"
 		);
 
 		// Assert
-		article.Name.Should().Be("new Name");
-		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
-		article.ModifiedOn.Should().BeCloseTo(DateTime.Now, TimeSpan.FromSeconds(1));
+		category.Id.Should().NotBe(Guid.Empty);
+		category.Name.Should().Be("new Name");
+		category.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
+		category.ModifiedOn.Should().Be(_staticDate);
 
 	}
 
 	[Theory]
-	[InlineData("", "Name is required")]
+	[InlineData("", "Name is required.")]
 	public void Category_WhenCreated_ShouldValidateRequiredFields(
 			string name,
 			string expectedError)
@@ -100,19 +105,18 @@ public class CategoryTests
 	}
 
 	[Theory]
-	[InlineData("", "Name is required")]
+	[InlineData("", "Name is required.")]
 	public void Category_WhenUpdated_ShouldValidateRequiredFields(
 			string name,
 			string expectedError)
 	{
 
 		// Arrange
-		var article = new Category(
-				"Name"
-		);
+		var category = FakeCategory.GetNewCategory(true);
+		category.Name = name;
 
 		// Act & Assert
-		article.Invoking(a => a.Update(
+		category.Invoking(a => a.Update(
 						name
 				)).Should().Throw<ValidationException>()
 				.WithMessage($"*{expectedError}*");

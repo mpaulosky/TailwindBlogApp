@@ -44,6 +44,7 @@ public class Author
 	/// <summary>
 	///   Gets or sets the id of the user.
 	/// </summary>
+	[Display(Name = "Author ID")]
 	public string Id { get; set; }
 
 	/// <summary>
@@ -97,8 +98,16 @@ public class Author
 	/// <exception cref="ValidationException">Thrown when validation fails.</exception>
 	private void ValidateState()
 	{
-		var validator = new AppUserValidator();
-		validator.ValidateAndThrow(this);
+
+		var validator = new AuthorValidator();
+
+		var validationResult = validator.Validate(this);
+
+		if (!validationResult.IsValid)
+		{
+			throw new ValidationException(validationResult.Errors);
+		}
+
 	}
 
 }

@@ -7,16 +7,16 @@
 // Project Name :  Architecture.Tests
 // =======================================================
 
-namespace Architecture.Tests;
+namespace Architecture;
 
 /// <summary>
-/// Interface for custom architecture rules.
+///   Interface for custom architecture rules.
 /// </summary>
 public interface ICustomRule
 {
 
 	/// <summary>
-	/// Determines whether the given type meets the custom rule.
+	///   Determines whether the given type meets the custom rule.
 	/// </summary>
 	/// <param name="type">The type to check.</param>
 	/// <returns>True if the type meets the rule, false otherwise.</returns>

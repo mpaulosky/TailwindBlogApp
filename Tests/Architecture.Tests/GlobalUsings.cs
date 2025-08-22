@@ -16,4 +16,9 @@ global using NetArchTest.Rules;
 
 global using Domain.Abstractions;
 
+global using MyMediator;
+
+global using Persistence.Postgres;
+global using Persistence.Postgres.Migrations;
+
 global using Xunit;

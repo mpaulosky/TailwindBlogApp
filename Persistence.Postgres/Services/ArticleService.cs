@@ -159,14 +159,14 @@ public class ArticleService : IArticleService
 	///   A <see cref="Result{T}" /> containing a list of <see cref="ArticleDto" />
 	///   or null if no data is found.
 	/// </returns>
-	public async Task<Result<List<ArticleDto>>> GetAllAsync()
+	public async Task<Result<List<ArticleDto>?>> GetAllAsync()
 	{
 
 		var output = await _cache.GetAsync<List<ArticleDto>>(_cacheName);
 
 		if (output is not null)
 		{
-			return Result<List<ArticleDto>>.Ok(output);
+			return Result<List<ArticleDto>?>.Ok(output);
 		}
 
 		var results = await _repository.GetAllAsync();
@@ -174,14 +174,14 @@ public class ArticleService : IArticleService
 		// If the repository call fails, return the failure result
 		if (results.Failure)
 		{
-			return Result<List<ArticleDto>>.Fail("Failed to retrieve articles.");
+			return Result<List<ArticleDto>?>.Fail("Failed to retrieve articles.");
 		}
 
 		output = results.Value.Adapt<List<ArticleDto>>().ToList();
 
 		await _cache.SetAsync(_cacheName, output, TimeSpan.FromDays(1));
 
-		return Result<List<ArticleDto>>.Ok(output);
+		return Result<List<ArticleDto>?>.Ok(output);
 
 	}
 
@@ -232,7 +232,7 @@ public class ArticleService : IArticleService
 
 		if (cachedArticle != null)
 		{
-			return Result.Ok(cachedArticle);
+			return Result<ArticleDto>.Ok(cachedArticle);
 		}
 
 		// Not cached, get from repository

@@ -2,7 +2,7 @@
 // Copyright (c) 2025. All rights reserved.
 // File Name :     AppUserValidator.cs
 // Company :       mpaulosky
-// Author :        Matthew
+// AppUser :        Matthew
 // Solution Name : TailwindBlog
 // Project Name :  Domain
 // =======================================================
@@ -10,9 +10,9 @@
 namespace Domain.Validators;
 
 /// <summary>
-///   Validator for the Author entity.
+///   Validator for the AppUser entity.
 /// </summary>
-public class AppUserValidator : AbstractValidator<Author>
+public class AppUserValidator : AbstractValidator<AppUser>
 {
 
 	/// <summary>
@@ -21,7 +21,8 @@ public class AppUserValidator : AbstractValidator<Author>
 	public AppUserValidator()
 	{
 		RuleFor(x => x.Id)
-				.NotEmpty().WithMessage("User ID is required");
+				.NotEmpty().WithMessage("User ID is required")
+				.Length(3, 50).WithMessage("User ID must be between 3 and 50 characters");
 
 		RuleFor(x => x.UserName)
 				.NotEmpty().WithMessage("Username is required")

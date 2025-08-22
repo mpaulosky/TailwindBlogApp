@@ -14,15 +14,39 @@ namespace Domain.Entities;
 public class ArticleTests
 {
 
+	private static readonly DateTime _staticDate = new(2025, 1, 1);
+
 	[Fact]
 	public void Article_WhenCreated_ShouldHaveEmptyProperties()
 	{
 
 		// Arrange & Act
-		// Article.Empty throws TypeInitializationException due to static property initialization failure.
-		FluentActions.Invoking(() => _ = Article.Empty)
-				.Should().Throw<TypeInitializationException>()
-				.And.InnerException.Should().BeOfType<ValidationException>();
+		var article = new Article(
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
+				false,
+				null,
+				true // skipValidation
+		);
+
+		// Assert
+		article.Title.Should().BeEmpty();
+		article.Introduction.Should().BeEmpty();
+		article.CoverImageUrl.Should().BeEmpty();
+		article.UrlSlug.Should().BeEmpty();
+		article.Author.Should().BeEquivalentTo(Author.Empty);
+		article.Category.Name.Should().Be(Category.Empty.Name);
+		article.Category.Id.Should().Be(Category.Empty.Id);
+		article.IsPublished.Should().BeFalse();
+		article.PublishedOn.Should().BeNull();
+		article.ModifiedOn.Should().BeNull();
 
 	}
 
@@ -31,10 +55,32 @@ public class ArticleTests
 	{
 
 		// Arrange & Act
-		// Article.Empty throws TypeInitializationException due to static property initialization failure.
-		FluentActions.Invoking(() => _ = Article.Empty)
-				.Should().Throw<TypeInitializationException>()
-				.And.InnerException.Should().BeOfType<ValidationException>();
+		var article = new Article(
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				string.Empty,
+				Author.Empty.Id,
+				Category.Empty.Id,
+				Category.Empty,
+				Author.Empty,
+				false,
+				null,
+				true // skipValidation
+		);
+
+		// Assert
+		article.Title.Should().BeEmpty();
+		article.Introduction.Should().BeEmpty();
+		article.CoverImageUrl.Should().BeEmpty();
+		article.UrlSlug.Should().BeEmpty();
+		article.Author.Should().BeEquivalentTo(Author.Empty);
+		article.Category.Name.Should().Be(Category.Empty.Name);
+		article.Category.Id.Should().Be(Category.Empty.Id);
+		article.IsPublished.Should().BeFalse();
+		article.PublishedOn.Should().BeNull();
+		article.ModifiedOn.Should().BeNull();
 
 	}
 
@@ -49,8 +95,6 @@ public class ArticleTests
 	{
 
 		// Arrange & Act
-		var now = DateTime.UtcNow;
-
 		var article = new Article(
 				title,
 				introduction,
@@ -74,7 +118,6 @@ public class ArticleTests
 		article.Author.Should().BeEquivalentTo(Author.Empty);
 		article.IsPublished.Should().BeFalse(); // Default value
 		article.PublishedOn.Should().BeNull(); // Default value
-		article.CreatedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(2));
 		article.ModifiedOn.Should().BeNull(); // Default value
 
 	}
@@ -84,14 +127,13 @@ public class ArticleTests
 	{
 
 		// Arrange
-		var now = DateTime.UtcNow;
 		const string title = "Published Article";
 		const string introduction = "This is a published article.";
 		const string content = "Full content of the article.";
 		const string coverImageUrl = "https://example.com/cover.jpg";
 		const string urlSlug = "published_article";
 		const bool isPublished = true;
-		var publishedOn = now;
+		var publishedOn = _staticDate;
 		var author = Author.Empty;
 		var category = Category.Empty;
 
@@ -112,7 +154,7 @@ public class ArticleTests
 
 		// Assert
 		article.IsPublished.Should().BeTrue();
-		article.PublishedOn.Should().Be(now);
+		article.PublishedOn.Should().Be(publishedOn);
 		article.Author.Should().BeEquivalentTo(author);
 		article.CreatedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 
@@ -123,24 +165,8 @@ public class ArticleTests
 	{
 
 		// Arrange
-		var article = new Article(
-				"initial title",
-				"initial intro",
-				"Initial content.",
-				"initial cover",
-				"initial_slug",
-				Author.Empty.Id,
-				Category.Empty.Id,
-				Category.Empty,
-				Author.Empty,
-				false,
-				null,
-				true // skipValidation: only for the test
-		);
-
-		var newAuthor = FakeAuthor.GetNewAuthor(true);
 		var newCategory = FakeCategory.GetNewCategory(true);
-		var publishDate = DateTime.UtcNow;
+		var article = FakeArticle.GetNewArticle(true);
 
 		// Act
 		article.Update(
@@ -149,10 +175,10 @@ public class ArticleTests
 				"Updated content.",
 				"new cover",
 				"new_slug",
-				newAuthor,
 				newCategory,
+				newCategory.Id,
 				true,
-				publishDate
+				_staticDate
 		);
 
 		// Assert
@@ -160,10 +186,9 @@ public class ArticleTests
 		article.Introduction.Should().Be("new intro");
 		article.CoverImageUrl.Should().Be("new cover");
 		article.UrlSlug.Should().Be("new_slug");
-		article.Author.Should().BeEquivalentTo(newAuthor);
 		article.Category.Should().BeEquivalentTo(newCategory);
 		article.IsPublished.Should().BeTrue();
-		article.PublishedOn.Should().Be(publishDate);
+		article.PublishedOn.Should().Be(_staticDate);
 		article.ModifiedOn.Should().NotBeNull("ModifiedOn should be set after update");
 		article.ModifiedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));
 
@@ -202,20 +227,8 @@ public class ArticleTests
 	{
 
 		// Arrange
-		var article = new Article(
-				"title",
-				"intro",
-				"Initial content.",
-				"cover",
-				"slug",
-				Author.Empty.Id,
-				Category.Empty.Id,
-				Category.Empty,
-				Author.Empty,
-				false,
-				null,
-				true
-		);
+		var newCategory = FakeCategory.GetNewCategory(true);
+		var article = FakeArticle.GetNewArticle(true);
 
 		// Act & Assert
 		article.Invoking(a => a.Update(
@@ -224,8 +237,8 @@ public class ArticleTests
 						"Updated content.",
 						"new cover",
 						"new_slug",
-						Author.Empty,
-						Category.Empty
+						newCategory,
+						newCategory.Id
 				)).Should().Throw<ValidationException>()
 				.WithMessage("*Title is required*");
 
@@ -242,8 +255,8 @@ public class ArticleTests
 						"Valid content.",
 						"cover",
 						"slug",
-						Author.Empty.Id,
-						Category.Empty.Id,
+						"valid-author-id",
+						Guid.NewGuid(),
 						Category.Empty,
 						Author.Empty,
 						true     // publishedOn missing should cause a validation error

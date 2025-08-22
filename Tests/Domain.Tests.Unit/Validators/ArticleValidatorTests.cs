@@ -35,7 +35,7 @@ public class ArticleValidatorTests
 
 		// Assert
 		result.IsValid.Should().BeTrue();
-		result.Errors.Should().BeEmpty();
+		result.Errors.Count.Should().Be(0);
 
 	}
 

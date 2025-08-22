@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     FooterComponentTest.cs
+// File Name :     FooterComponentTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -14,7 +14,7 @@ namespace Web.Components.Layout;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(FooterComponent))]
-public class FooterComponentTest : BunitContext
+public class FooterComponentTests : BunitContext
 {
 
 	[Fact]
@@ -36,6 +36,17 @@ public class FooterComponentTest : BunitContext
 
 		// Assert
 		cut.MarkupMatches(expectedHtml);
+
+	}
+
+	[Fact]
+	public void Renders_Footer()
+	{
+
+		var cut = Render<FooterComponent>();
+		cut.Markup.Should().Contain("©");
+		cut.Markup.Should().Contain("MPaulosky Co. All rights reserved.");
+		cut.Markup.Should().Contain("text-center px-6 py-2 mx-auto xl:max-w-5xl border-t-blue-700");
 
 	}
 

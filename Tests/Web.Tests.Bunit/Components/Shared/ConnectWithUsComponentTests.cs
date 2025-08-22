@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     ConnectWithUsComponentTest.cs
+// File Name :     ConnectWithUsComponentTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -14,7 +14,7 @@ namespace Web.Components.Shared;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(ConnectWithUsComponent))]
-public class ConnectWithUsComponentTest : BunitContext
+public class ConnectWithUsComponentTests : BunitContext
 {
 
 	[Fact]
@@ -27,7 +27,9 @@ public class ConnectWithUsComponentTest : BunitContext
 		var cut = Render<ConnectWithUsComponent>();
 
 		// Assert
-		cut.Markup.Should().Contain("<header class=\"mb-6 py-4\"><h1 class=\"text-2xl font-semibold tracking-tight py-4 text-gray-50\">Connect With Us</h1></header>");
+		cut.Markup.Should()
+				.Contain(
+						"<header class=\"mb-6 py-4\"><h1 class=\"text-2xl font-semibold tracking-tight py-4 text-gray-50\">Connect With Us</h1></header>");
 
 	}
 
@@ -41,7 +43,9 @@ public class ConnectWithUsComponentTest : BunitContext
 		var cut = Render<ConnectWithUsComponent>();
 
 		// Assert
-		cut.Markup.Should().Contain("<a href=\"https://www.threads/\" target=\"_blank\"><i class=\"ri-threads-line text-3xl hover:bg-gray-100 hover:rounded p-2\"></i></a>");
+		cut.Markup.Should()
+				.Contain(
+						"<a href=\"https://www.threads/\" target=\"_blank\"><i class=\"ri-threads-line text-3xl hover:bg-gray-100 hover:rounded p-2\"></i></a>");
 
 	}
 
@@ -55,7 +59,9 @@ public class ConnectWithUsComponentTest : BunitContext
 		var cut = Render<ConnectWithUsComponent>();
 
 		// Assert
-		cut.Markup.Should().Contain("<a href=\"https://www.instagram.com/\" target=\"_blank\"><i class=\"ri-instagram-line text-3xl\"></i></a>");
+		cut.Markup.Should()
+				.Contain(
+						"<a href=\"https://www.instagram.com/\" target=\"_blank\"><i class=\"ri-instagram-line text-3xl\"></i></a>");
 
 	}
 
@@ -69,7 +75,9 @@ public class ConnectWithUsComponentTest : BunitContext
 		var cut = Render<ConnectWithUsComponent>();
 
 		// Assert
-		cut.Markup.Should().Contain("<a href=\"https://www.youtube.com/\" target=\"_blank\"><i class=\"ri-youtube-line text-3xl\"></i></a>");
+		cut.Markup.Should()
+				.Contain(
+						"<a href=\"https://www.youtube.com/\" target=\"_blank\"><i class=\"ri-youtube-line text-3xl\"></i></a>");
 
 	}
 

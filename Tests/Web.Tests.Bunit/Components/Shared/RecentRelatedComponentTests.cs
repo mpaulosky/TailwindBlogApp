@@ -1,6 +1,6 @@
 // =======================================================
 // Copyright (c) 2025. All rights reserved.
-// File Name :     RecentRelatedComponentTest.cs
+// File Name :     RecentRelatedComponentTests.cs
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
@@ -14,7 +14,7 @@ namespace Web.Components.Shared;
 /// </summary>
 [ExcludeFromCodeCoverage]
 [TestSubject(typeof(RecentRelatedComponent))]
-public class RecentRelatedComponentTest : BunitContext
+public class RecentRelatedComponentTests : BunitContext
 {
 
 	[Fact]

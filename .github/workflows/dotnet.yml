@@ -34,7 +34,7 @@ jobs:
           global-json-file: global.json
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: "18"
           cache: "npm"
@@ -66,7 +66,7 @@ jobs:
           done
 
       - name: Upload Test Results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: TailwindBlog-Test-Results
           path: TestResults
@@ -94,13 +94,13 @@ jobs:
           fetch-depth: 0
 
       - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v4.1.0
+        uses: gittools/actions/gitversion/setup@v4.2.0
         with:
           versionSpec: "6.x"
 
       - name: Use GitVersion
         id: gitversion # step id used as a reference for output values
-        uses: gittools/actions/gitversion/execute@v4.1.0
+        uses: gittools/actions/gitversion/execute@v4.2.0
 
       - run: |
           echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"

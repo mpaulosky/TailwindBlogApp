@@ -1,8 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-
 using Microsoft.Extensions.Hosting;
-
 using OpenTelemetry;
+using OpenTelemetry.Exporter.OpenTelemetryProtocol;
 
 namespace ServiceDefaults;
 
@@ -21,7 +20,7 @@ public static class Extensions
 	{
 		builder.ConfigureOpenTelemetry();
 
-		builder.AddDefaultHealthChecks();
+//		builder.AddDefaultHealthChecks();
 
 		builder.Services.AddServiceDiscovery();
 
@@ -64,10 +63,10 @@ public static class Extensions
 					tracing.AddSource(builder.Environment.ApplicationName)
 							.AddAspNetCoreInstrumentation(tracing =>
 
-									// Exclude health check requests from tracing
-									tracing.Filter = context =>
-											!context.Request.Path.StartsWithSegments(_healthEndpointPath)
-											&& !context.Request.Path.StartsWithSegments(_alivenessEndpointPath)
+								// Exclude health check requests from tracing
+								tracing.Filter = context =>
+									!context.Request.Path.StartsWithSegments(_healthEndpointPath)
+									&& !context.Request.Path.StartsWithSegments(_alivenessEndpointPath)
 							)
 
 							// Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
@@ -75,41 +74,62 @@ public static class Extensions
 							.AddHttpClientInstrumentation();
 				});
 
-		builder.AddOpenTelemetryExporters();
+		//builder.AddOpenTelemetryExporters();
 
 		return builder;
 	}
 
-	private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder)
-			where TBuilder : IHostApplicationBuilder
-	{
-		var useOtlpExporter = !string.IsNullOrWhiteSpace(builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"]);
+	////private static TBuilder AddOpenTelemetryExporters<TBuilder>(this TBuilder builder)
+	////		where TBuilder : IHostApplicationBuilder
+	////{
+	////	var otlpEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
 
-		if (useOtlpExporter)
-		{
-			builder.Services.AddOpenTelemetry().UseOtlpExporter();
-		}
+	////	if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+	////	{
+	////		// Use the cross-cutting UseOtlpExporter registration and configure options from configuration.
+	////		builder.Services.AddOpenTelemetry().UseOtlpExporter(o =>
+	////		{
+	////			o.Endpoint = new Uri(otlpEndpoint);
 
-		// Uncomment the following lines to enable the Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
-		//if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
-		//{
-		//    builder.Services.AddOpenTelemetry()
-		//       .UseAzureMonitor();
-		//}
+	////			// Protocol (grpc or http/protobuf). Configure via OTEL_EXPORTER_OTLP_PROTOCOL env var.
+	////			var proto = builder.Configuration["OTEL_EXPORTER_OTLP_PROTOCOL"];
+	////			if (!string.IsNullOrWhiteSpace(proto) && Enum.TryParse(typeof(OtlpExportProtocol), proto, true, out var parsedProto))
+	////			{
+	////				o.Protocol = (OtlpExportProtocol)parsedProto;
+	////			}
 
-		return builder;
-	}
+	////			// Timeout in milliseconds
+	////			o.TimeoutMilliseconds = builder.Configuration.GetValue<int?>("OTEL_EXPORTER_OTLP_TIMEOUT_MS") ?? o.TimeoutMilliseconds;
 
-	private static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder)
-			where TBuilder : IHostApplicationBuilder
-	{
-		builder.Services.AddHealthChecks()
+	////			// Optional headers (format: "key1=value1,key2=value2")
+	////			var headers = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"];
+	////			if (!string.IsNullOrWhiteSpace(headers))
+	////			{
+	////				o.Headers = headers;
+	////			}
+	////		});
+	////	}
 
-				// Add a default liveness check to ensure the app is responsive
-				.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+	////	// Uncomment the following lines to enable the Azure Monitor exporter (requires the Azure.Monitor.OpenTelemetry.AspNetCore package)
+	////	//if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
+	////	//{
+	////	//    builder.Services.AddOpenTelemetry()
+	////	//       .UseAzureMonitor();
+	////	//}
 
-		return builder;
-	}
+	////	return builder;
+	////}
+
+	////private static TBuilder AddDefaultHealthChecks<TBuilder>(this TBuilder builder)
+	////		where TBuilder : IHostApplicationBuilder
+	////{
+	////	builder.Services.AddHealthChecks()
+
+	////			// Add a default liveness check to ensure the app is responsive
+	////			.AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+
+	////	return builder;
+	////}
 
 	public static WebApplication MapDefaultEndpoints(this WebApplication app)
 	{

@@ -4,23 +4,23 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator
+// Project Name :  MyMediatR
 // =======================================================
 
 namespace MyMediator;
 
 public class Sender
 (
-		IServiceProvider provider
+        IServiceProvider provider
 ) : ISender
 {
 
-	public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
-	{
-		var handlerType = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResponse));
-		dynamic handler = provider.GetRequiredService(handlerType);
+    public Task<TResponse> Send<TResponse>(IRequest<TResponse> request, CancellationToken cancellationToken = default)
+    {
+        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResponse));
+        dynamic handler = provider.GetRequiredService(handlerType);
 
-		return handler.Handle((dynamic)request, cancellationToken);
-	}
+        return handler.Handle((dynamic)request, cancellationToken);
+    }
 
 }

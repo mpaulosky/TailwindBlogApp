@@ -1,24 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<Sdk Name="Aspire.AppHost.Sdk" Version="9.4.0"/>
+	<Sdk Name="Aspire.AppHost.Sdk" Version="9.5.1" />
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net9.0</TargetFramework>
+		<TargetFramework>net10.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<UserSecretsId>4f5fc5ed-634a-4453-a996-79ad168dff61</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Domain\Domain.csproj" IsAspireProjectResource="false"/>
-		<ProjectReference Include="..\Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj"/>
-		<ProjectReference Include="..\Web\Web.csproj"/>
+		<ProjectReference Include="..\Domain\Domain.csproj" IsAspireProjectResource="false" />
+		<ProjectReference Include="..\Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj" />
+		<ProjectReference Include="..\Web\Web.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Hosting.AppHost"/>
-		<PackageReference Include="Aspire.Hosting.PostgreSQL"/>
+		<PackageReference Include="Aspire.Hosting.AppHost" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" />
 	</ItemGroup>
 
 </Project>

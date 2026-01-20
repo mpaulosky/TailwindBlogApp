@@ -4,13 +4,15 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator.Tests.Unit
+// Project Name :  MyMediatR.Tests.Unit
 // =======================================================
+
+using MyMediatR;
 
 namespace MyMediator;
 
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(MyMediator))]
+[TestSubject(typeof(MyMediatR.MyMediatR))]
 public class MyMediatorRegistrationTests
 {
 
@@ -21,7 +23,7 @@ public class MyMediatorRegistrationTests
 		var services = new ServiceCollection();
 
 		// Act
-		services.AddMyMediator(typeof(MyMediatorRegistrationTests).Assembly);
+		services.AddMyMediatR(typeof(MyMediatorRegistrationTests).Assembly);
 
 		// Assert
 		var provider = services.BuildServiceProvider();
@@ -37,7 +39,7 @@ public class MyMediatorRegistrationTests
 		var services = new ServiceCollection();
 
 		// Act
-		services.AddMyMediator(typeof(TestRequest).Assembly);
+		services.AddMyMediatR(typeof(TestRequest).Assembly);
 
 		// Assert
 		var provider = services.BuildServiceProvider();

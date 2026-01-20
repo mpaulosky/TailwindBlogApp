@@ -17,7 +17,7 @@
 ![GitHub closed pull requests](https://img.shields.io/github/issues-pr-closed/mpaulosky/TailwindBlog?logo=github)
 ![GitHub last commit (branch)](https://img.shields.io/github/last-commit/mpaulosky/TailwindBlog/main?label=last%20commit%20main&logo=github)
 ****
-[![.NET Build](https://github.com/mpaulosky/TailwindBlog/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/mpaulosky/TailwindBlog/actions/workflows/dotnet-build.yml)
+[![.NET Build](https://github.com/mpaulosky/TailwindBlog/actions/workflows/dotnet.yml/badge.svg)](https://github.com/mpaulosky/TailwindBlog/actions/workflows/dotnet.yml)
 [![Deploy GitHub Pages](https://github.com/mpaulosky/TailwindBlog/actions/workflows/deploy-jekyll-gh-pages.yml/badge.svg)](https://github.com/mpaulosky/TailwindBlog/actions/workflows/deploy-jekyll-gh-pages.yml)
 [![CodeCov Main](https://codecov.io/gh/mpaulosky/TailwindBlog/branch/main/graph/badge.svg)](https://codecov.io/gh/mpaulosky/TailwindBlog)
 ****

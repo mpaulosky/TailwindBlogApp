@@ -1,7 +1,10 @@
 using Auth0.AspNetCore.Authentication;
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +14,8 @@ var configuration = builder.Configuration;
 builder.AddServiceDefaults();
 
 // Register Postgres services
-var pg = new RegisterPostgresServices();
-pg.RegisterServices(builder);
+var postgresServices = new RegisterPostgresServices();
+postgresServices.RegisterServices(builder);
 
 // Add Output Cache
 builder.Services.AddOutputCache();
@@ -23,18 +26,28 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHealthChecks();
 
-builder.Services.AddAuthentication( /* options */)
-		.AddAuth0WebAppAuthentication(options =>
-		{
-			options.Domain = configuration["Auth0:Domain"] ?? string.Empty;
-			options.ClientId = configuration["Auth0:ClientId"] ?? string.Empty;
-		});
+// Register HttpContextAccessor for diagnostics
+builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthorization(options =>
+// Configure authentication: use cookies as the default authenticate/sign-in scheme
+// and Auth0 as the default challenge scheme for external login flows.
+// Note: Do not call AddCookie explicitly here because the Auth0 integration
+// already registers the cookie scheme. Registering it twice throws a "Scheme already exists" error.
+builder.Services.AddAuthentication(options =>
 {
-	// Define policies
-	options.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
+	options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = Auth0Constants.AuthenticationScheme;
+})
+.AddAuth0WebAppAuthentication(options =>
+{
+	options.Domain = configuration["Auth0:Domain"] ?? throw new InvalidOperationException("Auth0:Domain configuration is missing");
+	options.ClientId = configuration["Auth0:ClientId"] ?? throw new InvalidOperationException("Auth0:ClientId configuration is missing");
+	options.ClientSecret = configuration["Auth0:ClientSecret"] ?? throw new InvalidOperationException("Auth0:ClientSecret configuration is missing");
 });
+
+builder.Services.AddAuthorizationBuilder()
+	.AddPolicy("AdminOnly", policy => policy.RequireRole("admin"));
 
 builder.Services.AddCors(options =>
 {
@@ -44,7 +57,31 @@ builder.Services.AddCors(options =>
 			.AllowAnyMethod());
 });
 
-var app = builder.Build();
+// Enhanced OpenTelemetry tracing configuration
+var serviceName = configuration["OTEL_SERVICE_NAME"] ?? builder.Environment.ApplicationName ?? "web";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
+builder.Services.AddOpenTelemetry()
+	.WithTracing(tracing =>
+	{
+		// Resource describes the service producing telemetry
+		tracing.SetResourceBuilder(ResourceBuilder.CreateDefault()
+			.AddService(serviceName: serviceName, serviceVersion: serviceVersion));
+
+		// Common instrumentations
+		tracing
+			.AddAspNetCoreInstrumentation(options => options.RecordException = true)
+			.AddHttpClientInstrumentation(options => options.RecordException = true);
+
+		// Configure sampler (default to always sample in dev, or use OTEL_SAMPLER_PROBABILITY if provided)
+		var samplerProbability = configuration.GetValue<double?>("OTEL_SAMPLER_PROBABILITY") 
+			?? (builder.Environment.IsDevelopment() ? 1.0 : 0.1);
+		tracing.SetSampler(new ParentBasedSampler(new TraceIdRatioBasedSampler(samplerProbability)));
+
+		// Do not add a signal-specific AddOtlpExporter here because ServiceDefaults registers a cross-cutting UseOtlpExporter when configured.
+	});
+
+WebApplication app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
@@ -53,12 +90,35 @@ if (!app.Environment.IsDevelopment())
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 	app.UseHsts();
 }
+else
+{
+	// In development enable the developer exception page for richer diagnostics.
+	app.UseDeveloperExceptionPage();
+}
 
 app.UseHttpsRedirection();
 
 app.UseAntiforgery();
 
-app.MapGet("/Account/LoginComponent", async (HttpContext httpContext, string returnUrl = "/") =>
+// Simple request/response logging middleware for runtime diagnostics
+app.Use(async (context, next) =>
+{
+	var loggerFactory = context.RequestServices.GetRequiredService<ILoggerFactory>();
+	var logger = loggerFactory.CreateLogger("RequestDiagnostics");
+
+	logger.LogInformation("Incoming request {Method} {Path} from {RemoteIp} - Authenticated: {IsAuthenticated}",
+		context.Request.Method,
+		context.Request.Path,
+		context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+		context.User?.Identity?.IsAuthenticated ?? false);
+
+	await next();
+
+	logger.LogInformation("Outgoing response {StatusCode} for {Path}", 
+		context.Response.StatusCode, context.Request.Path);
+});
+
+app.MapGet("/Account/Login", async (HttpContext httpContext, string returnUrl = "/") =>
 {
 	var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
 			.WithRedirectUri(returnUrl)
@@ -75,6 +135,31 @@ app.MapGet("/Account/Logout", async httpContext =>
 
 	await httpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
 	await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+});
+
+// Diagnostics endpoint exposing environment, default auth schemes and registered schemes.
+app.MapGet("/diagnostics", async (IConfiguration cfg, IAuthenticationSchemeProvider schemeProvider, IOptions<AuthenticationOptions> authOptions, IWebHostEnvironment env) =>
+{
+	var schemes = await schemeProvider.GetAllSchemesAsync();
+	var schemeList = schemes.Select(s => new { s.Name, Handler = s.HandlerType?.FullName }).ToList();
+
+	string Mask(string? value) => string.IsNullOrEmpty(value) 
+		? string.Empty 
+		: (value.Length <= 6 ? "******" : value[..3] + "..." + value[^3..]);
+
+	return Results.Json(new
+	{
+		Environment = env.EnvironmentName,
+		DefaultAuthenticateScheme = authOptions.Value.DefaultAuthenticateScheme,
+		DefaultChallengeScheme = authOptions.Value.DefaultChallengeScheme,
+		DefaultSignInScheme = authOptions.Value.DefaultSignInScheme,
+		RegisteredSchemes = schemeList,
+		Auth0 = new
+		{
+			Domain = Mask(cfg["Auth0:Domain"]),
+			ClientId = Mask(cfg["Auth0:ClientId"])
+		}
+	});
 });
 
 app.UseAuthentication();

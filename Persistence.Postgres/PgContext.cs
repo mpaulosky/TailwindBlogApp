@@ -23,28 +23,23 @@ public class PgContext : DbContext
 
 		modelBuilder
 				.Entity<Article>()
-				.Property(e => e.CreatedOn)
-				.HasConversion(new DateTimeOffsetConverter());
+				.Property(e => e.CreatedOn);
 
 		modelBuilder
 				.Entity<Article>()
-				.Property(e => e.ModifiedOn)
-				.HasConversion(new DateTimeOffsetConverter());
+				.Property(e => e.ModifiedOn);
 
 		modelBuilder
 				.Entity<Article>()
-				.Property(e => e.PublishedOn)
-				.HasConversion(new DateTimeOffsetConverter());
+				.Property(e => e.PublishedOn);
 
 		modelBuilder
 				.Entity<Category>()
-				.Property(e => e.CreatedOn)
-				.HasConversion(new DateTimeOffsetConverter());
+				.Property(e => e.CreatedOn);
 
 		modelBuilder
 				.Entity<Category>()
-				.Property(e => e.ModifiedOn)
-				.HasConversion(new DateTimeOffsetConverter());
+				.Property(e => e.ModifiedOn);
 
 	}
 

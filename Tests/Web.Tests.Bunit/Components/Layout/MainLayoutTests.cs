@@ -59,9 +59,9 @@ public class MainLayoutTests : BunitContext
 
 		// Assert
 		cut.Markup.Should().Contain("Hey Test User!");
-		cut.Markup.Should().Contain("Users");
-		cut.Markup.Should().Contain("My Articles");
-		cut.Markup.Should().Contain("Logout");
+		cut.Markup.Should().Contain("Profile");
+		cut.Markup.Should().Contain("Articles");
+		cut.Markup.Should().Contain("Log out");
 
 	}
 

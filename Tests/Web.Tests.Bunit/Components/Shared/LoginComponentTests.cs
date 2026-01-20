@@ -30,7 +30,7 @@ public class LoginComponentTests : BunitContext
 
 		// Assert
 		cut.MarkupMatches(
-				$"""<a href="Account/{(isAuthorized ? "Logout" : "Login")}">{expectedText}</a>"""); // Update selector as needed
+				$"""<a href="Account/{(isAuthorized ? "Logout" : "Login")}" class="p-1 hover:text-blue-700">{expectedText}</a>""");
 
 	}
 

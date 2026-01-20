@@ -31,7 +31,7 @@ public class ContactPageTest : BunitContext
 				  <h1 class="text-3xl font-bold tracking-tight text-gray-50">Contacts</h1>
 				</header>
 				<div class="prose max-w-2xl mx-auto text-gray-100 bg-gray-800 rounded-md shadow-md p-6 mt-6">
-				  <h2 class="text-xl font-bold mb-2">Contact - TailwindBlog</h2>
+				  <h2 class="text-xl font-bold mb-2">Contacts</h2>
 				  <p>
 				    For questions, support, or feedback about
 				    <b>TailwindBlog</b>, please use one of the following methods:

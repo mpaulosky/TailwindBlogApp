@@ -15,16 +15,16 @@
   <Folder Name="/src/">
     <Project Path="AppHost\AppHost.csproj" />
     <Project Path="Domain\Domain.csproj" />
-    <Project Path="MyMediator\MyMediator.csproj" />
-    <Project Path="Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj" Type="Classic C#" />
-    <Project Path="Persistence.Postgres\Persistence.Postgres.csproj" Type="Classic C#" />
+    <Project Path="MyMediator/MyMediatR.csproj" />
+    <Project Path="Persistence.Postgres.Migrations\Persistence.Postgres.Migrations.csproj" />
+    <Project Path="Persistence.Postgres\Persistence.Postgres.csproj" />
     <Project Path="ServiceDefaults\ServiceDefaults.csproj" />
     <Project Path="Web\Web.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="Tests\Architecture.Tests\Architecture.Tests.csproj" Type="C#" />
-    <Project Path="Tests\Domain.Tests.Unit\Domain.Tests.Unit.csproj" Type="C#" />
-    <Project Path="Tests\MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" Type="C#" />
-    <Project Path="Tests\Web.Tests.Bunit\Web.Tests.Bunit.csproj" Type="C#" />
+    <Project Path="Tests\Architecture.Tests\Architecture.Tests.csproj" />
+    <Project Path="Tests\Domain.Tests.Unit\Domain.Tests.Unit.csproj" />
+    <Project Path="Tests\MyMediator.Tests.Unit\MyMediator.Tests.Unit.csproj" />
+    <Project Path="Tests\Web.Tests.Bunit\Web.Tests.Bunit.csproj" />
   </Folder>
 </Solution>

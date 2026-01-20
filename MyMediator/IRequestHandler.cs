@@ -4,7 +4,7 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator
+// Project Name :  MyMediatR
 // =======================================================
 
 namespace MyMediator;

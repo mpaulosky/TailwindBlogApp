@@ -4,13 +4,15 @@
 // Company :       mpaulosky
 // Author :        Matthew
 // Solution Name : TailwindBlog
-// Project Name :  MyMediator.Tests.Unit
+// Project Name :  MyMediatR.Tests.Unit
 // =======================================================
+
+using MyMediatR;
 
 namespace MyMediator;
 
 [ExcludeFromCodeCoverage]
-[TestSubject(typeof(MyMediator))]
+[TestSubject(typeof(MyMediatR.MyMediatR))]
 public class MyMediatorIntegrationTests
 {
 
@@ -19,7 +21,7 @@ public class MyMediatorIntegrationTests
 	{
 		// Arrange
 		var services = new ServiceCollection();
-		services.AddMyMediator(typeof(MyMediatorIntegrationTests).Assembly);
+		services.AddMyMediatR(typeof(MyMediatorIntegrationTests).Assembly);
 		var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true });
 		var sender = provider.GetRequiredService<ISender>();
 		var testRequest = new TestRequest { Value = "integration" };
@@ -36,7 +38,7 @@ public class MyMediatorIntegrationTests
 	{
 		// Arrange
 		var services = new ServiceCollection();
-		services.AddMyMediator(typeof(MyMediatorIntegrationTests).Assembly);
+		services.AddMyMediatR(typeof(MyMediatorIntegrationTests).Assembly);
 		var provider = services.BuildServiceProvider();
 		var sender = provider.GetRequiredService<ISender>();
 

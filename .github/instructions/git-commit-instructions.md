@@ -66,7 +66,7 @@ docs(CONTRIBUTING): update testing section for Playwright
 Adds Playwright usage instructions and links to documentation.
 ```
 
-## Additional ObjectIdelines
+## Additional Guidelines
 
 - Group related changes in a single commit.
 - Separate unrelated changes into different commits.
